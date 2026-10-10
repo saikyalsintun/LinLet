@@ -6,38 +6,36 @@
   <meta name="theme-color" content="#252724">
   <title>Money Transfer Fee Calculator</title>
   <style>
-    :root{--bg:#f4f5f3;--card:#fff;--ink:#252724;--muted:#6b716a;--gold:#d0a557;--green:#18794e;--line:#e4e7e2}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
-    .wrap{max-width:560px;margin:0 auto;padding:18px 14px 36px}.header{background:#252724;color:white;border-radius:20px;padding:22px;margin-bottom:16px}
-    .brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:14px;background:#d0a557;color:#252724;display:grid;place-items:center;font-size:24px;font-weight:800}
-    h1{font-size:21px;margin:0 0 4px}.sub{font-size:13px;color:#d6d8d3;margin:0}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #22222208}
-    label{display:block;font-size:13px;font-weight:650;margin:0 0 7px}input{width:100%;border:1px solid #d6dad4;border-radius:12px;padding:14px;font-size:17px;background:#fff;color:var(--ink);outline:none}
-    input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d0a5572c}.field{margin-bottom:16px}
-    .types{display:grid;grid-template-columns:1fr 1fr;gap:10px}.type{border:1px solid var(--line);border-radius:14px;padding:15px 10px;background:#fff;text-align:left;cursor:pointer}
-    .type strong{display:block;font-size:16px;margin-bottom:4px}.type span{font-size:12px;color:var(--muted)}.type.active{border:2px solid var(--gold);background:#fffaf0;padding:14px 9px}
-    .result{background:#292b27;color:white;border-radius:16px;padding:18px;margin-top:8px}.result small{color:#c9ccc5}.fee{font-size:34px;font-weight:800;color:var(--gold);margin:4px 0 14px;overflow-wrap:anywhere}
-    .line{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-top:1px solid #ffffff20;font-size:14px}.line span:first-child{color:#c9ccc5}
-    button.primary{width:100%;border:0;border-radius:13px;background:var(--gold);color:#252724;padding:15px;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px}
-    button.primary:disabled{opacity:.55;cursor:wait}.notice{font-size:13px;margin-top:12px;line-height:1.5}.notice.ok{color:var(--green)}.notice.err{color:#b42318}
-    .history-title{display:flex;justify-content:space-between;align-items:center;gap:8px}.history-title h2{font-size:17px;margin:0}.pill{font-size:12px;border-radius:999px;background:#f1f2ef;padding:6px 9px;color:var(--muted)}
-    .tx{padding:12px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font-size:13px}.tx:last-child{border-bottom:0}.tx .muted{color:var(--muted);margin-top:3px}.tx strong{font-size:14px}
-    .empty{color:var(--muted);font-size:13px;padding:14px 0}.foot{text-align:center;color:var(--muted);font-size:11px;padding:4px 12px}
+    :root{--bg:#f3f4f1;--card:#fff;--ink:#242722;--muted:#70756d;--gold:#d0a557;--line:#e3e6df;--green:#17784e;--red:#b42318}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .wrap{max-width:600px;margin:auto;padding:18px 14px 34px}.hero{background:#252724;color:#fff;border-radius:22px;padding:22px;margin-bottom:15px}
+    .brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;display:grid;place-items:center;background:var(--gold);border-radius:15px;color:#252724;font-size:25px;font-weight:900}
+    h1{font-size:21px;margin:0 0 4px}.subtitle{font-size:13px;color:#d6d8d2;margin:0}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #1c211b08}
+    label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}.field{margin-bottom:16px}input{display:block;width:100%;padding:14px;border:1px solid #d5d9d1;border-radius:12px;font:inherit;font-size:17px;background:white;color:var(--ink);outline:none}
+    input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d0a5572a}.optional{font-weight:400;color:var(--muted)}.types{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .type{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 12px;text-align:left;cursor:pointer;color:var(--ink)}.type strong{display:block;font-size:16px;margin-bottom:4px}.type span{color:var(--muted);font-size:12px}.type.active{border:2px solid var(--gold);padding:13px 11px;background:#fff9eb}
+    .result{background:#292b27;border-radius:16px;padding:18px;color:#fff}.result small{color:#c9ccc5}.fee{font-size:35px;font-weight:850;color:var(--gold);margin:4px 0 13px;overflow-wrap:anywhere}.summaryline{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #ffffff20;padding:9px 0 0;margin-top:8px;font-size:14px}.summaryline span{color:#c9ccc5}
+    .primary{width:100%;border:0;border-radius:13px;padding:15px;background:var(--gold);color:#252724;font:inherit;font-weight:800;font-size:16px;cursor:pointer;margin-top:14px}.primary:disabled{opacity:.6;cursor:wait}
+    .message{font-size:13px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}.message.ok{color:var(--green)}.message.err{color:var(--red)}.message.info{color:var(--muted)}
+    .sectionhead{display:flex;align-items:center;justify-content:space-between;gap:8px}.sectionhead h2{font-size:17px;margin:0}.pill{font-size:12px;background:#f0f1ed;color:var(--muted);border-radius:99px;padding:6px 9px}
+    .tx{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}.tx:last-child{border-bottom:0}.tx strong{font-size:14px}.muted{color:var(--muted);margin-top:3px}.empty{font-size:13px;color:var(--muted);padding:15px 0}.foot{text-align:center;font-size:11px;color:var(--muted);line-height:1.5;padding:0 12px}
   </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="header">
-    <div class="brand"><div class="logo">↔</div><div><h1>Money Transfer</h1><p class="sub">Fee calculator & transaction log</p></div></div>
+<main class="wrap">
+  <header class="hero">
+    <div class="brand"><div class="logo">↔</div><div><h1>Money Transfer</h1><p class="subtitle">Fee calculator · Transaction records</p></div></div>
   </header>
+
   <section class="card">
     <div class="field">
-      <label for="phone">Customer phone number <span style="font-weight:400;color:#6b716a">(optional)</span></label>
-      <input id="phone" type="tel" inputmode="tel" placeholder="Enter phone number">
+      <label for="phone">Customer phone number <span class="optional">(optional)</span></label>
+      <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Enter phone number">
     </div>
     <div class="field">
       <label for="amount">Transfer amount</label>
-      <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="Enter amount" aria-label="Transfer amount">
+      <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="Enter amount" aria-describedby="amountHint">
+      <div id="amountHint" class="muted" style="font-size:11px">Commas are added automatically, e.g. 100,000.</div>
     </div>
     <div class="field">
       <label>Transaction type</label>
@@ -48,47 +46,51 @@
     </div>
     <div class="result" aria-live="polite">
       <small>Service fee</small><div class="fee" id="fee">—</div>
-      <div class="line"><span>Transfer amount</span><strong id="amountDisplay">—</strong></div>
-      <div class="line"><span>Transaction type</span><strong id="typeDisplay">Cash Out</strong></div>
+      <div class="summaryline"><span>Transfer amount</span><strong id="amountDisplay">—</strong></div>
+      <div class="summaryline"><span>Transaction type</span><strong id="typeDisplay">Cash Out</strong></div>
     </div>
-    <button class="primary" id="saveBtn" type="button">Calculate & Save Transaction</button>
-    <div class="notice" id="message" role="status"></div>
+    <button class="primary" id="saveBtn" type="button">Calculate &amp; Save Transaction</button>
+    <div class="message info" id="message" role="status">Enter an amount to calculate the fee. Saving requires a correctly configured Apps Script API.</div>
   </section>
+
   <section class="card">
-    <div class="history-title"><h2>Recent transactions</h2><span class="pill" id="count">0 records</span></div>
-    <div id="history"><div class="empty">Recent transactions will appear here after the sheet connection is set up.</div></div>
+    <div class="sectionhead"><h2>Recent transactions</h2><span class="pill" id="count">0 records</span></div>
+    <div id="history"><div class="empty">Transactions saved during this session will appear here.</div></div>
   </section>
-  <p class="foot">Transaction records are saved to your Google Sheet when the app is deployed and connected.</p>
-</div>
+  <p class="foot">Fee preview runs in your browser. Transaction saving requires the Google Apps Script API to be configured and deployed.</p>
+</main>
 <script>
-  // The page is served by Google Apps Script. No API URL needs to be hard-coded.
+(() => {
+  'use strict';
+
+  // Paste your deployed Apps Script /exec URL here.
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxGg6jvPbklCOXtVX2ZLj-Kp7UBvyROAZDjXBzL3tqParwgkIu_g5sFHFVtNJK7jbW-/exec';
+
   let transactionType = 'Cash Out';
-  let currentFee = null;
   const $ = id => document.getElementById(id);
-  const money = n => Number(n).toLocaleString('en-US', {maximumFractionDigits:2});
+  const money = n => Number(n).toLocaleString('en-US', {maximumFractionDigits: 2});
 
   function parseAmount(value) {
-    const cleaned = String(value == null ? '' : value).replace(/,/g, '').replace(/\s/g, '');
+    const cleaned = String(value ?? '').replace(/,/g, '').replace(/\s/g, '');
     if (!cleaned || !/^\d+(?:\.\d+)?$/.test(cleaned)) return NaN;
     return Number(cleaned);
   }
 
   function formatAmountInput(value) {
-    let raw = String(value == null ? '' : value).replace(/,/g, '').replace(/\s/g, '');
-    if (!raw) return '';
-    // Permit only digits and one decimal point.
-    raw = raw.replace(/[^\d.]/g, '');
+    let raw = String(value ?? '').replace(/,/g, '').replace(/[^\d.]/g, '');
     const dot = raw.indexOf('.');
     if (dot !== -1) raw = raw.slice(0, dot + 1) + raw.slice(dot + 1).replace(/\./g, '');
     const parts = raw.split('.');
-    const integerPart = parts[0].replace(/^0+(?=\d)/, '');
-    const grouped = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const integer = parts[0].replace(/^0+(?=\d)/, '');
+    const grouped = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return parts.length > 1 ? grouped + '.' + parts[1] : grouped;
   }
 
+  // Fee rules agreed in conversation. Amount multiplier is kept to 2 decimal places.
   function calculateFee(amount, type) {
     if (!Number.isFinite(amount) || amount <= 0) return null;
     if (type === 'Cash In') return Math.ceil(amount / 100000) * 100;
+
     if (amount <= 20000) return 100;
     if (amount <= 30000) return 200;
     if (amount <= 50000) return 300;
@@ -99,13 +101,20 @@
     if (units < 30) rate = 500;
     else if (units < 50) rate = 450;
     else rate = 400;
+
+    // Round the calculated fee up to the next 100.
     return Math.ceil((units * rate) / 100) * 100;
+  }
+
+  function setMessage(text, kind = 'info') {
+    $('message').textContent = text;
+    $('message').className = 'message ' + kind;
   }
 
   function updatePreview() {
     const amount = parseAmount($('amount').value);
-    currentFee = calculateFee(amount, transactionType);
-    $('fee').textContent = currentFee === null ? '—' : money(currentFee);
+    const fee = calculateFee(amount, transactionType);
+    $('fee').textContent = fee === null ? '—' : money(fee);
     $('amountDisplay').textContent = Number.isFinite(amount) && amount > 0 ? money(amount) : '—';
     $('typeDisplay').textContent = transactionType;
   }
@@ -116,78 +125,30 @@
     $('cashOut').classList.toggle('active', type === 'Cash Out');
     $('cashIn').setAttribute('aria-pressed', String(type === 'Cash In'));
     $('cashOut').setAttribute('aria-pressed', String(type === 'Cash Out'));
-    $('message').textContent = '';
     updatePreview();
+    setMessage('Fee updated for ' + type + '.', 'info');
   }
 
   $('cashIn').addEventListener('click', () => chooseType('Cash In'));
   $('cashOut').addEventListener('click', () => chooseType('Cash Out'));
 
-  $('amount').addEventListener('input', function () {
-    const input = this;
-    const oldValue = input.value;
-    const oldCursor = input.selectionStart == null ? oldValue.length : input.selectionStart;
+  $('amount').addEventListener('input', function() {
+    const oldValue = this.value;
+    const oldCursor = this.selectionStart == null ? oldValue.length : this.selectionStart;
     const digitsBeforeCursor = oldValue.slice(0, oldCursor).replace(/[^\d.]/g, '').length;
     const formatted = formatAmountInput(oldValue);
-    input.value = formatted;
-
-    let newCursor = 0;
-    let seen = 0;
+    this.value = formatted;
+    let newCursor = 0, seen = 0;
     while (newCursor < formatted.length && seen < digitsBeforeCursor) {
       if (/[\d.]/.test(formatted.charAt(newCursor))) seen++;
       newCursor++;
     }
-    try { input.setSelectionRange(newCursor, newCursor); } catch (e) {}
+    try { this.setSelectionRange(newCursor, newCursor); } catch (_) {}
     updatePreview();
   });
 
   $('saveBtn').addEventListener('click', saveTransaction);
   updatePreview();
-
-  function showMessage(text, kind) {
-    $('message').textContent = text;
-    $('message').className = 'notice ' + (kind || '');
-  }
-
-  function saveTransaction() {
-    const amount = parseAmount($('amount').value);
-    const phone = $('phone').value.trim();
-    const fee = calculateFee(amount, transactionType);
-    if (!Number.isFinite(amount) || amount <= 0) {
-      showMessage('Please enter an amount greater than zero.', 'err'); return;
-    }
-    if (fee === null) { showMessage('Unable to calculate fee. Check the amount.', 'err'); return; }
-
-    $('saveBtn').disabled = true;
-    $('saveBtn').textContent = 'Saving…';
-    if (typeof google === 'undefined' || !google.script || !google.script.run) {
-      showMessage('The page is not connected to Apps Script yet. Deploy it as a Web App to save transactions.', 'err');
-      $('saveBtn').disabled = false;
-      $('saveBtn').textContent = 'Calculate & Save Transaction';
-      return;
-    }
-
-    google.script.run
-      .withSuccessHandler(result => {
-        $('saveBtn').disabled = false;
-        $('saveBtn').textContent = 'Calculate & Save Transaction';
-        if (!result || !result.success) {
-          showMessage((result && result.message) || 'Could not save the transaction.', 'err');
-          return;
-        }
-        showMessage('Saved successfully. Fee: ' + money(result.cost) + '.', 'ok');
-        addHistory({phone: phone || 'No phone number', amount, cost: result.cost, status: transactionType, date: result.date});
-        $('amount').value = '';
-        $('phone').value = '';
-        updatePreview();
-      })
-      .withFailureHandler(err => {
-        $('saveBtn').disabled = false;
-        $('saveBtn').textContent = 'Calculate & Save Transaction';
-        showMessage('Save failed: ' + (err && err.message ? err.message : 'Please try again.'), 'err');
-      })
-      .saveTransaction({phone, amount, status: transactionType});
-  }
 
   function addHistory(tx) {
     const history = $('history');
@@ -195,25 +156,69 @@
     const row = document.createElement('div');
     row.className = 'tx';
     const left = document.createElement('div');
-    const name = document.createElement('strong');
-    name.textContent = tx.status;
-    const detail = document.createElement('div');
-    detail.className = 'muted';
-    detail.textContent = tx.phone + ' · Amount ' + money(tx.amount);
-    left.append(name, detail);
+    const title = document.createElement('strong');
+    title.textContent = tx.status;
+    const details = document.createElement('div');
+    details.className = 'muted';
+    details.textContent = (tx.phone || 'No phone number') + ' · Amount ' + money(tx.amount);
+    left.append(title, details);
     const right = document.createElement('div');
     right.style.textAlign = 'right';
-    const cost = document.createElement('strong');
-    cost.textContent = money(tx.cost);
+    const fee = document.createElement('strong');
+    fee.textContent = money(tx.cost);
     const date = document.createElement('div');
     date.className = 'muted';
-    date.textContent = tx.date || 'Just now';
-    right.append(cost, date);
+    date.textContent = tx.date || new Date().toLocaleString();
+    right.append(fee, date);
     row.append(left, right);
     history.prepend(row);
     const count = history.querySelectorAll('.tx').length;
     $('count').textContent = count + (count === 1 ? ' record' : ' records');
   }
+
+  async function saveTransaction() {
+    const amount = parseAmount($('amount').value);
+    const phone = $('phone').value.trim();
+    const cost = calculateFee(amount, transactionType);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setMessage('Please enter an amount greater than zero.', 'err');
+      return;
+    }
+
+    $('saveBtn').disabled = true;
+    $('saveBtn').textContent = 'Saving…';
+    setMessage('Sending transaction to Google Sheets…', 'info');
+
+    try {
+      // Apps Script must implement doPost(e) and return JSON. Some Apps Script
+      // deployments redirect POST requests; no-cors cannot read a response,
+      // so we use a normal request and report errors rather than claiming success.
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'saveTransaction', phone, amount, status: transactionType }),
+        redirect: 'follow'
+      });
+      if (!response.ok) throw new Error('API returned HTTP ' + response.status);
+      const result = await response.json();
+      if (!result || result.success !== true) throw new Error(result && result.message ? result.message : 'The API did not confirm the save.');
+
+      const savedCost = Number(result.cost ?? cost);
+      addHistory({phone, amount, cost: savedCost, status: transactionType, date: result.date});
+      $('amount').value = '';
+      $('phone').value = '';
+      updatePreview();
+      setMessage('Saved successfully. Fee: ' + money(savedCost) + '.', 'ok');
+    } catch (err) {
+      setMessage('Could not confirm the save. ' + (err && err.message ? err.message : 'Check your Apps Script API deployment and CORS settings.') +
+        ' If this is a browser CORS error, the Apps Script endpoint needs a compatible API setup. No success was reported.', 'err');
+    } finally {
+      $('saveBtn').disabled = false;
+      $('saveBtn').textContent = 'Calculate & Save Transaction';
+    }
+  }
+})();
 </script>
 </body>
 </html>
