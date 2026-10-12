@@ -54,8 +54,7 @@ h1{font-size:21px;margin:0 0 3px}.subtitle{font-size:12px;color:#d6d8d2;margin:0
 'use strict';
 const $=id=>document.getElementById(id);
 // Paste your deployed Apps Script Web App URL ending in /exec below.
-const API_URL='https://script.google.com/macros/s/AKfycbzUvpo_FrhJgOXzuNeUCISbAaxFrxXhNNQnj_tibJVtkMK3Ny0rFb5w4Cv2dcfmVPAg/exec';
-const $=id=>document.getElementById(id);
+const API_URL='PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
 function callApi(params){
  return new Promise((resolve,reject)=>{
   const callback='gasCallback_'+Date.now()+'_'+Math.random().toString(36).slice(2);
@@ -94,7 +93,15 @@ function updatePreview(){
  }else{$('preview').textContent=current===undefined?'—':money(current);$('previewDetail').textContent='Enter an amount to preview the new balance.';}
 }
 $('service').addEventListener('change',updatePreview);
-$('amount').addEventListener('input',updatePreview);
+$('amount').addEventListener('input',()=>{
+ const input=$('amount');
+ const raw=input.value.replace(/,/g,'').replace(/[^0-9.]/g,'');
+ const parts=raw.split('.');
+ const whole=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');
+ const formatted=parts.length>1?whole+'.'+parts.slice(1).join(''):whole;
+ input.value=formatted;
+ updatePreview();
+});
 $('refreshBtn').addEventListener('click',load);
 $('addBtn').addEventListener('click',()=>{
  const service=$('service').value,amount=parseAmount($('amount').value),note=$('note').value.trim();
