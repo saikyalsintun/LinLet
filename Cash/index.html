@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#252724">
+<title>Cash_on_hand</title>
+<style>
+:root{--bg:#f3f4f1;--card:#fff;--ink:#252724;--muted:#70756d;--gold:#d0a557;--line:#e3e6df;--green:#17784e;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 36px}.hero{background:#252724;color:white;border-radius:22px;padding:22px;margin-bottom:15px}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;display:grid;place-items:center;background:var(--gold);border-radius:15px;color:#252724;font-size:25px;font-weight:900}
+h1{font-size:23px;margin:0 0 4px}.subtitle{font-size:13px;color:#d6d8d2;margin:0}.total-label{color:#c9ccc5;font-size:13px;margin-top:22px}.total{font-size:32px;font-weight:850;color:var(--gold);margin-top:3px;overflow-wrap:anywhere}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #1c211b08}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.sectionhead h2{font-size:17px;margin:0}.pill{font-size:12px;background:#f0f1ed;color:var(--muted);border-radius:99px;padding:6px 9px}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.mode button{border:1px solid var(--line);border-radius:13px;background:#fff;padding:13px;font:inherit;font-weight:800;cursor:pointer}.mode button.active{border:2px solid var(--gold);background:#fff9eb;padding:12px}
+label{display:block;font-size:13px;font-weight:750;margin-bottom:7px}.field{margin-bottom:15px}input,select{display:block;width:100%;padding:12px;border:1px solid #d5d9d1;border-radius:11px;font:inherit;font-size:16px;background:white;color:var(--ink);outline:none}input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d0a5572a}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.denom{border:1px solid var(--line);border-radius:13px;padding:12px}.denom-top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.denom-title{font-weight:800}.denom-sub{font-size:11px;color:var(--muted);margin-top:3px}.denom input{padding:10px;font-size:16px}
+.preview{background:#292b27;color:#fff;border-radius:15px;padding:16px;margin:14px 0}.preview small{color:#c9ccc5}.preview strong{display:block;color:var(--gold);font-size:24px;margin:4px 0}
+.primary{width:100%;border:0;border-radius:13px;padding:15px;background:var(--gold);color:#252724;font:inherit;font-weight:850;font-size:16px;cursor:pointer}.primary:disabled{opacity:.55;cursor:wait}
+.secondary{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
+.message{font-size:13px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}.ok{color:var(--green)}.err{color:var(--red)}.info{color:var(--muted)}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:430px;font-size:13px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:700}td:last-child,th:last-child{text-align:right}.qty{font-weight:800}.foot{text-align:center;font-size:11px;color:var(--muted);line-height:1.5;padding:0 12px}
+@media(max-width:440px){.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px 10px 28px}.card{padding:14px}.total{font-size:28px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="hero">
+ <div class="brand"><div class="logo">▤</div><div><h1>Cash_on_hand</h1><p class="subtitle">Physical cash inventory · MMK</p></div></div>
+ <div class="total-label">Total physical cash available</div><div class="total" id="total">Loading…</div>
+ <p class="subtitle" id="connection" style="margin-top:8px">Connecting to Google Sheets…</p>
+</header>
+<section class="card">
+ <div class="sectionhead"><h2>Update cash</h2><span class="pill" id="modePill">Add cash</span></div>
+ <div class="mode"><button type="button" class="active" id="addMode">＋ Cash received</button><button type="button" id="subtractMode">− Cash given</button></div>
+ <div class="field"><label for="note">Note (optional)</label><input id="note" maxlength="180" placeholder="e.g. cash received from customer"></div>
+ <div class="sectionhead"><h2>Enter quantity by denomination</h2><span class="pill">Notes / amount</span></div>
+ <div class="grid" id="denominations"></div>
+ <div class="preview"><small>Transaction amount</small><strong id="transactionTotal">0 MMK</strong><small id="previewText">Enter the cash received by denomination.</small></div>
+ <button class="primary" id="saveBtn" type="button">Add cash to inventory</button>
+ <div id="saveMessage" class="message" aria-live="polite"></div>
+</section>
+<section class="card">
+ <div class="sectionhead"><h2>Current cash inventory</h2><button class="secondary" id="refreshBtn" type="button">Refresh</button></div>
+ <div class="table-wrap"><table><thead><tr><th>Cash type</th><th>Quantity / amount</th><th>Cash value</th></tr></thead><tbody id="inventory"><tr><td colspan="3">Loading…</td></tr></tbody></table></div>
+ <div id="refreshMessage" class="message"></div>
+</section>
+<p class="foot">Cash_on_hand is a standalone cash inventory website. Updates are stored in the Google Sheet tab named in_cash, with a separate cash_update_log for the transaction history.</p>
+</main>
+<script>
+'use strict';
+const API_URL='https://script.google.com/macros/s/AKfycbzUvpo_FrhJgOXzuNeUCISbAaxFrxXhNNQnj_tibJVtkMK3Ny0rFb5w4Cv2dcfmVPAg/exec';
+const $=id=>document.getElementById(id);
+const DENOMS=[{key:'10000',label:'10,000 MMK',value:10000},{key:'5000',label:'5,000 MMK',value:5000},{key:'1000',label:'1,000 MMK',value:1000},{key:'500',label:'500 MMK',value:500},{key:'200',label:'200 MMK',value:200},{key:'100',label:'100 MMK',value:100},{key:'50',label:'50 MMK',value:50},{key:'change',label:'Change',value:0}];
+let mode='add', inventory={};
+const money=n=>(Number(n)||0).toLocaleString('en-US',{maximumFractionDigits:2})+' MMK';
+function callApi(params){return new Promise((resolve,reject)=>{const cb='cashCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);const script=document.createElement('script');const timeout=setTimeout(()=>{cleanup();reject(new Error('Request timed out. Check the Apps Script deployment and API URL.'));},20000);function cleanup(){clearTimeout(timeout);delete window[cb];script.remove()}window[cb]=data=>{cleanup();if(data&&data.success)resolve(data);else reject(new Error(data&&data.error||'The request failed.'))};params.callback=cb;script.src=API_URL+'?'+new URLSearchParams(params).toString();script.onerror=()=>{cleanup();reject(new Error('Cannot connect to Apps Script. Check its deployment access.'))};document.head.appendChild(script)})}
+function buildInputs(){ $('denominations').innerHTML=DENOMS.map(d=>`<div class="denom"><div class="denom-top"><div><div class="denom-title">${d.label}</div><div class="denom-sub">${d.key==='change'?'Enter total change value':'Quantity of notes'}</div></div></div><input type="text" inputmode="numeric" autocomplete="off" id="qty_${d.key}" value="0" aria-label="${d.label} ${d.key==='change'?'amount':'quantity'}"></div>`).join('');DENOMS.forEach(d=>$(('qty_'+d.key)).addEventListener('input',e=>{let v=e.target.value.replace(/,/g,'').replace(/[^0-9]/g,'');if(d.key==='change'){e.target.value=v?Number(v).toLocaleString('en-US'):''}else{e.target.value=v?Number(v).toLocaleString('en-US'):''}updatePreview()}))}
+function getEntered(){const result={};DENOMS.forEach(d=>{result[d.key]=Number(($('qty_'+d.key).value||'0').replace(/,/g,''))||0});return result}
+function totalEntered(){const q=getEntered();return DENOMS.reduce((sum,d)=>sum+(d.key==='change'?q.change:d.value*q[d.key]),0)}
+function updatePreview(){$('transactionTotal').textContent=money(totalEntered());$('previewText').textContent=mode==='add'?'This amount will be added to your cash inventory.':'This amount will be subtracted from your cash inventory.'}
+function setMode(next){mode=next;$('addMode').classList.toggle('active',mode==='add');$('subtractMode').classList.toggle('active',mode==='subtract');$('modePill').textContent=mode==='add'?'Add cash':'Give cash';$('saveBtn').textContent=mode==='add'?'Add cash to inventory':'Subtract cash from inventory';updatePreview()}
+function showMessage(id,text,type){$(id).className='message '+(type||'info');$(id).textContent=text}
+function render(data){inventory={};(data.items||[]).forEach(x=>inventory[x.key]=x);$('total').textContent=money(data.total);$('connection').textContent='Connected · Last updated '+(data.updatedAt||'just now');$('inventory').innerHTML=(data.items||[]).map(x=>`<tr><td>${x.label}</td><td class="qty">${Number(x.quantity||0).toLocaleString('en-US')}</td><td>${money(x.value||0)}</td></tr>`).join('')}
+async function refresh(){ $('refreshBtn').disabled=true;try{const data=await callApi({action:'cashRead'});render(data);showMessage('refreshMessage','Cash inventory refreshed.','ok')}catch(e){$('connection').textContent='Connection error';showMessage('refreshMessage',e.message,'err')}finally{$('refreshBtn').disabled=false}}
+async function save(){const q=getEntered();const amount=totalEntered();if(amount<=0){showMessage('saveMessage','Enter at least one cash quantity or a Change amount greater than zero.','err');return}if(mode==='subtract'){for(const d of DENOMS){const current=inventory[d.key]?Number(inventory[d.key].quantity)||0:0;const requested=q[d.key]||0;if(requested>current){showMessage('saveMessage','Not enough '+d.label+' available. Current quantity: '+current.toLocaleString('en-US')+'.','err');return}}if(q.change>(inventory.change?Number(inventory.change.quantity)||0:0)){showMessage('saveMessage','Not enough Change available.','err');return}}
+$('saveBtn').disabled=true;showMessage('saveMessage','Updating cash inventory…','info');try{const result=await callApi({action:'cashUpdate',mode,counts:JSON.stringify(q),note:$('note').value.trim()});render(result);DENOMS.forEach(d=>$('qty_'+d.key).value='0');$('note').value='';updatePreview();showMessage('saveMessage',mode==='add'?'Cash received and saved successfully.':'Cash given and subtracted successfully.','ok')}catch(e){showMessage('saveMessage',e.message,'err')}finally{$('saveBtn').disabled=false}}
+$('addMode').addEventListener('click',()=>setMode('add'));$('subtractMode').addEventListener('click',()=>setMode('subtract'));$('saveBtn').addEventListener('click',save);$('refreshBtn').addEventListener('click',refresh);buildInputs();setMode('add');refresh();
+</script>
+</body>
+</html>
