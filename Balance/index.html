@@ -53,8 +53,7 @@ h1{font-size:21px;margin:0 0 3px}.subtitle{font-size:12px;color:#d6d8d2;margin:0
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
-// Paste your deployed Apps Script Web App URL ending in /exec below.
-const API_URL='PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+const API_URL='https://script.google.com/macros/s/AKfycbzUvpo_FrhJgOXzuNeUCISbAaxFrxXhNNQnj_tibJVtkMK3Ny0rFb5w4Cv2dcfmVPAg/exec';
 function callApi(params){
  return new Promise((resolve,reject)=>{
   const callback='gasCallback_'+Date.now()+'_'+Math.random().toString(36).slice(2);
