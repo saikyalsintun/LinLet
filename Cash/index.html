@@ -6,42 +6,75 @@
 <meta name="theme-color" content="#252724">
 <title>Cash_on_hand</title>
 <style>
-:root{--bg:#f3f4f1;--card:#fff;--ink:#252724;--muted:#70756d;--gold:#d0a557;--line:#e3e6df;--green:#17784e;--red:#b42318}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.wrap{max-width:760px;margin:auto;padding:18px 14px 36px}.hero{background:#252724;color:white;border-radius:22px;padding:22px;margin-bottom:15px}
-.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;display:grid;place-items:center;background:var(--gold);border-radius:15px;color:#252724;font-size:25px;font-weight:900}
-h1{font-size:23px;margin:0 0 4px}.subtitle{font-size:13px;color:#d6d8d2;margin:0}.total-label{color:#c9ccc5;font-size:13px;margin-top:22px}.total{font-size:32px;font-weight:850;color:var(--gold);margin-top:3px;overflow-wrap:anywhere}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #1c211b08}
-.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.sectionhead h2{font-size:17px;margin:0}.pill{font-size:12px;background:#f0f1ed;color:var(--muted);border-radius:99px;padding:6px 9px}
-.mode{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.mode button{border:1px solid var(--line);border-radius:13px;background:#fff;padding:13px;font:inherit;font-weight:800;cursor:pointer}.mode button.active{border:2px solid var(--gold);background:#fff9eb;padding:12px}
-label{display:block;font-size:13px;font-weight:750;margin-bottom:7px}.field{margin-bottom:15px}input,select{display:block;width:100%;padding:12px;border:1px solid #d5d9d1;border-radius:11px;font:inherit;font-size:16px;background:white;color:var(--ink);outline:none}input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d0a5572a}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-/* Banknote-inspired denomination colors */
-.denom{position:relative;overflow:hidden;border-radius:15px;padding:13px 12px 12px;border:1px solid var(--denom-border,#dfe3dc);background:var(--denom-bg,#fff);color:var(--denom-ink,#252724);box-shadow:inset 0 4px 0 var(--denom-accent,#d0a557)}
-.denom:after{content:"";position:absolute;right:-18px;top:19px;width:68px;height:68px;border:1px solid var(--denom-pattern,#ffffff80);border-radius:50%;pointer-events:none}
-.denom-top{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}
-.denom-title{font-weight:850;letter-spacing:-.15px}
-.denom-sub{font-size:11px;color:var(--denom-muted,#666);margin-top:3px}
-.denom input{position:relative;z-index:1;padding:10px;font-size:16px;background:var(--input-bg,#fff);color:var(--denom-ink,#252724);border-color:var(--denom-border,#d5d9d1)}
-.denom-10000{--denom-bg:#e5f6f6;--denom-ink:#075d78;--denom-muted:#317889;--denom-accent:#168ca2;--denom-border:#b1dfe3;--denom-pattern:#168ca255;--input-bg:#f9ffff}
-.denom-5000{--denom-bg:#fff0f5;--denom-ink:#9f2850;--denom-muted:#b45b78;--denom-accent:#c74777;--denom-border:#f0c2d3;--denom-pattern:#c7477755;--input-bg:#fffafd}
-.denom-1000{--denom-bg:#edf7e9;--denom-ink:#245d43;--denom-muted:#4e8068;--denom-accent:#5b9a70;--denom-border:#c9e2cc;--denom-pattern:#5b9a7055;--input-bg:#fbfffa}
-.denom-500{--denom-bg:#fff0e5;--denom-ink:#8a4a2b;--denom-muted:#a86d4e;--denom-accent:#c8794b;--denom-border:#efc9ad;--denom-pattern:#c8794b55;--input-bg:#fffaf6}
-.denom-200{--denom-bg:#f0f3f4;--denom-ink:#485b65;--denom-muted:#77858b;--denom-accent:#8799a0;--denom-border:#d2dce0;--denom-pattern:#8799a055;--input-bg:#fff}
-.denom-100{--denom-bg:#eaf2ff;--denom-ink:#244f91;--denom-muted:#5b79a8;--denom-accent:#4678bf;--denom-border:#c5d7f4;--denom-pattern:#4678bf55;--input-bg:#fbfdff}
-.denom-50{--denom-bg:#f7eee3;--denom-ink:#69472f;--denom-muted:#92765d;--denom-accent:#a8754c;--denom-border:#e5d0b8;--denom-pattern:#a8754c55;--input-bg:#fffdf9}
-.denom-change{--denom-bg:#f1edff;--denom-ink:#58418a;--denom-muted:#8373ac;--denom-accent:#8b70c8;--denom-border:#d8cef2;--denom-pattern:#8b70c855;--input-bg:#fff}
-.inventory-label{font-weight:800}
+:root{
+ --bg:#f4f6f3;--card:#fff;--ink:#20251f;--muted:#737b72;--gold:#d0a557;
+ --line:#e4e9e1;--green:#18784e;--red:#b42318;--shadow:0 8px 24px #2430240b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px}
+button,input{font:inherit}
+.wrap{max-width:800px;margin:auto;padding:20px 14px 36px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#20251f 0%,#30392f 100%);color:#fff;border-radius:25px;padding:23px;margin-bottom:16px;box-shadow:0 12px 28px #1c271d1c}
+.hero:after{content:"";position:absolute;width:210px;height:210px;right:-65px;top:-100px;border:1px solid #d0a5574d;border-radius:50%;box-shadow:0 0 0 24px #d0a5570b,0 0 0 48px #d0a55708;pointer-events:none}
+.brand{display:flex;gap:13px;align-items:center;position:relative;z-index:1}
+.logo{width:48px;height:48px;display:grid;place-items:center;background:linear-gradient(145deg,#e7c57f,#c89b43);border-radius:16px;color:#242820;font-size:25px;font-weight:900;box-shadow:0 4px 12px #0002}
+h1{font-size:23px;letter-spacing:-.5px;margin:0 0 4px}
+.subtitle{font-size:12px;color:#d4d9d1;margin:0}
+.total-panel{position:relative;z-index:1;margin-top:23px;padding-top:17px;border-top:1px solid #ffffff1b}
+.total-label{color:#d1d6ce;font-size:12px;font-weight:650;letter-spacing:.2px}
+.total{font-size:clamp(28px,7vw,36px);font-weight:900;letter-spacing:-1px;color:#e4bd6d;margin-top:4px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.card{background:var(--card);border:1px solid var(--line);border-radius:21px;padding:18px;margin-bottom:15px;box-shadow:var(--shadow)}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
+.sectionhead h2{font-size:17px;letter-spacing:-.25px;margin:0}
+.pill{font-size:11px;font-weight:750;background:#f1f3ef;color:#677064;border-radius:99px;padding:6px 10px;white-space:nowrap}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.mode button{border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px 10px;font-weight:800;color:#555e53;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.mode button:active{transform:scale(.99)}
+.mode button.active{border-color:#d0a557;background:#fff8e8;color:#4b3918;box-shadow:inset 0 0 0 1px #d0a557}
+label{display:block;font-size:12px;font-weight:800;margin-bottom:7px;color:#3a4038}
+.field{margin-bottom:17px}
+input,select{display:block;width:100%;padding:13px 14px;border:1px solid #dce2d9;border-radius:12px;font-size:16px;background:#fbfcfa;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 4px #d0a55722;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.denom{position:relative;overflow:hidden;border-radius:17px;padding:13px;border:1px solid var(--denom-border,#dfe3dc);background:var(--denom-bg,#fff);color:var(--denom-ink,#252724);box-shadow:inset 0 3px 0 var(--denom-accent,#d0a557);min-width:0}
+.denom:before{content:"";position:absolute;width:90px;height:90px;right:-32px;top:-32px;border:1px solid var(--denom-pattern,#ffffff80);border-radius:50%;box-shadow:0 0 0 10px var(--denom-pattern,#ffffff30),0 0 0 20px var(--denom-pattern,#ffffff18);pointer-events:none}
+.denom-top{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:13px}
+.denom-heading{min-width:0}
+.denom-title{font-size:14px;font-weight:900;letter-spacing:-.2px}
+.denom-sub{font-size:11px;color:var(--denom-muted,#666);margin-top:4px;line-height:1.35}
+.denom-mark{display:grid;place-items:center;flex:0 0 auto;width:35px;height:35px;border-radius:11px;border:1px solid var(--denom-border,#ddd);background:#ffffff8c;color:var(--denom-ink,#252724);font-size:11px;font-weight:950;letter-spacing:-.4px}
+.denom input{position:relative;z-index:1;padding:11px 12px;font-size:16px;font-weight:750;background:var(--input-bg,#fff);color:var(--denom-ink,#252724);border-color:var(--denom-border,#d5d9d1)}
+.denom-10000{--denom-bg:#eaf7f7;--denom-ink:#075d78;--denom-muted:#397c89;--denom-accent:#168ca2;--denom-border:#b9e0e3;--denom-pattern:#168ca21a;--input-bg:#fbffff}
+.denom-5000{--denom-bg:#fff1f5;--denom-ink:#96264c;--denom-muted:#ac5a76;--denom-accent:#c74777;--denom-border:#efc8d6;--denom-pattern:#c747771a;--input-bg:#fffafd}
+.denom-1000{--denom-bg:#eef7ec;--denom-ink:#245d43;--denom-muted:#4f8068;--denom-accent:#5b9a70;--denom-border:#cde4cf;--denom-pattern:#5b9a701a;--input-bg:#fcfffb}
+.denom-500{--denom-bg:#fff3e9;--denom-ink:#86472b;--denom-muted:#a76c4d;--denom-accent:#c8794b;--denom-border:#efd1bb;--denom-pattern:#c8794b1a;--input-bg:#fffdfb}
+.denom-200{--denom-bg:#f2f5f6;--denom-ink:#485b65;--denom-muted:#75848b;--denom-accent:#8799a0;--denom-border:#d6e0e3;--denom-pattern:#8799a01a;--input-bg:#fff}
+.denom-100{--denom-bg:#edf3ff;--denom-ink:#244f91;--denom-muted:#5b79a8;--denom-accent:#4678bf;--denom-border:#ccdaf3;--denom-pattern:#4678bf1a;--input-bg:#fbfdff}
+.denom-50{--denom-bg:#f8f0e7;--denom-ink:#69472f;--denom-muted:#92765d;--denom-accent:#a8754c;--denom-border:#e8d5c1;--denom-pattern:#a8754c1a;--input-bg:#fffdfa}
+.denom-change{--denom-bg:#f2efff;--denom-ink:#58418a;--denom-muted:#8373ac;--denom-accent:#8b70c8;--denom-border:#ddd4f3;--denom-pattern:#8b70c81a;--input-bg:#fff}
+.preview{background:linear-gradient(135deg,#252a24,#384035);color:#fff;border-radius:16px;padding:16px;margin:16px 0;border:1px solid #3d463b}
+.preview small{color:#cbd2c7;font-size:12px}
+.preview strong{display:block;color:#e4bd6d;font-size:clamp(22px,5vw,27px);letter-spacing:-.4px;margin:5px 0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.primary{width:100%;border:0;border-radius:13px;padding:15px;background:linear-gradient(135deg,#e4c27d,#cda24e);color:#292b24;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 4px 12px #d0a55730;transition:transform .12s,opacity .12s}
+.primary:active{transform:scale(.99)}
+.primary:disabled{opacity:.55;cursor:wait}
+.secondary{border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:#fff;color:var(--ink);font-weight:750;font-size:12px;cursor:pointer}
+.message{font-size:12px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}.ok{color:var(--green)}.err{color:var(--red)}.info{color:var(--muted)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:13px}
+table{border-collapse:collapse;width:100%;min-width:430px;font-size:13px;background:#fff}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf0eb}
+th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.45px;font-weight:800;background:#f8f9f6}
+tbody tr:last-child td{border-bottom:0}
+td:last-child,th:last-child{text-align:right}
+.qty{font-weight:850;font-variant-numeric:tabular-nums}
+.inventory-label{font-weight:850}
 .inventory-label.denom-10000{color:#168ca2}.inventory-label.denom-5000{color:#c74777}
 .inventory-label.denom-1000{color:#43875a}.inventory-label.denom-500{color:#b96d43}
 .inventory-label.denom-200{color:#687c84}.inventory-label.denom-100{color:#3568ad}
 .inventory-label.denom-50{color:#94613c}.inventory-label.denom-change{color:#8062bc}
-
-.preview{background:#292b27;color:#fff;border-radius:15px;padding:16px;margin:14px 0}.preview small{color:#c9ccc5}.preview strong{display:block;color:var(--gold);font-size:24px;margin:4px 0}
-.primary{width:100%;border:0;border-radius:13px;padding:15px;background:var(--gold);color:#252724;font:inherit;font-weight:850;font-size:16px;cursor:pointer}.primary:disabled{opacity:.55;cursor:wait}
-.secondary{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
-.message{font-size:13px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}.ok{color:var(--green)}.err{color:var(--red)}.info{color:var(--muted)}
-.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:430px;font-size:13px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:700}td:last-child,th:last-child{text-align:right}.qty{font-weight:800}.foot{text-align:center;font-size:11px;color:var(--muted);line-height:1.5;padding:0 12px}
-@media(max-width:440px){.grid{grid-template-columns:1fr 1fr}.wrap{padding:12px 10px 28px}.card{padding:14px}.total{font-size:28px}}
+.foot{text-align:center;font-size:11px;color:var(--muted);line-height:1.6;padding:2px 14px}
+@media(min-width:560px){.wrap{padding-top:26px}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.denom{padding:14px}.card{padding:20px}}
+@media(max-width:360px){.wrap{padding:10px 8px 24px}.card{padding:12px}.grid{gap:8px}.denom{padding:10px}.denom-title{font-size:12px}.denom-mark{width:29px;height:29px}.mode button{font-size:12px}}
 </style>
 </head>
 <body>
@@ -53,7 +86,7 @@ label{display:block;font-size:13px;font-weight:750;margin-bottom:7px}.field{marg
 </header>
 <section class="card">
  <div class="sectionhead"><h2>Update cash</h2><span class="pill" id="modePill">Add cash</span></div>
- <div class="mode"><button type="button" class="active" id="addMode">＋ Cash in</button><button type="button" id="subtractMode">− Cash out</button></div>
+ <div class="mode"><button type="button" class="active" id="addMode">＋ Cash received</button><button type="button" id="subtractMode">− Cash given</button></div>
  <div class="field"><label for="note">Note (optional)</label><input id="note" maxlength="180" placeholder="e.g. cash received from customer"></div>
  <div class="sectionhead"><h2>Enter quantity by denomination</h2><span class="pill">Notes / amount</span></div>
  <div class="grid" id="denominations"></div>
@@ -76,7 +109,7 @@ const DENOMS=[{key:'10000',label:'10,000 MMK',value:10000,color:'denom-10000'},{
 let mode='add', inventory={};
 const money=n=>(Number(n)||0).toLocaleString('en-US',{maximumFractionDigits:2})+' MMK';
 function callApi(params){return new Promise((resolve,reject)=>{const cb='cashCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);const script=document.createElement('script');const timeout=setTimeout(()=>{cleanup();reject(new Error('Request timed out. Check the Apps Script deployment and API URL.'));},20000);function cleanup(){clearTimeout(timeout);delete window[cb];script.remove()}window[cb]=data=>{cleanup();if(data&&data.success)resolve(data);else reject(new Error(data&&data.error||'The request failed.'))};params.callback=cb;script.src=API_URL+'?'+new URLSearchParams(params).toString();script.onerror=()=>{cleanup();reject(new Error('Cannot connect to Apps Script. Check its deployment access.'))};document.head.appendChild(script)})}
-function buildInputs(){ $('denominations').innerHTML=DENOMS.map(d=>`<div class="denom ${d.color}"><div class="denom-top"><div><div class="denom-title">${d.label}</div><div class="denom-sub">${d.key==='change'?'Enter total change value':'Quantity of notes'}</div></div></div><input type="text" inputmode="numeric" autocomplete="off" id="qty_${d.key}" value="0" aria-label="${d.label} ${d.key==='change'?'amount':'quantity'}"></div>`).join('');DENOMS.forEach(d=>$(('qty_'+d.key)).addEventListener('input',e=>{let v=e.target.value.replace(/,/g,'').replace(/[^0-9]/g,'');if(d.key==='change'){e.target.value=v?Number(v).toLocaleString('en-US'):''}else{e.target.value=v?Number(v).toLocaleString('en-US'):''}updatePreview()}))}
+function buildInputs(){ $('denominations').innerHTML=DENOMS.map(d=>`<div class="denom ${d.color}"><div class="denom-top"><div class="denom-heading"><div class="denom-title">${d.label}</div><div class="denom-sub">${d.key==='change'?'Enter total change value':'Quantity of notes'}</div></div><div class="denom-mark" aria-hidden="true">${d.key==='change'?'CHG':Number(d.key).toLocaleString('en-US')}</div></div><input type="text" inputmode="numeric" autocomplete="off" id="qty_${d.key}" value="0" aria-label="${d.label} ${d.key==='change'?'amount':'quantity'}"></div>`).join('');DENOMS.forEach(d=>$(('qty_'+d.key)).addEventListener('input',e=>{let v=e.target.value.replace(/,/g,'').replace(/[^0-9]/g,'');e.target.value=v?Number(v).toLocaleString('en-US'):'';updatePreview()}))}
 function getEntered(){const result={};DENOMS.forEach(d=>{result[d.key]=Number(($('qty_'+d.key).value||'0').replace(/,/g,''))||0});return result}
 function totalEntered(){const q=getEntered();return DENOMS.reduce((sum,d)=>sum+(d.key==='change'?q.change:d.value*q[d.key]),0)}
 function updatePreview(){$('transactionTotal').textContent=money(totalEntered());$('previewText').textContent=mode==='add'?'This amount will be added to your cash inventory.':'This amount will be subtracted from your cash inventory.'}
