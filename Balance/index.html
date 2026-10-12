@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#252724">
+<title>Balance Total</title>
+<style>
+:root{--bg:#f3f4f1;--card:#fff;--ink:#242722;--muted:#70756d;--gold:#d0a557;--line:#e3e6df;--green:#17784e;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px}
+.wrap{max-width:640px;margin:auto;padding:16px 13px 30px}.hero{background:#252724;color:#fff;border-radius:20px;padding:20px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:var(--gold);color:#252724;font-size:23px;font-weight:900}
+h1{font-size:21px;margin:0 0 3px}.subtitle{font-size:12px;color:#d6d8d2;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:16px;margin-bottom:13px;box-shadow:0 3px 12px #1c211b08}
+.head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.head h2{font-size:16px;margin:0}.pill{font-size:11px;color:var(--muted);background:#f0f1ed;border-radius:99px;padding:5px 8px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.balance{border:1px solid var(--line);border-radius:13px;padding:12px;min-width:0}.name{font-size:12px;font-weight:750;color:var(--muted)}.value{font-size:clamp(17px,4vw,22px);font-weight:850;letter-spacing:-.4px;margin-top:5px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.field{margin-bottom:13px}label{display:block;font-size:12px;font-weight:750;margin-bottom:6px}input,select{display:block;width:100%;padding:13px;border:1px solid #d5d9d1;border-radius:11px;background:#fff;color:var(--ink);font:inherit;outline:none}input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d0a55725}
+.btn{width:100%;border:0;border-radius:12px;padding:14px;background:var(--gold);color:#252724;font:inherit;font-weight:850;cursor:pointer;margin-top:3px}.btn:disabled{opacity:.6;cursor:wait}.btn.secondary{background:#fff;border:1px solid var(--line)}
+.message{font-size:12px;line-height:1.5;margin-top:10px;color:var(--muted);overflow-wrap:anywhere}.message.ok{color:var(--green)}.message.err{color:var(--red)}
+.summary{background:#292b27;color:#fff;border-radius:13px;padding:14px;margin:4px 0 13px}.summary small{color:#c9ccc5}.summary strong{display:block;color:var(--gold);font-size:25px;margin-top:4px;overflow-wrap:anywhere}
+.foot{text-align:center;color:var(--muted);font-size:11px;line-height:1.5;padding:4px 12px}
+@media(min-width:520px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.wrap{padding-top:24px}.card{padding:18px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="hero"><div class="brand"><div class="logo">＋</div><div><h1>Balance Total</h1><p class="subtitle">Manage your e-payment balances</p></div></div></header>
+
+<section class="card">
+ <div class="head"><h2>Current balances</h2><span class="pill" id="connectionStatus">Connecting…</span></div>
+ <div class="grid" id="balances"><div class="message">Loading your balances…</div></div>
+ <button class="btn secondary" id="refreshBtn" type="button" style="margin-top:12px">Refresh balances</button>
+ <div class="message" id="refreshMessage" role="status"></div>
+</section>
+
+<section class="card">
+ <div class="head"><h2>Update balance</h2><span class="pill">Add money</span></div>
+ <p class="message" style="margin-top:0">Choose the payment service and enter the amount you want to add. The selected balance will increase in Google Sheets.</p>
+ <div class="field"><label for="service">Payment service</label>
+  <select id="service">
+   <option value="KBZ">KBZ Pay</option><option value="Wave">Wave</option><option value="Aya">AYA Pay</option><option value="CB">CB Pay</option><option value="UAB">UAB Pay</option><option value="MTB">MTB Pay</option><option value="Truemoney">Truemoney</option>
+  </select>
+ </div>
+ <div class="field"><label for="amount">Amount to add</label><input id="amount" type="text" inputmode="decimal" placeholder="e.g. 100,000"></div>
+ <div class="summary"><small>New balance preview</small><strong id="preview">—</strong><small id="previewDetail">Select a service and enter an amount.</small></div>
+ <div class="field"><label for="note">Note <span style="font-weight:400;color:#70756d">(optional)</span></label><input id="note" type="text" placeholder="e.g. added cash to KBZ Pay"></div>
+ <button class="btn" id="addBtn" type="button">Add to balance</button>
+ <div class="message" id="saveMessage" role="status"></div>
+</section>
+<p class="foot">This is a standalone balance-update website. It changes only the selected payment balance and records each update in a separate log sheet.</p>
+</main>
+<script>
+(() => {
+'use strict';
+const $=id=>document.getElementById(id);
+const money=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const labels={KBZ:'KBZ Pay',Wave:'Wave',Aya:'AYA Pay',CB:'CB Pay',UAB:'UAB Pay',MTB:'MTB Pay',Truemoney:'Truemoney'};
+let balances={};
+function msg(id,text,kind=''){$(id).textContent=text;$(id).className='message '+kind;}
+function parseAmount(v){const s=String(v||'').replace(/,/g,'').replace(/\s/g,'');if(!s||!/^\d+(?:\.\d+)?$/.test(s))return NaN;return Number(s);}
+function render(data){
+ balances={};data.services.forEach(s=>balances[s.key]=Number(s.balance)||0);
+ $('connectionStatus').textContent='Connected';
+ $('balances').innerHTML=data.services.map(s=>`<div class="balance"><div class="name">${escapeHtml(s.label)}</div><div class="value">${money(s.balance)}</div></div>`).join('');
+ updatePreview();
+}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function load(){
+ $('connectionStatus').textContent='Loading…';$('refreshBtn').disabled=true;
+ google.script.run.withSuccessHandler(data=>{$('refreshBtn').disabled=false;render(data);msg('refreshMessage','Balances refreshed '+data.updatedAt+'.','ok');})
+ .withFailureHandler(err=>{$('refreshBtn').disabled=false;$('connectionStatus').textContent='Error';msg('refreshMessage',err.message||String(err),'err');})
+ .getBalanceData();
+}
+function updatePreview(){
+ const service=$('service').value,amount=parseAmount($('amount').value),current=balances[service];
+ if(Number.isFinite(amount)&&amount>0&&current!==undefined){
+  $('preview').textContent=money(current+amount);
+  $('previewDetail').textContent=money(current)+' current + '+money(amount)+' added';
+ }else{$('preview').textContent=current===undefined?'—':money(current);$('previewDetail').textContent='Enter an amount to preview the new balance.';}
+}
+$('service').addEventListener('change',updatePreview);
+$('amount').addEventListener('input',updatePreview);
+$('refreshBtn').addEventListener('click',load);
+$('addBtn').addEventListener('click',()=>{
+ const service=$('service').value,amount=parseAmount($('amount').value),note=$('note').value.trim();
+ if(!Number.isFinite(amount)||amount<=0){msg('saveMessage','Enter an amount greater than zero.','err');return;}
+ $('addBtn').disabled=true;msg('saveMessage','Updating Google Sheets…');
+ google.script.run.withSuccessHandler(result=>{
+  $('addBtn').disabled=false;
+  balances[service]=result.newBalance;
+  $('amount').value='';$('note').value='';
+  $('connectionStatus').textContent='Connected';
+  // Re-render all balances using the returned balance array.
+  const data={services:result.balances.map(s=>({key:s.key,label:s.label,balance:s.balance})),updatedAt:result.updatedAt};
+  render(data);
+  msg('saveMessage',labels[service]+' increased by '+money(result.added)+'. New balance: '+money(result.newBalance)+'.','ok');
+ }).withFailureHandler(err=>{$('addBtn').disabled=false;msg('saveMessage',err.message||String(err),'err');})
+ .addPaymentBalance({service,amount,note});
+});
+load();
+})();
+</script>
+</body>
+</html>
