@@ -24,7 +24,7 @@ h1{font-size:21px;margin:0 0 3px}.subtitle{font-size:12px;color:#d6d8d2;margin:0
 </head>
 <body>
 <main class="wrap">
-<header class="hero"><div class="brand"><div class="logo">＋</div><div><h1>Balance Total</h1><p class="subtitle">Manage your e-payment balances</p></div></div></header>
+<header class="hero"><div class="brand"><div class="logo">＋</div><div><h1>Balance Total</h1><p class="subtitle">Manage balances and sync new transactions</p></div></div></header>
 
 <section class="card">
  <div class="head"><h2>Current balances</h2><span class="pill" id="connectionStatus">Connecting…</span></div>
@@ -47,12 +47,13 @@ h1{font-size:21px;margin:0 0 3px}.subtitle{font-size:12px;color:#d6d8d2;margin:0
  <button class="btn" id="addBtn" type="button">Add to balance</button>
  <div class="message" id="saveMessage" role="status"></div>
 </section>
-<p class="foot">This is a standalone balance-update website. It changes only the selected payment balance and records each update in a separate log sheet.</p>
+<p class="foot">This standalone website syncs newly added cost_detail transactions and supports manual balance additions. Cash In subtracts Amount; Cash Out adds Amount.</p>
 </main>
 <script>
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
+// Paste your deployed Apps Script Web App URL ending in /exec below.
 const API_URL='https://script.google.com/macros/s/AKfycbzUvpo_FrhJgOXzuNeUCISbAaxFrxXhNNQnj_tibJVtkMK3Ny0rFb5w4Cv2dcfmVPAg/exec';
 function callApi(params){
  return new Promise((resolve,reject)=>{
@@ -81,7 +82,7 @@ function render(data){
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function load(){
  $('connectionStatus').textContent='Loading…';$('refreshBtn').disabled=true;
- callApi({action:'read'}).then(data=>{ $('refreshBtn').disabled=false;render(data);msg('refreshMessage','Balances refreshed '+data.updatedAt+'.','ok'); })
+ callApi({action:'sync'}).then(data=>{ $('refreshBtn').disabled=false;render(data);const syncInfo=data.sync&&data.sync.message?data.sync.message:'Balances refreshed.';msg('refreshMessage',syncInfo+' Updated '+data.updatedAt+'.','ok'); })
  .catch(err=>{$('refreshBtn').disabled=false;$('connectionStatus').textContent='Error';msg('refreshMessage',err.message||String(err),'err');});
 }
 function updatePreview(){
