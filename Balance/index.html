@@ -47,14 +47,14 @@ h1{font-size:21px;margin:0 0 3px}.subtitle{font-size:12px;color:#d6d8d2;margin:0
  <button class="btn" id="addBtn" type="button">Add to balance</button>
  <div class="message" id="saveMessage" role="status"></div>
 </section>
-<p class="foot">This standalone website syncs newly added cost_detail transactions and supports manual balance additions. Cash In subtracts Amount; Cash Out adds Amount.</p>
+<p class="foot">Automatic sync checks new cost_detail rows about once per minute after the trigger is installed. Cash In subtracts Amount; Cash Out adds Amount.</p>
 </main>
 <script>
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
-// Paste your deployed Apps Script Web App URL ending in /exec below.
 const API_URL='https://script.google.com/macros/s/AKfycbzUvpo_FrhJgOXzuNeUCISbAaxFrxXhNNQnj_tibJVtkMK3Ny0rFb5w4Cv2dcfmVPAg/exec';
+
 function callApi(params){
  return new Promise((resolve,reject)=>{
   const callback='gasCallback_'+Date.now()+'_'+Math.random().toString(36).slice(2);
@@ -74,23 +74,32 @@ let balances={};
 function msg(id,text,kind=''){$(id).textContent=text;$(id).className='message '+kind;}
 function parseAmount(v){const s=String(v||'').replace(/,/g,'').replace(/\s/g,'');if(!s||!/^\d+(?:\.\d+)?$/.test(s))return NaN;return Number(s);}
 function render(data){
- balances={};data.services.forEach(s=>balances[s.key]=Number(s.balance)||0);
+ balances={};(data.services||[]).forEach(s=>balances[s.key]=Number(s.balance)||0);
  $('connectionStatus').textContent='Connected';
- $('balances').innerHTML=data.services.map(s=>`<div class="balance"><div class="name">${escapeHtml(s.label)}</div><div class="value">${money(s.balance)}</div></div>`).join('');
+ $('balances').innerHTML=(data.services||[]).map(s=>`<div class="balance"><div class="name">${escapeHtml(s.label)}</div><div class="value">${money(s.balance)}</div></div>`).join('');
  updatePreview();
 }
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function load(){
  $('connectionStatus').textContent='Loading…';$('refreshBtn').disabled=true;
- callApi({action:'sync'}).then(data=>{ $('refreshBtn').disabled=false;render(data);const syncInfo=data.sync&&data.sync.message?data.sync.message:'Balances refreshed.';msg('refreshMessage',syncInfo+' Updated '+data.updatedAt+'.','ok'); })
- .catch(err=>{$('refreshBtn').disabled=false;$('connectionStatus').textContent='Error';msg('refreshMessage',err.message||String(err),'err');});
+ callApi({action:'sync'}).then(data=>{
+  $('refreshBtn').disabled=false;render(data);
+  const syncInfo=data.sync&&data.sync.message?data.sync.message:'Balances refreshed.';
+  msg('refreshMessage',syncInfo+' Updated '+data.updatedAt+'.','ok');
+ }).catch(err=>{
+  $('refreshBtn').disabled=false;$('connectionStatus').textContent='Error';
+  msg('refreshMessage',err.message||String(err),'err');
+ });
 }
 function updatePreview(){
  const service=$('service').value,amount=parseAmount($('amount').value),current=balances[service];
  if(Number.isFinite(amount)&&amount>0&&current!==undefined){
   $('preview').textContent=money(current+amount);
   $('previewDetail').textContent=money(current)+' current + '+money(amount)+' added';
- }else{$('preview').textContent=current===undefined?'—':money(current);$('previewDetail').textContent='Enter an amount to preview the new balance.';}
+ }else{
+  $('preview').textContent=current===undefined?'—':money(current);
+  $('previewDetail').textContent='Enter an amount to preview the new balance.';
+ }
 }
 $('service').addEventListener('change',updatePreview);
 $('amount').addEventListener('input',()=>{
@@ -98,8 +107,7 @@ $('amount').addEventListener('input',()=>{
  const raw=input.value.replace(/,/g,'').replace(/[^0-9.]/g,'');
  const parts=raw.split('.');
  const whole=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');
- const formatted=parts.length>1?whole+'.'+parts.slice(1).join(''):whole;
- input.value=formatted;
+ input.value=parts.length>1?whole+'.'+parts.slice(1).join(''):whole;
  updatePreview();
 });
 $('refreshBtn').addEventListener('click',load);
@@ -108,8 +116,7 @@ $('addBtn').addEventListener('click',()=>{
  if(!Number.isFinite(amount)||amount<=0){msg('saveMessage','Enter an amount greater than zero.','err');return;}
  $('addBtn').disabled=true;msg('saveMessage','Updating Google Sheets…');
  callApi({action:'add',service,amount:String(amount),note}).then(result=>{
-  $('addBtn').disabled=false;
-  $('amount').value='';$('note').value='';
+  $('addBtn').disabled=false;$('amount').value='';$('note').value='';
   $('connectionStatus').textContent='Connected';
   render({services:result.balances,updatedAt:result.updatedAt});
   msg('saveMessage',labels[service]+' increased by '+money(result.added)+'. New balance: '+money(result.newBalance)+'.','ok');
