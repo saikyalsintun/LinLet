@@ -53,6 +53,22 @@ h1{font-size:21px;margin:0 0 3px}.subtitle{font-size:12px;color:#d6d8d2;margin:0
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
+// Paste your deployed Apps Script Web App URL ending in /exec below.
+const API_URL='https://script.google.com/macros/s/AKfycbzUvpo_FrhJgOXzuNeUCISbAaxFrxXhNNQnj_tibJVtkMK3Ny0rFb5w4Cv2dcfmVPAg/exec';
+const $=id=>document.getElementById(id);
+function callApi(params){
+ return new Promise((resolve,reject)=>{
+  const callback='gasCallback_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  const script=document.createElement('script');
+  const timeout=setTimeout(()=>{cleanup();reject(new Error('Request timed out. Check the Apps Script URL and deployment access.'));},20000);
+  function cleanup(){clearTimeout(timeout);delete window[callback];script.remove();}
+  window[callback]=data=>{cleanup();if(data&&data.success)resolve(data);else reject(new Error((data&&data.error)||'The request failed.'));};
+  params.callback=callback;
+  script.src=API_URL+'?'+new URLSearchParams(params).toString();
+  script.onerror=()=>{cleanup();reject(new Error('Could not connect to Apps Script. Check the URL and deployment access.'));};
+  document.head.appendChild(script);
+ });
+}
 const money=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const labels={KBZ:'KBZ Pay',Wave:'Wave',Aya:'AYA Pay',CB:'CB Pay',UAB:'UAB Pay',MTB:'MTB Pay',Truemoney:'Truemoney'};
 let balances={};
@@ -67,9 +83,8 @@ function render(data){
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function load(){
  $('connectionStatus').textContent='Loading…';$('refreshBtn').disabled=true;
- google.script.run.withSuccessHandler(data=>{$('refreshBtn').disabled=false;render(data);msg('refreshMessage','Balances refreshed '+data.updatedAt+'.','ok');})
- .withFailureHandler(err=>{$('refreshBtn').disabled=false;$('connectionStatus').textContent='Error';msg('refreshMessage',err.message||String(err),'err');})
- .getBalanceData();
+ callApi({action:'read'}).then(data=>{ $('refreshBtn').disabled=false;render(data);msg('refreshMessage','Balances refreshed '+data.updatedAt+'.','ok'); })
+ .catch(err=>{$('refreshBtn').disabled=false;$('connectionStatus').textContent='Error';msg('refreshMessage',err.message||String(err),'err');});
 }
 function updatePreview(){
  const service=$('service').value,amount=parseAmount($('amount').value),current=balances[service];
@@ -85,17 +100,13 @@ $('addBtn').addEventListener('click',()=>{
  const service=$('service').value,amount=parseAmount($('amount').value),note=$('note').value.trim();
  if(!Number.isFinite(amount)||amount<=0){msg('saveMessage','Enter an amount greater than zero.','err');return;}
  $('addBtn').disabled=true;msg('saveMessage','Updating Google Sheets…');
- google.script.run.withSuccessHandler(result=>{
+ callApi({action:'add',service,amount:String(amount),note}).then(result=>{
   $('addBtn').disabled=false;
-  balances[service]=result.newBalance;
   $('amount').value='';$('note').value='';
   $('connectionStatus').textContent='Connected';
-  // Re-render all balances using the returned balance array.
-  const data={services:result.balances.map(s=>({key:s.key,label:s.label,balance:s.balance})),updatedAt:result.updatedAt};
-  render(data);
+  render({services:result.balances,updatedAt:result.updatedAt});
   msg('saveMessage',labels[service]+' increased by '+money(result.added)+'. New balance: '+money(result.newBalance)+'.','ok');
- }).withFailureHandler(err=>{$('addBtn').disabled=false;msg('saveMessage',err.message||String(err),'err');})
- .addPaymentBalance({service,amount,note});
+ }).catch(err=>{$('addBtn').disabled=false;msg('saveMessage',err.message||String(err),'err');});
 });
 load();
 })();
