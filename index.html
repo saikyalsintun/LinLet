@@ -130,6 +130,60 @@
     }
     .priority-two .link-icon { background: #f5e4b9; border-color: #e8d19a; }
     .priority-two .link-copy strong { color: var(--gold-dark); }
+    .bottom-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 2px;
+    }
+    .square-button {
+      position: relative;
+      min-height: 148px;
+      padding: 18px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      background: #fff;
+      color: var(--text);
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(25,25,25,.025);
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .square-button:hover {
+      transform: translateY(-2px);
+      border-color: #dfc27e;
+      box-shadow: 0 5px 14px rgba(25,25,25,.07);
+    }
+    .square-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      border: 1px solid #f0e3c5;
+      background: var(--gold-light);
+      color: var(--gold-dark);
+    }
+    .square-icon svg { width: 25px; height: 25px; }
+    .square-icon.sheets-icon { background: #f1f8f2; border-color: #d7eadb; }
+    .square-button strong { font-size: 14px; text-align: center; }
+    .square-arrow {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 25px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 16px;
+    }
     footer {
       padding: 18px 16px;
       border-top: 1px solid var(--border);
@@ -145,6 +199,9 @@
       .link-button { min-height: 74px; padding: 13px; gap: 11px; }
       .link-icon { width: 40px; height: 40px; flex-basis: 40px; }
       .link-copy span { font-size: 11px; }
+      .bottom-actions { gap: 10px; }
+      .square-button { min-height: 132px; padding: 16px 8px 12px; }
+      .square-button strong { font-size: 13px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition: none !important; }
@@ -177,7 +234,7 @@
         <span class="arrow" aria-hidden="true">→</span>
       </a>
 
-      <a class="link-button priority-two" href="./Self/index.html" aria-label="Open Self CashIn and CashOut">
+      <a class="link-button priority-two" href="./Self%20CashIn/CashOut/index.html" aria-label="Open Self CashIn and CashOut">
         <span class="link-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v18"></path><path d="M17 7.5c0-1.7-2.2-3-5-3s-5 1.3-5 3 2.2 3 5 3 5 1.3 5 3-2.2 3-5 3-5-1.3-5-3"></path>
@@ -207,15 +264,29 @@
         <span class="arrow" aria-hidden="true">→</span>
       </a>
 
-      <a class="link-button" href="./Balance/" aria-label="Open Balance website">
-        <span class="link-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M3 10h18M7 15h3M7 3h10"></path>
-          </svg>
-        </span>
-        <span class="link-copy"><strong>Balance</strong><span>Open the balance website</span></span>
-        <span class="arrow" aria-hidden="true">→</span>
-      </a>
+      <div class="bottom-actions" aria-label="Additional links">
+        <a class="square-button" href="./Balance/" aria-label="Open Balance website">
+          <span class="square-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="6" width="18" height="13" rx="2"></rect>
+              <path d="M3 10h18M7 15h3M7 3h10"></path>
+            </svg>
+          </span>
+          <strong>Balance</strong>
+        </a>
+
+        <a class="square-button" href="https://docs.google.com/spreadsheets/d/1AxzL8b48o62G1oCoBuBIsOem104kDB-KK6cVRXBeql0/edit?pli=1&amp;gid=573374688#gid=573374688" target="_blank" rel="noopener noreferrer" aria-label="Open Google Sheets">
+          <span class="square-icon sheets-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 2.8h8l4.2 4.2v14.2H6a2 2 0 0 1-2-2V4.8a2 2 0 0 1 2-2Z" fill="#188038"/>
+              <path d="M14 2.8V7h4.2" fill="#34A853"/>
+              <path d="M7.2 10h7.6v8H7.2z" fill="#fff"/>
+              <path d="M7.2 12.7h7.6M9.7 10v8M12.3 10v8" stroke="#188038" stroke-width="1"/>
+            </svg>
+          </span>
+          <strong>Google Sheet</strong>
+        </a>
+      </div>
     </nav>
   </main>
 
