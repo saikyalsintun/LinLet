@@ -18,9 +18,9 @@ h2{font-size:18px;margin:0 0 5px}.help{font-size:13px;color:var(--muted);margin:
 label{display:block;font-weight:700;margin-bottom:7px}input{display:block;width:100%;padding:14px 13px;border:1px solid #d8ddd7;border-radius:12px;font:inherit;font-size:18px;outline:none}input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #c9a45c26}
 .quick-amounts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.chip:hover{border-color:var(--gold)}
 .preview{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-top:1px solid var(--line);margin-top:16px}.preview span{color:var(--muted)}.preview strong{font-variant-numeric:tabular-nums}
-button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);color:#211b10;padding:15px;font:inherit;font-weight:850;cursor:pointer;margin-top:8px}button.primary:hover{background:#d4b572}button:disabled{opacity:.6;cursor:wait}
+button.secondary{width:100%;border:1px solid var(--gold);border-radius:12px;background:#fff;color:#6d5424;padding:13px;font:inherit;font-weight:800;cursor:pointer;margin-top:10px}button.secondary:hover{background:#fbf7ed}button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);color:#211b10;padding:15px;font:inherit;font-weight:850;cursor:pointer;margin-top:8px}button.primary:hover{background:#d4b572}button:disabled{opacity:.6;cursor:wait}
 .notice{display:none;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:14px;overflow-wrap:anywhere}.notice.show{display:block}.notice.info{background:#eef4ff;color:#244a8a}.notice.ok{background:#eaf7ef;color:#146c3e}.notice.err{background:#fff0ef;color:var(--red)}
-.note{color:var(--muted);font-size:12px;margin:14px 2px 0}.bottom{color:var(--muted);font-size:12px;text-align:center;margin-top:22px}
+.note{color:var(--muted);font-size:12px;margin:14px 2px 0}.mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;background:#f0f1ed;border:1px solid var(--line);border-radius:14px;margin:0 0 22px}.mode-option{border:0;border-radius:10px;background:transparent;color:var(--muted);padding:12px 10px;font:inherit;font-weight:800;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s}.mode-option.active{background:#fff;color:#332711;box-shadow:0 2px 8px #20232112}.mode-option.active[data-mode="return"]{background:#232824;color:#fff}.mode-panel[hidden]{display:none!important}.bottom{color:var(--muted);font-size:12px;text-align:center;margin-top:22px}
 @media(max-width:480px){.card{padding:18px}.top{align-items:flex-start}.stats{gap:8px}.stat{padding:11px}.stat strong{font-size:16px}}
 </style>
 </head>
@@ -45,6 +45,11 @@ button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);col
   </section>
 
   <section class="card">
+    <div class="mode-switch" role="group" aria-label="Choose loan action">
+      <button class="mode-option active" id="borrowModeBtn" type="button" data-mode="borrow" aria-pressed="true">Borrow</button>
+      <button class="mode-option" id="returnModeBtn" type="button" data-mode="return" aria-pressed="false">Return</button>
+    </div>
+    <div id="borrowPanel" class="mode-panel">
     <h2>Borrow money</h2>
     <p class="help">The amount you borrow will be added to your KBZ balance.</p>
     <label for="amount">Loan amount (MMK)</label>
@@ -60,6 +65,24 @@ button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);col
     <button class="primary" id="borrowBtn" type="button">Confirm Borrow</button>
     <div id="message" class="notice" role="status" aria-live="polite"></div>
     <p class="note">Borrowing is limited by the remaining amount under your 4,000,000 MMK loan limit. Do not click twice while a request is processing.</p>
+    </div>
+    <div id="repaymentPanel" class="mode-panel" hidden>
+    <h2>Return money</h2>
+    <p class="help">Return money toward your outstanding loan. The repayment amount will be deducted from KBZ and reduce Current_Loan.</p>
+    <label for="repayAmount">Repayment amount (MMK)</label>
+    <input id="repayAmount" type="text" inputmode="numeric" autocomplete="off" placeholder="Enter repayment amount">
+    <div class="quick-amounts" aria-label="Repayment amount options">
+      <button class="chip" type="button" data-repay-amount="100000">100,000</button>
+      <button class="chip" type="button" data-repay-amount="500000">500,000</button>
+      <button class="chip" type="button" data-repay-amount="1000000">1,000,000</button>
+      <button class="chip" type="button" data-repay-all="true">Repay remaining loan</button>
+    </div>
+    <div class="preview"><span>Outstanding loan after repayment</span><strong id="repayRemainingPreview">—</strong></div>
+    <div class="preview" style="margin-top:0"><span>KBZ balance after repayment</span><strong id="kbzAfterRepayPreview">—</strong></div>
+    <button class="primary" id="repayBtn" type="button">Confirm Repayment</button>
+    <div id="repayMessage" class="notice" role="status" aria-live="polite"></div>
+    <p class="note">Repayment cannot exceed the outstanding loan or the available KBZ balance.</p>
+    </div>
   </section>
   <div class="bottom">Quick Loan · LinLett Finance</div>
 </main>
@@ -71,6 +94,7 @@ button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);col
   const money = n => Math.round(Number(n)||0).toLocaleString('en-US') + ' MMK';
   let status = {limit: MAX_LIMIT, currentLoan: 0, available: MAX_LIMIT, kbzBalance: null};
   let busy = false;
+  let repaymentBusy = false;
 
   function parseAmount(v) { return Number(String(v || '').replace(/[^\d]/g, '')) || 0; }
   function showMessage(text, type) {
@@ -86,6 +110,7 @@ button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);col
     $('progressText').textContent = money(status.currentLoan) + ' used';
     $('percentText').textContent = Math.round(used) + '%';
     updatePreview();
+    updateRepaymentPreview();
   }
   function updatePreview() {
     const amount = parseAmount($('amount').value);
@@ -93,7 +118,23 @@ button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);col
     $('kbzPreview').textContent = money(amount);
     $('borrowBtn').disabled = busy || amount <= 0 || amount > status.available;
     $('borrowBtn').textContent = busy ? 'Processing…' : 'Confirm Borrow';
+    updateRepaymentPreview();
   }
+  function updateRepaymentPreview() {
+    const amount = parseAmount($('repayAmount').value);
+    $('repayRemainingPreview').textContent = money(Math.max(0, status.currentLoan - amount));
+    $('kbzAfterRepayPreview').textContent = status.kbzBalance == null
+      ? '—'
+      : money(status.kbzBalance - amount);
+    $('repayBtn').disabled = repaymentBusy || amount <= 0 ||
+      amount > status.currentLoan || (status.kbzBalance != null && amount > status.kbzBalance);
+    $('repayBtn').textContent = repaymentBusy ? 'Processing…' : 'Confirm Repayment';
+  }
+  function showRepayMessage(text, type) {
+    $('repayMessage').textContent = text;
+    $('repayMessage').className = 'notice show ' + type;
+  }
+
   async function request(action, data = {}) {
     const response = await fetch(API_URL, {
       method: 'POST',
@@ -141,6 +182,38 @@ button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);col
       busy = false; updatePreview();
     }
   }
+  async function repayLoan() {
+    const amount = parseAmount($('repayAmount').value);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return showRepayMessage('Enter a repayment amount greater than zero.', 'err');
+    }
+    if (amount > status.currentLoan) {
+      return showRepayMessage('Repayment cannot exceed the outstanding loan of ' + money(status.currentLoan) + '.', 'err');
+    }
+    if (status.kbzBalance != null && amount > status.kbzBalance) {
+      return showRepayMessage('Insufficient KBZ balance. Current KBZ balance: ' + money(status.kbzBalance) + '.', 'err');
+    }
+    if (!confirm('Repay ' + money(amount) + '? This will deduct the amount from KBZ and reduce your outstanding loan.')) return;
+    repaymentBusy = true;
+    updateRepaymentPreview();
+    showRepayMessage('Processing repayment and updating KBZ balance…', 'info');
+    try {
+      const result = await request('repayQuickLoan', {amount});
+      status.limit = Number(result.limit ?? status.limit);
+      status.currentLoan = Number(result.currentLoan ?? (status.currentLoan - amount));
+      status.available = Number(result.available ?? (status.limit - status.currentLoan));
+      status.kbzBalance = result.kbzBalance == null ? status.kbzBalance : Number(result.kbzBalance);
+      $('repayAmount').value = '';
+      render();
+      showRepayMessage('Repayment successful. ' + money(amount) + ' was deducted from KBZ. Remaining loan: ' + money(status.currentLoan) + '.', 'ok');
+    } catch (err) {
+      showRepayMessage('Repayment was not confirmed: ' + err.message + ' Check the sheet before retrying to avoid duplicate repayment.', 'err');
+    } finally {
+      repaymentBusy = false;
+      updateRepaymentPreview();
+    }
+  }
+
   $('amount').addEventListener('input', () => {
     const digits = String($('amount').value).replace(/[^\d]/g, '');
     $('amount').value = digits ? Number(digits).toLocaleString('en-US') : '';
@@ -149,6 +222,32 @@ button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);col
   document.querySelectorAll('[data-amount]').forEach(b => b.addEventListener('click', () => {
     $('amount').value = Number(b.dataset.amount).toLocaleString('en-US'); updatePreview();
   }));
+  $('repayAmount').addEventListener('input', () => {
+    const digits = String($('repayAmount').value).replace(/[^\d]/g, '');
+    $('repayAmount').value = digits ? Number(digits).toLocaleString('en-US') : '';
+    updateRepaymentPreview();
+  });
+  document.querySelectorAll('[data-repay-amount]').forEach(b => b.addEventListener('click', () => {
+    $('repayAmount').value = Number(b.dataset.repayAmount).toLocaleString('en-US');
+    updateRepaymentPreview();
+  }));
+  document.querySelector('[data-repay-all]').addEventListener('click', () => {
+    $('repayAmount').value = Number(status.currentLoan).toLocaleString('en-US');
+    updateRepaymentPreview();
+  });
+  function setMode(mode) {
+    const returning = mode === 'return';
+    $('borrowPanel').hidden = returning;
+    $('repaymentPanel').hidden = !returning;
+    $('borrowModeBtn').classList.toggle('active', !returning);
+    $('returnModeBtn').classList.toggle('active', returning);
+    $('borrowModeBtn').setAttribute('aria-pressed', String(!returning));
+    $('returnModeBtn').setAttribute('aria-pressed', String(returning));
+    if (returning) $('repayAmount').focus();
+  }
+  $('borrowModeBtn').addEventListener('click', () => setMode('borrow'));
+  $('returnModeBtn').addEventListener('click', () => setMode('return'));
+  $('repayBtn').addEventListener('click', repayLoan);
   $('borrowBtn').addEventListener('click', borrow);
   render(); loadStatus();
 })();
