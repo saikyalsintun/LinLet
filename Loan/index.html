@@ -180,7 +180,7 @@ button.secondary{width:100%;border:1px solid var(--gold);border-radius:12px;back
       showMessage('Loan was not confirmed: ' + err.message + ' Check the sheet before retrying to avoid duplicate borrowing.', 'err');
     } finally {
       busy = false; updatePreview();
-    }
+    } 
   }
   async function repayLoan() {
     const amount = parseAmount($('repayAmount').value);
