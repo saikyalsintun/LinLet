@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick Loan | LinLett</title>
+<style>
+:root{--ink:#202321;--muted:#737a74;--line:#e6e9e5;--gold:#c9a45c;--gold-dark:#a8843c;--bg:#f5f6f3;--green:#17834b;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:26px 16px 48px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+.brand{font-weight:800;letter-spacing:.02em}.brand span{color:var(--gold-dark)}.back{color:var(--ink);text-decoration:none;border:1px solid var(--line);background:white;border-radius:12px;padding:9px 12px;font-weight:650}
+h1{font-size:clamp(28px,5vw,38px);line-height:1.15;margin:0 0 8px}.sub{color:var(--muted);margin:0 0 24px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 8px 28px #1e2b1d08;margin-bottom:16px}
+.limit-card{background:#232824;color:white;border:0}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:750}.limit-card .eyebrow{color:#c4c9c3}
+.big{font-size:clamp(32px,7vw,44px);font-weight:850;letter-spacing:-.04em;margin:7px 0 16px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stat{padding:14px;border-radius:14px;background:#ffffff0e}.stat span{display:block;color:#c4c9c3;font-size:12px;margin-bottom:4px}.stat strong{font-size:18px}
+.progress{height:8px;background:#ffffff20;border-radius:99px;overflow:hidden}.progress>div{height:100%;width:0;background:var(--gold);transition:width .2s}.progress-caption{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#c4c9c3;margin-top:8px}
+h2{font-size:18px;margin:0 0 5px}.help{font-size:13px;color:var(--muted);margin:0 0 18px}
+label{display:block;font-weight:700;margin-bottom:7px}input{display:block;width:100%;padding:14px 13px;border:1px solid #d8ddd7;border-radius:12px;font:inherit;font-size:18px;outline:none}input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #c9a45c26}
+.quick-amounts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.chip:hover{border-color:var(--gold)}
+.preview{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-top:1px solid var(--line);margin-top:16px}.preview span{color:var(--muted)}.preview strong{font-variant-numeric:tabular-nums}
+button.primary{width:100%;border:0;border-radius:12px;background:var(--gold);color:#211b10;padding:15px;font:inherit;font-weight:850;cursor:pointer;margin-top:8px}button.primary:hover{background:#d4b572}button:disabled{opacity:.6;cursor:wait}
+.notice{display:none;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:14px;overflow-wrap:anywhere}.notice.show{display:block}.notice.info{background:#eef4ff;color:#244a8a}.notice.ok{background:#eaf7ef;color:#146c3e}.notice.err{background:#fff0ef;color:var(--red)}
+.note{color:var(--muted);font-size:12px;margin:14px 2px 0}.bottom{color:var(--muted);font-size:12px;text-align:center;margin-top:22px}
+@media(max-width:480px){.card{padding:18px}.top{align-items:flex-start}.stats{gap:8px}.stat{padding:11px}.stat strong{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="top">
+    <div class="brand">LinLett <span>FINANCE</span></div>
+    <a class="back" href="../index.html">← Homepage</a>
+  </div>
+  <h1>Quick Loan</h1>
+  <p class="sub">Borrow from your available loan limit and add the amount to your KBZ balance.</p>
+
+  <section class="card limit-card" aria-live="polite">
+    <div class="eyebrow">Maximum loan limit</div>
+    <div class="big" id="limitText">4,000,000 MMK</div>
+    <div class="stats">
+      <div class="stat"><span>Already borrowed</span><strong id="currentText">Loading…</strong></div>
+      <div class="stat"><span>Available to borrow</span><strong id="availableText">Loading…</strong></div>
+    </div>
+    <div style="margin-top:18px" class="progress"><div id="progressBar"></div></div>
+    <div class="progress-caption"><span id="progressText">Loading loan status…</span><span id="percentText">—</span></div>
+  </section>
+
+  <section class="card">
+    <h2>Borrow money</h2>
+    <p class="help">The amount you borrow will be added to your KBZ balance.</p>
+    <label for="amount">Loan amount (MMK)</label>
+    <input id="amount" type="text" inputmode="numeric" autocomplete="off" placeholder="Enter amount, e.g. 500,000">
+    <div class="quick-amounts" aria-label="Quick amount options">
+      <button class="chip" type="button" data-amount="100000">100,000</button>
+      <button class="chip" type="button" data-amount="500000">500,000</button>
+      <button class="chip" type="button" data-amount="1000000">1,000,000</button>
+      <button class="chip" type="button" data-amount="2000000">2,000,000</button>
+    </div>
+    <div class="preview"><span>Remaining after this loan</span><strong id="remainingPreview">—</strong></div>
+    <div class="preview" style="margin-top:0"><span>Amount added to KBZ</span><strong id="kbzPreview">—</strong></div>
+    <button class="primary" id="borrowBtn" type="button">Confirm Borrow</button>
+    <div id="message" class="notice" role="status" aria-live="polite"></div>
+    <p class="note">Borrowing is limited by the remaining amount under your 4,000,000 MMK loan limit. Do not click twice while a request is processing.</p>
+  </section>
+  <div class="bottom">Quick Loan · LinLett Finance</div>
+</main>
+<script>
+(() => {
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwPNTZ7fv5bkv8vcSOdhZARB33C43AI-ezSgLpWEJLFtf2ewnMcKnMXuBGrecQWDD7I3Q/exec';
+  const MAX_LIMIT = 4000000;
+  const $ = id => document.getElementById(id);
+  const money = n => Math.round(Number(n)||0).toLocaleString('en-US') + ' MMK';
+  let status = {limit: MAX_LIMIT, currentLoan: 0, available: MAX_LIMIT, kbzBalance: null};
+  let busy = false;
+
+  function parseAmount(v) { return Number(String(v || '').replace(/[^\d]/g, '')) || 0; }
+  function showMessage(text, type) {
+    $('message').textContent = text;
+    $('message').className = 'notice show ' + type;
+  }
+  function render() {
+    $('limitText').textContent = money(status.limit);
+    $('currentText').textContent = money(status.currentLoan);
+    $('availableText').textContent = money(status.available);
+    const used = status.limit > 0 ? Math.min(100, status.currentLoan / status.limit * 100) : 0;
+    $('progressBar').style.width = used + '%';
+    $('progressText').textContent = money(status.currentLoan) + ' used';
+    $('percentText').textContent = Math.round(used) + '%';
+    updatePreview();
+  }
+  function updatePreview() {
+    const amount = parseAmount($('amount').value);
+    $('remainingPreview').textContent = money(Math.max(0, status.available - amount));
+    $('kbzPreview').textContent = money(amount);
+    $('borrowBtn').disabled = busy || amount <= 0 || amount > status.available;
+    $('borrowBtn').textContent = busy ? 'Processing…' : 'Confirm Borrow';
+  }
+  async function request(action, data = {}) {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({action, ...data}),
+      redirect: 'follow'
+    });
+    if (!response.ok) throw new Error('API returned HTTP ' + response.status);
+    const result = await response.json();
+    if (!result || result.success !== true) throw new Error(result && result.message ? result.message : 'The API did not confirm the request.');
+    return result;
+  }
+  async function loadStatus() {
+    try {
+      const result = await request('getQuickLoanStatus');
+      status.limit = Number(result.limit ?? MAX_LIMIT);
+      status.currentLoan = Number(result.currentLoan ?? 0);
+      status.available = Math.max(0, Number(result.available ?? (status.limit - status.currentLoan)));
+      status.kbzBalance = result.kbzBalance == null ? null : Number(result.kbzBalance);
+      render();
+    } catch (err) {
+      render();
+      showMessage('Could not load loan status. Make sure the Quick Loan API actions are installed in Code.gs and deployed. ' + err.message, 'err');
+    }
+  }
+  async function borrow() {
+    const amount = parseAmount($('amount').value);
+    if (!Number.isFinite(amount) || amount <= 0) return showMessage('Enter a loan amount greater than zero.', 'err');
+    if (amount > status.available) return showMessage('This amount exceeds your available loan limit of ' + money(status.available) + '.', 'err');
+    if (!confirm('Borrow ' + money(amount) + ' and add it to your KBZ balance?')) return;
+    busy = true; updatePreview();
+    showMessage('Processing loan and updating KBZ balance…', 'info');
+    try {
+      const result = await request('borrowQuickLoan', {amount});
+      status.limit = Number(result.limit ?? status.limit);
+      status.currentLoan = Number(result.currentLoan ?? (status.currentLoan + amount));
+      status.available = Number(result.available ?? (status.limit - status.currentLoan));
+      status.kbzBalance = result.kbzBalance == null ? status.kbzBalance : Number(result.kbzBalance);
+      $('amount').value = '';
+      render();
+      showMessage('Loan successful. ' + money(amount) + ' was added to KBZ. Remaining loan limit: ' + money(status.available) + '.', 'ok');
+    } catch (err) {
+      showMessage('Loan was not confirmed: ' + err.message + ' Check the sheet before retrying to avoid duplicate borrowing.', 'err');
+    } finally {
+      busy = false; updatePreview();
+    }
+  }
+  $('amount').addEventListener('input', () => {
+    const digits = String($('amount').value).replace(/[^\d]/g, '');
+    $('amount').value = digits ? Number(digits).toLocaleString('en-US') : '';
+    updatePreview();
+  });
+  document.querySelectorAll('[data-amount]').forEach(b => b.addEventListener('click', () => {
+    $('amount').value = Number(b.dataset.amount).toLocaleString('en-US'); updatePreview();
+  }));
+  $('borrowBtn').addEventListener('click', borrow);
+  render(); loadStatus();
+})();
+</script>
+</body>
+</html>
