@@ -59,6 +59,9 @@ input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 4px #d0a55722
 .primary:active{transform:scale(.99)}
 .primary:disabled{opacity:.55;cursor:wait}
 .secondary{border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:#fff;color:var(--ink);font-weight:750;font-size:12px;cursor:pointer}
+.danger{border:1px solid #efc3bf;border-radius:11px;padding:9px 12px;background:#fff7f6;color:#b42318;font-weight:800;font-size:12px;cursor:pointer}
+.danger:disabled{opacity:.55;cursor:wait}
+.inventory-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .message{font-size:12px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}.ok{color:var(--green)}.err{color:var(--red)}.info{color:var(--muted)}
 .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:13px}
 table{border-collapse:collapse;width:100%;min-width:430px;font-size:13px;background:#fff}
@@ -95,7 +98,7 @@ td:last-child,th:last-child{text-align:right}
  <div id="saveMessage" class="message" aria-live="polite"></div>
 </section>
 <section class="card">
- <div class="sectionhead"><h2>Current cash inventory</h2><button class="secondary" id="refreshBtn" type="button">Refresh</button></div>
+ <div class="sectionhead"><h2>Current cash inventory</h2><div class="inventory-actions"><button class="secondary" id="refreshBtn" type="button">Refresh</button><button class="danger" id="resetBtn" type="button">Return 0</button></div></div>
  <div class="table-wrap"><table><thead><tr><th>Cash type</th><th>Quantity / amount</th><th>Cash value</th></tr></thead><tbody id="inventory"><tr><td colspan="3">Loading…</td></tr></tbody></table></div>
  <div id="refreshMessage" class="message"></div>
 </section>
@@ -117,9 +120,10 @@ function setMode(next){mode=next;$('addMode').classList.toggle('active',mode==='
 function showMessage(id,text,type){$(id).className='message '+(type||'info');$(id).textContent=text}
 function render(data){inventory={};(data.items||[]).forEach(x=>inventory[x.key]=x);$('total').textContent=money(data.total);$('connection').textContent='Connected · Last updated '+(data.updatedAt||'just now');$('inventory').innerHTML=(data.items||[]).map(x=>{const d=DENOMS.find(item=>item.key===x.key);return `<tr><td><span class="inventory-label ${d?d.color:''}">${x.label}</span></td><td class="qty">${Number(x.quantity||0).toLocaleString('en-US')}</td><td>${money(x.value||0)}</td></tr>`}).join('')}
 async function refresh(){ $('refreshBtn').disabled=true;try{const data=await callApi({action:'cashRead'});render(data);showMessage('refreshMessage','Cash inventory refreshed.','ok')}catch(e){$('connection').textContent='Connection error';showMessage('refreshMessage',e.message,'err')}finally{$('refreshBtn').disabled=false}}
+async function resetCash(){const confirmed=window.confirm('Return all cash quantities to 0? This will update the current inventory and record all cash types in cash_update_log. This action cannot be undone automatically.');if(!confirmed)return;$('resetBtn').disabled=true;showMessage('refreshMessage','Resetting cash inventory and recording history…','info');try{const result=await callApi({action:'cashReset',note:'Return 0 — all cash types reset to zero'});render(result);DENOMS.forEach(d=>$('qty_'+d.key).value='0');updatePreview();showMessage('refreshMessage','All cash types have been reset to 0. A history row was recorded for every cash type.','ok')}catch(e){showMessage('refreshMessage',e.message,'err')}finally{$('resetBtn').disabled=false}}
 async function save(){const q=getEntered();const amount=totalEntered();if(amount<=0){showMessage('saveMessage','Enter at least one cash quantity or a Change amount greater than zero.','err');return}if(mode==='subtract'){for(const d of DENOMS){const current=inventory[d.key]?Number(inventory[d.key].quantity)||0:0;const requested=q[d.key]||0;if(requested>current){showMessage('saveMessage','Not enough '+d.label+' available. Current quantity: '+current.toLocaleString('en-US')+'.','err');return}}if(q.change>(inventory.change?Number(inventory.change.quantity)||0:0)){showMessage('saveMessage','Not enough Change available.','err');return}}
 $('saveBtn').disabled=true;showMessage('saveMessage','Updating cash inventory…','info');try{const result=await callApi({action:'cashUpdate',mode,counts:JSON.stringify(q),note:$('note').value.trim()});render(result);DENOMS.forEach(d=>$('qty_'+d.key).value='0');$('note').value='';updatePreview();showMessage('saveMessage',mode==='add'?'Cash received and saved successfully.':'Cash given and subtracted successfully.','ok')}catch(e){showMessage('saveMessage',e.message,'err')}finally{$('saveBtn').disabled=false}}
-$('addMode').addEventListener('click',()=>setMode('add'));$('subtractMode').addEventListener('click',()=>setMode('subtract'));$('saveBtn').addEventListener('click',save);$('refreshBtn').addEventListener('click',refresh);buildInputs();setMode('add');refresh();
+$('addMode').addEventListener('click',()=>setMode('add'));$('subtractMode').addEventListener('click',()=>setMode('subtract'));$('saveBtn').addEventListener('click',save);$('refreshBtn').addEventListener('click',refresh);$('resetBtn').addEventListener('click',resetCash);buildInputs();setMode('add');refresh();
 </script>
 </body>
 </html>
