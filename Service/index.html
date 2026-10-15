@@ -21,6 +21,9 @@
     .provider span{display:block;line-height:1.2}
     .provider.active{border:2px solid var(--gold);padding:11px 9px;background:#fff9eb;box-shadow:0 0 0 2px #d0a55712}
     .provider:focus-visible{outline:3px solid #d0a55766;outline-offset:2px}
+    .provider:disabled,.provider.topup-unknown{cursor:not-allowed;opacity:.42;filter:grayscale(1);background:#eceeea;color:#777;box-shadow:none}
+    .provider:disabled img{filter:grayscale(1)}
+    .topup-mode #topUpNote{display:block}
     @media(min-width:520px){.providers{grid-template-columns:repeat(3,minmax(0,1fr))}}
     .provider:focus-visible{outline:3px solid #d0a55766;outline-offset:2px}
     .switch-field{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:#fbfcfa;margin-bottom:16px}
@@ -32,7 +35,7 @@
     .switch input:checked + .switch-track{background:var(--gold)}.switch input:checked + .switch-track:after{transform:translateX(20px)}
     .switch input:focus-visible + .switch-track{outline:3px solid #d0a55766;outline-offset:3px}
     .meter-note{display:none;background:#fff9eb;border:1px solid #ead7ac;color:#6c5428;padding:10px 12px;border-radius:10px;font-size:12px;margin:-5px 0 15px}
-    .meter-mode .meter-note{display:block}
+    .meter-mode #meterNote{display:block}
     .result{background:#292b27;border-radius:16px;padding:18px;color:#fff}.result small{color:#c9ccc5}.fee{font-size:35px;font-weight:850;color:var(--gold);margin:4px 0 13px;overflow-wrap:anywhere}.summaryline{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #ffffff20;padding:9px 0 0;margin-top:8px;font-size:14px}.summaryline span{color:#c9ccc5}
     #cashBalanceRows{margin-top:4px;padding-top:3px;border-top:1px dashed #ffffff24}
     #cashBalanceCurrent,#cashBalanceAfter{font-variant-numeric:tabular-nums}
@@ -88,6 +91,14 @@
       </label>
     </div>
     <div class="meter-note" id="meterNote">Meter Bill is active. The service fee is fixed at 200, regardless of the amount. Please still choose the payment service.</div>
+    <div class="switch-field">
+      <div class="switch-copy"><strong>Top Up Service</strong><span>Switch on to calculate the provider's top-up fee</span></div>
+      <label class="switch" for="topUpToggle" aria-label="Activate Top Up service">
+        <input id="topUpToggle" type="checkbox" role="switch" aria-checked="false">
+        <span class="switch-track" aria-hidden="true"></span>
+      </label>
+    </div>
+    <div class="meter-note" id="topUpNote">Top Up is active. Known rates: AYA 2.5%, Truemoney 3%, MTB 0.5%. KBZ, CB, Wave, and UAB are disabled until their rates are known.</div>
     <div class="field" id="transactionTypeField">
       <label>Transaction type</label>
       <div class="types">
@@ -139,6 +150,7 @@
   let transactionType = 'Cash Out';
   let selectedProvider = '';
   let meterBillActive = false;
+  let topUpActive = false;
   let currentCashBalance = null;
   let cashBalanceLoading = true;
   let pendingRequestId = '';
@@ -187,7 +199,7 @@
       $('cashBalanceCurrent').textContent = moneyMMK(total);
       $('cashBalanceCurrent').style.color = '#e4bd6d';
       $('cashBalanceCurrent').title = 'Physical cash balance from in_cash';
-      $('cashBalanceRows').style.display = meterBillActive ? 'none' : '';
+      $('cashBalanceRows').style.display = (meterBillActive || topUpActive) ? 'none' : '';
     } catch (err) {
       currentCashBalance = null;
       $('cashBalanceCurrent').textContent = 'Unavailable';
@@ -204,7 +216,7 @@
   function updateCashPreview() {
     const rows = $('cashBalanceRows');
     if (!rows) return;
-    rows.style.display = meterBillActive ? 'none' : '';
+    rows.style.display = (meterBillActive || topUpActive) ? 'none' : '';
     const amount = parseAmount($('amount').value);
     if (currentCashBalance === null) {
       $('cashBalanceAfter').textContent = cashBalanceLoading ? 'Loading…' : 'Unavailable';
@@ -244,10 +256,16 @@
   // Cash In: 100 per started 100,000.
   // Cash Out: use the supplied table through 1,500,000; above that,
   // preserve the existing tiered formula.
-  function calculateFee(amount, type, meterBill = false) {
+  function calculateFee(amount, type, meterBill = false, topUp = false, provider = selectedProvider) {
     if (!Number.isFinite(amount) || amount <= 0) return null;
     // Meter Bill always charges a flat 200, regardless of transfer amount.
     if (meterBill || type === 'Meter Bill') return 200;
+    if (topUp || type === 'Top Up') {
+      const key = normalizeProvider(provider);
+      const rates = { aya: 2.5, truemoney: 3, mtb: 0.5 };
+      if (!(key in rates)) return null;
+      return Math.round(amount * rates[key] / 100);
+    }
     // Transfers below 10,000 are free for both Cash In and Cash Out.
     if (amount < 10000) return 0;
     if (type === 'Cash In') return Math.ceil(amount / 100000) * 100;
@@ -303,6 +321,33 @@
     return Math.ceil((units * rate) / 100) * 100;
   }
 
+  function normalizeProvider(value) {
+    const key = String(value || '').toLowerCase().replace(/[^a-z]/g, '');
+    if (key.includes('truemoney') || key.includes('truemonney')) return 'truemoney';
+    if (key.startsWith('aya')) return 'aya';
+    if (key.startsWith('mtb')) return 'mtb';
+    if (key.startsWith('kbz')) return 'kbz';
+    if (key.startsWith('cb')) return 'cb';
+    if (key.startsWith('wave')) return 'wave';
+    if (key.startsWith('uab')) return 'uab';
+    return key;
+  }
+
+  function refreshProviderAvailability() {
+    document.querySelectorAll('[data-provider]').forEach(button => {
+      const key = normalizeProvider(button.dataset.provider);
+      const unknown = topUpActive && !['aya', 'truemoney', 'mtb'].includes(key);
+      button.disabled = unknown;
+      button.classList.toggle('topup-unknown', unknown);
+      if (unknown && selectedProvider === button.dataset.provider) {
+        selectedProvider = '';
+        button.classList.remove('active');
+        button.setAttribute('aria-pressed', 'false');
+      }
+      button.title = unknown ? 'Top-up fee is not known yet' : '';
+    });
+  }
+
   function setMessage(text, kind = 'info') {
     $('message').textContent = text;
     $('message').className = 'message ' + kind;
@@ -310,10 +355,10 @@
 
   function updatePreview() {
     const amount = parseAmount($('amount').value);
-    const fee = calculateFee(amount, transactionType, meterBillActive);
+    const fee = calculateFee(amount, topUpActive ? 'Top Up' : transactionType, meterBillActive, topUpActive, selectedProvider);
     $('fee').textContent = fee === null ? '—' : money(fee);
     $('amountDisplay').textContent = Number.isFinite(amount) && amount > 0 ? money(amount) : '—';
-    $('typeDisplay').textContent = meterBillActive ? 'Meter Bill' : transactionType;
+    $('typeDisplay').textContent = meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : transactionType);
     $('providerDisplay').textContent = selectedProvider || 'Not selected';
     updateCashPreview();
   }
@@ -346,12 +391,25 @@
 
   $('meterBillToggle').addEventListener('change', function() {
     meterBillActive = this.checked;
+    if (meterBillActive) { topUpActive = false; $('topUpToggle').checked = false; $('topUpToggle').setAttribute('aria-checked', 'false'); }
     this.setAttribute('aria-checked', String(meterBillActive));
-    $('transactionTypeField').style.display = meterBillActive ? 'none' : '';
+    $('transactionTypeField').style.display = (meterBillActive || topUpActive) ? 'none' : '';
     $('paymentServiceField').style.display = '';
     document.querySelector('.wrap').classList.toggle('meter-mode', meterBillActive);
-    updatePreview();
+    document.querySelector('.wrap').classList.toggle('topup-mode', topUpActive);
+    refreshProviderAvailability(); updatePreview();
     setMessage(meterBillActive ? 'Meter Bill service activated. The fee is fixed at 200.' : 'Money Transfer service activated.', 'info');
+  });
+
+  $('topUpToggle').addEventListener('change', function() {
+    topUpActive = this.checked;
+    if (topUpActive) { meterBillActive = false; $('meterBillToggle').checked = false; $('meterBillToggle').setAttribute('aria-checked', 'false'); }
+    this.setAttribute('aria-checked', String(topUpActive));
+    $('transactionTypeField').style.display = (meterBillActive || topUpActive) ? 'none' : '';
+    document.querySelector('.wrap').classList.toggle('meter-mode', meterBillActive);
+    document.querySelector('.wrap').classList.toggle('topup-mode', topUpActive);
+    refreshProviderAvailability(); updatePreview();
+    setMessage(topUpActive ? 'Top Up activated. Only AYA, Truemoney, and MTB are available because their fee rates are known.' : 'Top Up service deactivated.', 'info');
   });
 
   $('amount').addEventListener('input', function() {
@@ -403,10 +461,10 @@
     const amount = parseAmount($('amount').value);
     const phone = $('phone').value.trim();
     const customerName = $('customerName').value.trim();
-    const savedStatus = meterBillActive ? 'Meter Bill' : transactionType;
+    const savedStatus = meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : transactionType);
     const savedProvider = selectedProvider;
-    const cost = calculateFee(amount, transactionType, meterBillActive);
-    const requestSignature = JSON.stringify([amount, phone, customerName, savedStatus, savedProvider, meterBillActive ? 'Meter Bill' : 'Money Transfer']);
+    const cost = calculateFee(amount, topUpActive ? 'Top Up' : transactionType, meterBillActive, topUpActive, savedProvider);
+    const requestSignature = JSON.stringify([amount, phone, customerName, savedStatus, savedProvider, meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : 'Money Transfer')]);
     if (!Number.isFinite(amount) || amount <= 0) {
       setMessage('Please enter an amount greater than zero.', 'err');
       return;
@@ -415,7 +473,10 @@
       setMessage('Please choose a payment service.', 'err');
       return;
     }
-    if (!meterBillActive && transactionType === 'Cash Out') {
+    if (topUpActive && !['aya', 'truemoney', 'mtb'].includes(normalizeProvider(selectedProvider))) {
+      setMessage('This provider is unavailable for Top Up because its fee rate is not known yet.', 'err'); return;
+    }
+    if (!meterBillActive && !topUpActive && transactionType === 'Cash Out') {
       if (currentCashBalance === null) {
         setMessage('The physical cash balance is unavailable. Refresh the page or check the Cash on Hand API before saving.', 'err');
         return;
@@ -442,7 +503,7 @@
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'saveTransaction', requestId: pendingRequestId, phone, customerName, amount, status: savedStatus, provider: savedProvider, serviceType: meterBillActive ? 'Meter Bill' : 'Money Transfer' }),
+        body: JSON.stringify({ action: 'saveTransaction', requestId: pendingRequestId, phone, customerName, amount, status: savedStatus, provider: savedProvider, serviceType: meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : 'Money Transfer') }),
         redirect: 'follow'
       });
       if (!response.ok) throw new Error('API returned HTTP ' + response.status);
@@ -453,7 +514,7 @@
       if (result.cashBalance !== null && result.cashBalance !== undefined && Number.isFinite(Number(result.cashBalance))) {
         currentCashBalance = Number(result.cashBalance);
         $('cashBalanceCurrent').textContent = moneyMMK(currentCashBalance);
-      } else if (!meterBillActive) {
+      } else if (!meterBillActive && !topUpActive) {
         await refreshCashBalance();
       }
       addHistory({phone, customerName, amount, cost: savedCost, status: savedStatus, provider: savedProvider, date: result.date});
