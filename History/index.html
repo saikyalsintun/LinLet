@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transaction History | LinLett Finance</title>
+<style>
+:root{--gold:#c7a451;--gold-dark:#a98531;--gold-soft:#fbf6e9;--ink:#292820;--muted:#858174;--line:#eee9dc;--page:#f8f7f3;--white:#fff;--green:#25825a;--red:#c74c4c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px}
+.shell{max-width:820px;margin:0 auto;min-height:100vh;background:var(--white);box-shadow:0 0 24px #30271208}
+header{padding:22px 22px 0;background:var(--white);border-bottom:1px solid var(--line)}
+.header-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-bottom:18px}
+.kicker{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--gold-dark);font-weight:800}
+h1{font-size:23px;letter-spacing:-.5px;margin:5px 0 4px}
+.sub{font-size:12px;color:var(--muted);margin:0}
+button,select{font:inherit}
+.refresh{border:1px solid #e6d8b4;background:var(--gold-soft);color:#71571d;border-radius:9px;padding:10px 12px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap}
+.filters{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 22px;background:#fffdf8;border-bottom:1px solid var(--line)}
+.filters label{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--muted)}
+select{min-width:135px;border:1px solid #e7e0cf;border-radius:8px;padding:9px 10px;background:#fff;color:var(--ink);outline:none}
+.count{margin-left:auto;color:var(--muted);font-size:11px}
+.income-summary{margin:16px 20px 8px;padding:18px 20px;border:1px solid #e6d8b4;border-radius:13px;background:linear-gradient(135deg,#fffdf7,#fbf6e9)}
+.income-title{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.income-total{font-size:27px;font-weight:850;letter-spacing:-.5px;color:var(--gold-dark);margin-top:7px}
+.income-note{font-size:10px;color:var(--muted);margin-top:4px}
+.notice{display:none;margin:14px 20px;padding:11px 12px;background:#fff1f1;border:1px solid #f0caca;color:#a32d35;border-radius:9px;font-size:12px}
+.list{padding:0 20px 28px}
+.month-heading{padding:19px 2px 7px;color:var(--gold-dark);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}
+.record{border:1px solid var(--line);border-radius:12px;padding:15px;margin:9px 0 12px;background:#fff}
+.record-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding-bottom:12px;border-bottom:1px solid #f1ede3}
+.status-wrap{display:flex;gap:10px;align-items:flex-start;min-width:0}
+.status-icon{width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:var(--gold-soft);color:var(--gold-dark);display:grid;place-items:center;font-size:16px;font-weight:800}
+.record-status{font-size:13px;font-weight:800;overflow-wrap:anywhere}
+.record-date{font-size:11px;color:var(--muted);margin-top:4px}
+.amount-wrap{text-align:right;white-space:nowrap}
+.amount{font-size:20px;font-weight:800;color:var(--gold-dark)}
+.amount.in{color:var(--green)}.amount.out{color:var(--red)}
+.amount-label{font-size:10px;color:var(--muted);margin-top:4px}
+.secondary-amount{font-size:12px;font-weight:750;color:var(--green);margin-top:5px}
+.secondary-label{font-size:10px;color:var(--muted);margin-top:2px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;padding-top:13px}
+.field{min-width:0}.field.right{text-align:right}
+.label{display:block;color:var(--muted);font-size:10px;margin-bottom:4px}
+.value{display:block;font-size:12px;font-weight:650;overflow-wrap:anywhere}
+.empty{padding:54px 16px;text-align:center;color:var(--muted);font-size:13px}
+.empty-mark{font-size:28px;color:var(--gold);margin-bottom:8px}
+footer{border-top:1px solid var(--line);padding:14px 18px 20px;text-align:center;color:#a29b8c;font-size:10px}
+@media(max-width:480px){.income-summary{margin:12px 12px 6px;padding:15px}.income-total{font-size:24px}header{padding:18px 15px 0}h1{font-size:21px}.filters{padding:12px 15px}.list{padding:0 12px 24px}.count{width:100%;margin-left:0}select{flex:1;min-width:115px}.record{padding:12px}.fields{gap:12px}.amount{font-size:13px}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header><div class="header-row"><div><div class="kicker">LinLett Finance</div><h1>Transaction History</h1><p class="sub">Customer transaction records and service costs.</p></div><button id="refresh" class="refresh">↻ Refresh</button></div></header>
+<section class="filters"><label for="month">MONTH</label><select id="month"><option value="all">All months</option></select><label for="year">YEAR</label><select id="year"><option value="all">All years</option></select><span class="count" id="count">Loading records…</span></section>
+<div id="notice" class="notice"></div>
+<section class="income-summary" aria-live="polite"><div class="income-title">Total Income (Cost Total)</div><div class="income-total" id="incomeTotal">0 MMK</div><div class="income-note">Total service fees for the selected month/year</div></section>
+<section id="list" class="list"><div class="empty">Loading transaction records…</div></section>
+<footer>History reads only the transaction columns from cost_detail.</footer>
+</main>
+<script>
+'use strict';
+const API_URL='https://script.google.com/macros/s/AKfycbzMqNdgEgGQhI3gIUxK5op5z3PMJw069pmiU_PzhOuhM834XNqIUQZMWiQbV08CuTqzYg/exec';
+const $=id=>document.getElementById(id);
+let records=[];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>{if(typeof v==='number')return Number.isFinite(v)?v:0;const n=Number(String(v??'').replace(/[,_\s]/g,'').replace(/[^0-9.\-]/g,''));return Number.isFinite(n)?n:0};
+const money=v=>Math.abs(num(v)).toLocaleString('en-US',{maximumFractionDigits:2})+' MMK';
+function requestHistory(){return new Promise((resolve,reject)=>{const cb='history_'+Date.now()+'_'+Math.random().toString(36).slice(2),script=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(Error('Request timed out. Check the History Apps Script deployment.'))},20000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=data=>{cleanup();data?.success?resolve(data):reject(Error(data?.error||'Unable to load transaction history.'))};script.src=API_URL+'?action=historyRead&callback='+cb;script.onerror=()=>{cleanup();reject(Error('Could not connect to the History web app.'))};document.head.appendChild(script)})}
+function monthKey(x){return x.month||''}
+function monthName(key){const [y,m]=key.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('en-US',{month:'long'})}
+function setupFilters(){const months=[...new Set(records.map(monthKey).filter(Boolean))].sort().reverse();const years=[...new Set(months.map(m=>m.slice(0,4)))].sort().reverse();$('month').innerHTML='<option value="all">All months</option>'+months.map(m=>`<option value="${esc(m)}">${esc(monthName(m))}</option>`).join('');$('year').innerHTML='<option value="all">All years</option>'+years.map(y=>`<option value="${esc(y)}">${esc(y)}</option>`).join('')}
+function visible(){const m=$('month').value,y=$('year').value;return records.filter(r=>(m==='all'||r.month===m)&&(y==='all'||r.year===y)).sort((a,b)=>b.timestamp-a.timestamp)}
+function render(){const items=visible();const totalCost=items.reduce((sum,r)=>sum+Math.max(0,num(r.cost)),0);$('incomeTotal').textContent=totalCost.toLocaleString('en-US',{maximumFractionDigits:2})+' MMK';$('count').textContent=items.length+' record'+(items.length===1?'':'s');if(!items.length){$('list').innerHTML='<div class="empty"><div class="empty-mark">◇</div>No transaction records found for this period.</div>';return}let out='',last='';items.forEach(r=>{const heading=monthName(r.month)+' '+r.year;if(heading!==last){out+=`<div class="month-heading">${esc(heading)}</div>`;last=heading}const status=String(r.status||'Transaction');const statusLower=status.toLowerCase();const amount=num(r.amount);const cost=r.cost;const amtClass=/cash\s*out|bank\s*out|outgoing/i.test(statusLower)?'out':/cash\s*in|bank\s*in|incoming/i.test(statusLower)?'in':'';out+=`<article class="record"><div class="record-head"><div class="status-wrap"><div class="status-icon">↔</div><div><div class="record-status">${esc(status)}</div><div class="record-date">${esc(r.dateLabel||'')}</div></div></div><div class="amount-wrap"><div class="amount">${cost===null||cost===undefined||cost===''?'—':money(cost)}</div><div class="amount-label">Service Fee (Cost)</div><div class="secondary-amount ${amtClass}">+ ${money(amount)}</div><div class="secondary-label">Amount</div></div></div><div class="fields"><div class="field"><span class="label">Customer Name</span><span class="value">${esc(r.customerName||'—')}</span></div><div class="field right"><span class="label">Phone Number</span><span class="value">${esc(r.phoneNumber||'—')}</span></div><div class="field"><span class="label">Payment Status</span><span class="value">${esc(r.paymentStatus||'—')}</span></div><div class="field right"><span class="label">Date</span><span class="value">${esc(r.dateLabel||'—')}</span></div></div></article>`});$('list').innerHTML=out}
+function load(){$('refresh').disabled=true;$('refresh').textContent='Loading…';$('notice').style.display='none';requestHistory().then(data=>{records=(data.items||[]).filter(r=>r&&r.timestamp);setupFilters();render()}).catch(e=>{$('notice').textContent=e.message;$('notice').style.display='block';$('list').innerHTML='<div class="empty">Could not load transaction records.</div>'}).finally(()=>{$('refresh').disabled=false;$('refresh').textContent='↻ Refresh'})}
+$('refresh').addEventListener('click',load);$('month').addEventListener('change',render);$('year').addEventListener('change',render);load();
+</script>
+</body></html>
