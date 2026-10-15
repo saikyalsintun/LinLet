@@ -34,6 +34,10 @@
     .meter-note{display:none;background:#fff9eb;border:1px solid #ead7ac;color:#6c5428;padding:10px 12px;border-radius:10px;font-size:12px;margin:-5px 0 15px}
     .meter-mode .meter-note{display:block}
     .result{background:#292b27;border-radius:16px;padding:18px;color:#fff}.result small{color:#c9ccc5}.fee{font-size:35px;font-weight:850;color:var(--gold);margin:4px 0 13px;overflow-wrap:anywhere}.summaryline{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #ffffff20;padding:9px 0 0;margin-top:8px;font-size:14px}.summaryline span{color:#c9ccc5}
+    #cashBalanceRows{margin-top:4px;padding-top:3px;border-top:1px dashed #ffffff24}
+    #cashBalanceCurrent,#cashBalanceAfter{font-variant-numeric:tabular-nums}
+    #cashBalanceAfter.cash-short{color:#ff9b91}
+    #cashBalanceAfter.cash-ok{color:#9fe0b9}
     .primary{width:100%;border:0;border-radius:13px;padding:15px;background:var(--gold);color:#252724;font:inherit;font-weight:800;font-size:16px;cursor:pointer;margin-top:14px}.primary:disabled{opacity:.6;cursor:wait}
     .message{font-size:13px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}.message.ok{color:var(--green)}.message.err{color:var(--red)}.message.info{color:var(--muted)}
     .sectionhead{display:flex;align-items:center;justify-content:space-between;gap:8px}.sectionhead h2{font-size:17px;margin:0}.pill{font-size:12px;background:#f0f1ed;color:var(--muted);border-radius:99px;padding:6px 9px}
@@ -108,16 +112,20 @@
       <div class="summaryline"><span>Transfer amount</span><strong id="amountDisplay">—</strong></div>
       <div class="summaryline"><span>Transaction type</span><strong id="typeDisplay">Cash Out</strong></div>
       <div class="summaryline"><span>Payment service</span><strong id="providerDisplay">Not selected</strong></div>
+      <div id="cashBalanceRows">
+        <div class="summaryline"><span>Physical cash available</span><strong id="cashBalanceCurrent">Loading…</strong></div>
+        <div class="summaryline"><span id="cashProjectionLabel">Cash after transaction</span><strong id="cashBalanceAfter">—</strong></div>
+      </div>
     </div>
     <button class="primary" id="saveBtn" type="button">Calculate &amp; Save Transaction</button>
-    <div class="message info" id="message" role="status">Enter an amount to calculate the fee. Saving requires a correctly configured Apps Script API.</div>
+    <div class="message info" id="message" role="status">Enter an amount to calculate the fee. Cash Out also checks the available physical cash balance.</div>
   </section>
 
   <section class="card">
     <div class="sectionhead"><h2>Recent transactions</h2><span class="pill" id="count">0 records</span></div>
     <div id="history"><div class="empty">Transactions saved during this session will appear here.</div></div>
   </section>
-  <p class="foot">Fee preview runs in your browser. Transaction saving requires the Google Apps Script API to be configured and deployed.</p>
+  <p class="foot">Cash and bank balances are checked and updated by the Service Apps Script backend.</p>
   
 </main>
 <script>
@@ -126,12 +134,96 @@
 
   // Paste your deployed Apps Script /exec URL here.
   const API_URL = 'https://script.google.com/macros/s/AKfycbxGg6jvPbklCOXtVX2ZLj-Kp7UBvyROAZDjXBzL3tqParwgkIu_g5sFHFVtNJK7jbW-/exec';
+  const CASH_API_URL = 'https://script.google.com/macros/s/AKfycbxgdC_BYGZi-M2tpFKh6F2SeKoHzKrZ4RQNWNqqFl1P14uBMacgmFIGQLo1p7cfP08C/exec';
 
   let transactionType = 'Cash Out';
   let selectedProvider = '';
   let meterBillActive = false;
+  let currentCashBalance = null;
+  let cashBalanceLoading = true;
+  let pendingRequestId = '';
+  let pendingRequestSignature = '';
   const $ = id => document.getElementById(id);
   const money = n => Number(n).toLocaleString('en-US', {maximumFractionDigits: 2});
+  const moneyMMK = n => money(n) + ' MMK';
+
+  function callCashApi(params) {
+    return new Promise((resolve, reject) => {
+      const callback = 'serviceCashCb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+      const script = document.createElement('script');
+      const timeout = setTimeout(() => {
+        cleanup();
+        reject(new Error('Cash balance request timed out.'));
+      }, 15000);
+      function cleanup() {
+        clearTimeout(timeout);
+        delete window[callback];
+        script.remove();
+      }
+      window[callback] = data => {
+        cleanup();
+        if (data && data.success) resolve(data);
+        else reject(new Error(data && (data.error || data.message) || 'Could not read the cash balance.'));
+      };
+      params.callback = callback;
+      params._ts = Date.now();
+      script.src = CASH_API_URL + '?' + new URLSearchParams(params).toString();
+      script.onerror = () => {
+        cleanup();
+        reject(new Error('Cannot connect to the Cash on Hand API.'));
+      };
+      document.head.appendChild(script);
+    });
+  }
+
+  async function refreshCashBalance() {
+    cashBalanceLoading = true;
+    updateCashPreview();
+    try {
+      const data = await callCashApi({action: 'cashRead'});
+      const total = Number(data.total ?? data.balance);
+      if (!Number.isFinite(total) || total < 0) throw new Error('Cash API did not return a valid total balance.');
+      currentCashBalance = total;
+      $('cashBalanceCurrent').textContent = moneyMMK(total);
+      $('cashBalanceCurrent').style.color = '#e4bd6d';
+      $('cashBalanceCurrent').title = 'Physical cash balance from in_cash';
+      $('cashBalanceRows').style.display = meterBillActive ? 'none' : '';
+    } catch (err) {
+      currentCashBalance = null;
+      $('cashBalanceCurrent').textContent = 'Unavailable';
+      $('cashBalanceCurrent').style.color = '#ff9b91';
+      $('cashBalanceCurrent').title = err.message || 'Cash balance unavailable';
+      $('cashBalanceAfter').textContent = 'Unable to preview';
+      $('cashBalanceAfter').className = 'cash-short';
+    } finally {
+      cashBalanceLoading = false;
+      updateCashPreview();
+    }
+  }
+
+  function updateCashPreview() {
+    const rows = $('cashBalanceRows');
+    if (!rows) return;
+    rows.style.display = meterBillActive ? 'none' : '';
+    const amount = parseAmount($('amount').value);
+    if (currentCashBalance === null) {
+      $('cashBalanceAfter').textContent = cashBalanceLoading ? 'Loading…' : 'Unavailable';
+      $('cashBalanceAfter').className = 'cash-short';
+      $('cashProjectionLabel').textContent = 'Cash after transaction';
+      return;
+    }
+    $('cashBalanceCurrent').textContent = moneyMMK(currentCashBalance);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      $('cashBalanceAfter').textContent = moneyMMK(currentCashBalance);
+      $('cashBalanceAfter').className = 'cash-ok';
+      $('cashProjectionLabel').textContent = 'Cash after transaction';
+      return;
+    }
+    const after = transactionType === 'Cash In' ? currentCashBalance + amount : currentCashBalance - amount;
+    $('cashBalanceAfter').textContent = moneyMMK(after);
+    $('cashBalanceAfter').className = after < 0 ? 'cash-short' : 'cash-ok';
+    $('cashProjectionLabel').textContent = transactionType === 'Cash Out' ? 'Cash remaining after Cash Out' : 'Cash after Cash In';
+  }
 
   function parseAmount(value) {
     const cleaned = String(value ?? '').replace(/,/g, '').replace(/\s/g, '');
@@ -223,6 +315,7 @@
     $('amountDisplay').textContent = Number.isFinite(amount) && amount > 0 ? money(amount) : '—';
     $('typeDisplay').textContent = meterBillActive ? 'Meter Bill' : transactionType;
     $('providerDisplay').textContent = selectedProvider || 'Not selected';
+    updateCashPreview();
   }
 
   function chooseType(type) {
@@ -278,6 +371,7 @@
 
   $('saveBtn').addEventListener('click', saveTransaction);
   updatePreview();
+  refreshCashBalance();
 
   function addHistory(tx) {
     const history = $('history');
@@ -312,7 +406,7 @@
     const savedStatus = meterBillActive ? 'Meter Bill' : transactionType;
     const savedProvider = selectedProvider;
     const cost = calculateFee(amount, transactionType, meterBillActive);
-
+    const requestSignature = JSON.stringify([amount, phone, customerName, savedStatus, savedProvider, meterBillActive ? 'Meter Bill' : 'Money Transfer']);
     if (!Number.isFinite(amount) || amount <= 0) {
       setMessage('Please enter an amount greater than zero.', 'err');
       return;
@@ -320,6 +414,21 @@
     if (!selectedProvider) {
       setMessage('Please choose a payment service.', 'err');
       return;
+    }
+    if (!meterBillActive && transactionType === 'Cash Out') {
+      if (currentCashBalance === null) {
+        setMessage('The physical cash balance is unavailable. Refresh the page or check the Cash on Hand API before saving.', 'err');
+        return;
+      }
+      if (amount > currentCashBalance) {
+        setMessage('Insufficient physical cash. Available: ' + moneyMMK(currentCashBalance) + '. Cash Out cannot be saved.', 'err');
+        return;
+      }
+    }
+
+    if (!pendingRequestId || pendingRequestSignature !== requestSignature) {
+      pendingRequestId = 'svc_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+      pendingRequestSignature = requestSignature;
     }
 
     $('saveBtn').disabled = true;
@@ -333,7 +442,7 @@
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'saveTransaction', phone, customerName, amount, status: savedStatus, provider: savedProvider, serviceType: meterBillActive ? 'Meter Bill' : 'Money Transfer' }),
+        body: JSON.stringify({ action: 'saveTransaction', requestId: pendingRequestId, phone, customerName, amount, status: savedStatus, provider: savedProvider, serviceType: meterBillActive ? 'Meter Bill' : 'Money Transfer' }),
         redirect: 'follow'
       });
       if (!response.ok) throw new Error('API returned HTTP ' + response.status);
@@ -341,7 +450,15 @@
       if (!result || result.success !== true) throw new Error(result && result.message ? result.message : 'The API did not confirm the save.');
 
       const savedCost = Number(result.cost ?? cost);
+      if (result.cashBalance !== null && result.cashBalance !== undefined && Number.isFinite(Number(result.cashBalance))) {
+        currentCashBalance = Number(result.cashBalance);
+        $('cashBalanceCurrent').textContent = moneyMMK(currentCashBalance);
+      } else if (!meterBillActive) {
+        await refreshCashBalance();
+      }
       addHistory({phone, customerName, amount, cost: savedCost, status: savedStatus, provider: savedProvider, date: result.date});
+      pendingRequestId = '';
+      pendingRequestSignature = '';
       $('amount').value = '';
       $('phone').value = '';
       $('customerName').value = '';
