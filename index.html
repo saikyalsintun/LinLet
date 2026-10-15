@@ -130,12 +130,7 @@
     }
     .priority-two .link-icon { background: #f5e4b9; border-color: #e8d19a; }
     .priority-two .link-copy strong { color: var(--gold-dark); }
-    .bottom-actions {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 2px;
-    }
+    .bottom-actions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 2px; }
     .square-button {
       position: relative;
       min-width: 0;
@@ -200,11 +195,11 @@
       .link-button { min-height: 74px; padding: 13px; gap: 11px; }
       .link-icon { width: 40px; height: 40px; flex-basis: 40px; }
       .link-copy span { font-size: 11px; }
-      .bottom-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-      .square-button { min-height: 102px; padding: 12px 4px 10px; border-radius: 12px; }
-      .square-icon { width: 34px; height: 34px; border-radius: 9px; }
-      .square-icon svg { width: 19px; height: 19px; }
-      .square-button strong { font-size: 10px; line-height: 1.25; }
+      .bottom-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+      .square-button { min-height: 94px; padding: 10px 2px 8px; border-radius: 12px; gap: 6px; }
+      .square-icon { width: 31px; height: 31px; border-radius: 9px; }
+      .square-icon svg { width: 18px; height: 18px; }
+      .square-button strong { font-size: 9px; line-height: 1.2; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition: none !important; }
@@ -237,7 +232,7 @@
         <span class="arrow" aria-hidden="true">→</span>
       </a>
 
-      <a class="link-button priority-two" href="./Self%20CashIn/CashOut/index.html" aria-label="Open Self CashIn and CashOut">
+      <a class="link-button priority-two" href="./Self/index.html" aria-label="Open Self CashIn and CashOut">
         <span class="link-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v18"></path><path d="M17 7.5c0-1.7-2.2-3-5-3s-5 1.3-5 3 2.2 3 5 3 5 1.3 5 3-2.2 3-5 3-5-1.3-5-3"></path>
@@ -304,6 +299,17 @@
           </span>
           <strong>Google Sheet</strong>
         </a>
+        <a class="square-button" href="./History/index.html" aria-label="Open History page">
+          <span class="square-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 2.6-6.4"></path>
+              <path d="M3 4v5h5"></path>
+              <path d="M12 7v5l3.5 2"></path>
+            </svg>
+          </span>
+          <strong>History</strong>
+        </a>
+
       </div>
     </nav>
   </main>
