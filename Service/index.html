@@ -201,9 +201,70 @@ body[data-theme="dark"] .theme-toggle,body[data-theme="dark"] .homepage-back{
  .theme-toggle{top:8px;right:8px;min-height:34px;padding:7px 9px;font-size:11px}
 }
 
+
+/* Initial Google Sheets / Apps Script loading overlay */
+#linlettLoadingOverlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(250,250,247,.96);color:#292a25;transition:opacity .22s ease,visibility .22s ease}
+#linlettLoadingOverlay.linlett-loading-hidden{opacity:0;visibility:hidden;pointer-events:none}
+#linlettLoadingOverlay .linlett-loader-logo{width:44px;height:44px;max-width:44px;max-height:44px;object-fit:contain;animation:linlettLogoBounce .72s cubic-bezier(.36,.07,.19,.97) infinite !important;transform:translate3d(0,0,0);will-change:transform;filter:drop-shadow(0 3px 5px rgba(0,0,0,.12))}
+#linlettLoadingOverlay .linlett-loading-text{font:600 13px/1.4 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.02em;color:#68685e}
+@keyframes linlettLogoBounce{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-14px,0)}}
+body[data-theme="dark"] #linlettLoadingOverlay{background:rgba(21,23,20,.97);color:#f4f0e5}
+body[data-theme="dark"] #linlettLoadingOverlay .linlett-loading-text{color:#c8c8bd}
+
 </style>
 </head>
 <body>
+<div id="linlettLoadingOverlay" role="status" aria-live="polite" aria-label="Loading page data">
+  <img class="linlett-loader-logo" src="../img/LinLett.png" alt="LinLett" onerror="this.style.display='none'">
+  <div class="linlett-loading-text">Loading your data…</div>
+</div>
+<script>
+/* Tracks initial Apps Script requests and hides the loader only after all requests settle.
+   No API URLs or backend behavior are changed. */
+(function(){
+  var overlay=document.getElementById('linlettLoadingOverlay');
+  if(!overlay)return;
+  var active=0,windowLoaded=document.readyState==='complete',finished=false,quietTimer=null;
+  var tracked=new WeakSet();
+  function isApiUrl(url){return typeof url==='string' && /script\.(?:google\.com|googleusercontent\.com)\/macros\//i.test(url);}
+  function finishOne(){active=Math.max(0,active-1);scheduleHide();}
+  function scheduleHide(){
+    if(finished||!windowLoaded||active!==0)return;
+    clearTimeout(quietTimer);
+    quietTimer=setTimeout(function(){
+      if(finished||!windowLoaded||active!==0)return;
+      finished=true;overlay.classList.add('linlett-loading-hidden');
+      setTimeout(function(){if(overlay.parentNode)overlay.parentNode.removeChild(overlay);},260);
+    },350);
+  }
+  var originalAppend=Node.prototype.appendChild;
+  Node.prototype.appendChild=function(node){
+    try{
+      if(node&&node.tagName==='SCRIPT'&&isApiUrl(node.src)&&!tracked.has(node)){
+        tracked.add(node);active++;clearTimeout(quietTimer);
+        var settled=false;
+        var settle=function(){if(settled)return;settled=true;clearTimeout(watchdog);node.removeEventListener('load',settle);node.removeEventListener('error',settle);finishOne();};
+        node.addEventListener('load',settle,{once:true});node.addEventListener('error',settle,{once:true});
+        /* Safety net for a stalled external script; page code retains its own timeout/error handling. */
+        var watchdog=setTimeout(settle,52000);
+      }
+    }catch(e){}
+    return originalAppend.call(this,node);
+  };
+  if(typeof window.fetch==='function'){
+    var originalFetch=window.fetch.bind(window);
+    window.fetch=function(input,init){
+      var url=typeof input==='string'?input:(input&&input.url)||'';
+      if(finished||!isApiUrl(url))return originalFetch(input,init);
+      active++;clearTimeout(quietTimer);
+      return originalFetch(input,init).finally(finishOne);
+    };
+  }
+  window.addEventListener('load',function(){windowLoaded=true;scheduleHide();},{once:true});
+  if(windowLoaded)scheduleHide();
+})();
+</script>
+
 <main class="wrap">
 <a class="homepage-back" href="../index.html">← Back to Homepage</a>
 
