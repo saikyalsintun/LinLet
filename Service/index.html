@@ -67,6 +67,52 @@
       .provider img{height:36px;max-width:96px}
       .provider.active{padding:6px 5px}
     }
+
+/* Desktop/laptop layout optimization: CSS only; mobile layout remains unchanged. */
+@media (min-width: 900px){
+  .wrap{max-width:1180px;padding:18px 24px 28px}
+  .hero{padding:16px 20px;border-radius:16px;margin-bottom:12px}
+  .hero .logo{width:40px;height:40px}
+  h1{font-size:20px}
+  .dashboard-link{margin-top:10px;padding:9px 13px}
+  .wrap > section.card:first-of-type{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    column-gap:16px;row-gap:9px;align-items:start;
+    padding:16px;margin-bottom:12px
+  }
+  .wrap > section.card:first-of-type > .field{margin-bottom:3px;min-width:0}
+  .wrap > section.card:first-of-type > .field:nth-of-type(1){grid-column:1}
+  .wrap > section.card:first-of-type > .field:nth-of-type(2){grid-column:2}
+  .wrap > section.card:first-of-type > .field:nth-of-type(3){grid-column:1}
+  .wrap > section.card:first-of-type > .switch-field{margin-bottom:0;min-height:58px;padding:10px 12px}
+  .wrap > section.card:first-of-type > .switch-field:nth-of-type(4){grid-column:2}
+  .wrap > section.card:first-of-type > .meter-note{grid-column:1/-1;margin:0 0 2px}
+  .wrap > section.card:first-of-type > .switch-field:nth-of-type(6){grid-column:1}
+  .wrap > section.card:first-of-type > #transactionTypeField{grid-column:1;margin:0}
+  .wrap > section.card:first-of-type > #paymentServiceField{grid-column:2;grid-row: auto; margin:0}
+  .wrap > section.card:first-of-type > #paymentServiceField .providers{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .wrap > section.card:first-of-type > #paymentServiceField .provider{min-height:82px;padding:8px}
+  .wrap > section.card:first-of-type > #paymentServiceField .provider img{height:38px;max-width:100px}
+  .wrap > section.card:first-of-type > .result{grid-column:1/-1;padding:14px 18px}
+  .fee{font-size:30px;margin:2px 0 8px}
+  .summaryline{padding:6px 0 0;margin-top:6px}
+  .wrap > section.card:first-of-type > #saveBtn{grid-column:1/-1;max-width:360px;justify-self:start;margin-top:2px;padding:12px 18px}
+  .wrap > section.card:first-of-type > #message{grid-column:1/-1;margin-top:0}
+  .wrap > section.card:nth-of-type(2){padding:15px 18px;margin-bottom:10px}
+  .wrap > section.card:nth-of-type(2) .tx{padding:8px 0}
+  input{padding:11px 12px;font-size:15px}
+  label{margin-bottom:5px}
+  .field{margin-bottom:10px}
+}
+@media (min-width:900px) and (max-height:850px){
+  .wrap{padding-top:10px;padding-bottom:16px}
+  .hero{padding:12px 18px}
+  .wrap > section.card:first-of-type{padding:12px 15px;row-gap:7px}
+  .wrap > section.card:first-of-type > .switch-field{min-height:50px;padding:8px 10px}
+  .wrap > section.card:first-of-type > .result{padding:10px 15px}
+  .summaryline{padding-top:4px;margin-top:4px}
+}
+
   </style>
 </head>
 <body>
