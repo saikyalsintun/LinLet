@@ -113,10 +113,100 @@
   .summaryline{padding-top:4px;margin-top:4px}
 }
 
-  </style>
+  
+/* Shared Light/Dark theme controls */
+.theme-toggle{
+  position:fixed;top:10px;right:10px;z-index:9999;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:38px;padding:8px 11px;border:1px solid var(--line,#ddd);
+  border-radius:999px;background:var(--card,#fff);color:var(--ink,#222);
+  box-shadow:0 3px 12px #00000018;font:700 12px/1.2 system-ui,sans-serif;cursor:pointer
+}
+.homepage-back{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  width:max-content;max-width:100%;margin:0 0 12px;padding:9px 13px;
+  border:1px solid var(--line,#ddd);border-radius:11px;
+  background:var(--card,#fff);color:var(--ink,#222);
+  text-decoration:none;font:750 12px/1.2 system-ui,sans-serif
+}
+.homepage-back:hover,.theme-toggle:hover{filter:brightness(.97)}
+body[data-theme="dark"]{
+  --bg:#151714;--page:#151714;--card:#22251f;--ink:#f0f1eb;--text:#f0f1eb;
+  --muted:#b3b8ad;--line:#3a3f36;--border:#3a3f36;--white:#22251f;
+  --gold-light:#393123;--gold-soft:#393123;--shadow:0 5px 18px #0005;
+  background:var(--bg);color:var(--ink);color-scheme:dark
+}
+body[data-theme="dark"] header:not(.hero),body[data-theme="dark"] footer{
+  background:#1d201b;color:var(--muted);border-color:var(--line)
+}
+body[data-theme="dark"] .card,
+body[data-theme="dark"] .shell,
+body[data-theme="dark"] .record,
+body[data-theme="dark"] .link-button:not(.priority-one):not(.priority-two),
+body[data-theme="dark"] .square-button,
+body[data-theme="dark"] .balance:not([class*="balance-kbz"]):not([class*="balance-wave"]):not([class*="balance-aya"]):not([class*="balance-cb"]):not([class*="balance-uab"]):not([class*="balance-mtb"]):not([class*="balance-truemoney"]){
+  background:var(--card);color:var(--ink);border-color:var(--line)
+}
+body[data-theme="dark"] input,body[data-theme="dark"] select,
+body[data-theme="dark"] textarea,body[data-theme="dark"] .phone-suggestions,
+body[data-theme="dark"] .phone-suggestion,body[data-theme="dark"] .type,
+body[data-theme="dark"] .provider,body[data-theme="dark"] .bank-choice,
+body[data-theme="dark"] .mode-option,body[data-theme="dark"] .chip,
+body[data-theme="dark"] .btn.secondary,body[data-theme="dark"] .secondary,
+body[data-theme="dark"] .back,body[data-theme="dark"] .refresh{
+  background:#292d26;color:var(--ink);border-color:var(--line)
+}
+body[data-theme="dark"] .phone-suggestion:hover,
+body[data-theme="dark"] .type.active,body[data-theme="dark"] .provider.active,
+body[data-theme="dark"] .bank-choice[aria-pressed="true"],
+body[data-theme="dark"] .mode-option.active{
+  background:#403722;color:#ffe4a6;border-color:var(--gold)
+}
+body[data-theme="dark"] .switch-field,body[data-theme="dark"] .balance,
+body[data-theme="dark"] .summary,body[data-theme="dark"] .summary-item,
+body[data-theme="dark"] .helper,body[data-theme="dark"] .pill,
+body[data-theme="dark"] .filters,body[data-theme="dark"] .income-summary{
+  background:#292d26;color:var(--ink);border-color:var(--line)
+}
+body[data-theme="dark"] .priority-two{background:#393123;border-color:#705b30}
+body[data-theme="dark"] .priority-two .link-copy strong{color:#f0cf83}
+body[data-theme="dark"] .priority-two .link-icon,
+body[data-theme="dark"] .square-icon{background:#393123;border-color:#5e4b2a}
+body[data-theme="dark"] .value,body[data-theme="dark"] .label,
+body[data-theme="dark"] .name,body[data-theme="dark"] .field label{color:var(--ink)}
+body[data-theme="dark"] .meter-note{background:#393123;color:#f0dcae;border-color:#705b30}
+body[data-theme="dark"] .result,body[data-theme="dark"] .limit-card,
+body[data-theme="dark"] .hero,body[data-theme="dark"] .preview{
+  background:#20241e;color:#f0f1eb;border-color:#3a3f36
+}
+body[data-theme="dark"] .result small,body[data-theme="dark"] .summaryline span,
+body[data-theme="dark"] .subtitle,body[data-theme="dark"] .help,
+body[data-theme="dark"] .sub{color:#c1c7bc}
+body[data-theme="dark"] .priority-one{background:#8f6a25;border-color:#b78627}
+body[data-theme="dark"] .priority-one .link-copy strong{color:#fff}
+body[data-theme="dark"] .priority-one .link-copy span{color:#fff5df}
+body[data-theme="dark"] .income-total,body[data-theme="dark"] .amount,
+body[data-theme="dark"] .summary strong{color:#e6c16f}
+body[data-theme="dark"] .status-icon{background:#393123;color:#f0cf83}
+body[data-theme="dark"] .notice.info{background:#29333b;color:#c7e3f8}
+body[data-theme="dark"] .notice.ok{background:#20372a;color:#b4e4c5}
+body[data-theme="dark"] .notice.err{background:#3b2525;color:#ffb9b3}
+body[data-theme="dark"] .mode-switch{background:#292d26}
+body[data-theme="dark"] .mode-option.active[data-mode="return"]{background:#40443d;color:#fff}
+body[data-theme="dark"] .brand-mark{background:#393123;color:#f0cf83;border-color:#5e4b2a}
+body[data-theme="dark"] .theme-toggle,body[data-theme="dark"] .homepage-back{
+  background:#292d26;color:#f0f1eb;border-color:#4b5147
+}
+@media(max-width:520px){
+ .theme-toggle{top:8px;right:8px;min-height:34px;padding:7px 9px;font-size:11px}
+}
+
+</style>
 </head>
 <body>
 <main class="wrap">
+<a class="homepage-back" href="../index.html">← Back to Homepage</a>
+
 
   <section class="card">
     <div class="field">
@@ -762,6 +852,57 @@
       $('saveBtn').textContent = 'Calculate & Save Transaction';
     }
   }
+})();
+</script>
+
+<script>
+(function(){
+  const key='linlett-theme';
+  let saved='light';
+  try{saved=localStorage.getItem(key)||'light'}catch(e){}
+  function apply(theme){
+    document.body.setAttribute('data-theme',theme);
+    const btn=document.getElementById('themeToggle');
+    if(btn){btn.textContent=theme==='dark'?'☀ Light':'☾ Dark';btn.setAttribute('aria-pressed',String(theme==='dark'))}
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.setAttribute('content',theme==='dark'?'#151714':'#ffffff');
+  }
+  const btn=document.createElement('button');
+  btn.type='button';btn.id='themeToggle';btn.className='theme-toggle';
+  btn.setAttribute('aria-label','Toggle light and dark theme');
+  btn.addEventListener('click',function(){
+    const next=document.body.getAttribute('data-theme')==='dark'?'light':'dark';
+    apply(next);try{localStorage.setItem(key,next)}catch(e){}
+  });
+  document.body.appendChild(btn);
+  apply(saved);
+})();
+</script>
+
+<script>
+/* Enter advances through visible form controls like Tab; buttons retain normal Enter activation. */
+(function(){
+  function eligible(el){
+    if(!el || el.disabled || el.tabIndex < 0 || el.type === 'hidden') return false;
+    if(el.closest('[hidden]') || el.getAttribute('aria-hidden') === 'true') return false;
+    const style=window.getComputedStyle(el);
+    return style.display!=='none' && style.visibility!=='hidden' && el.getClientRects().length>0;
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter' || e.defaultPrevented || e.isComposing || e.altKey || e.ctrlKey || e.metaKey) return;
+    const current=e.target;
+    if(!(current instanceof HTMLElement)) return;
+    if(current.tagName==='TEXTAREA' || current.isContentEditable) return;
+    if(current.tagName==='BUTTON' || (current.tagName==='INPUT' && ['button','submit','reset','checkbox','radio','file'].includes((current.type||'').toLowerCase()))) return;
+    if(!['INPUT','SELECT'].includes(current.tagName)) return;
+    const controls=Array.from(document.querySelectorAll('input,select,textarea,button,a[href],[tabindex]')).filter(eligible);
+    const idx=controls.indexOf(current);
+    if(idx<0) return;
+    e.preventDefault();
+    const next=controls.slice(idx+1).find(el=>el!==current);
+    if(next){next.focus({preventScroll:false});}
+    else {const first=controls.find(el=>el!==current);if(first)first.focus({preventScroll:false});}
+  },true);
 })();
 </script>
 </body>
