@@ -19,7 +19,7 @@
     .dashboard-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:17px;padding:11px 15px;border:1px solid #d0a557;border-radius:12px;color:#252724;background:#d0a557;text-decoration:none;font-size:13px;font-weight:800;transition:background .15s ease}.dashboard-link:hover{background:#e0bb76}
     h1{font-size:21px;margin:0 0 4px}.subtitle{font-size:13px;color:#d6d8d2;margin:0}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #1c211b08}
     label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}.field{margin-bottom:16px}input{display:block;width:100%;padding:14px;border:1px solid #d5d9d1;border-radius:12px;font:inherit;font-size:17px;background:white;color:var(--ink);outline:none}
-    input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d0a5572a}.optional{font-weight:400;color:var(--muted)}.types{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d0a5572a}.phone-suggestions{display:none;position:relative;margin-top:6px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:0 8px 24px #1c211b12;max-height:220px;overflow:auto;z-index:20}.phone-suggestions.open{display:block}.phone-suggestion{display:flex;width:100%;flex-direction:column;gap:3px;padding:11px 12px;border:0;border-bottom:1px solid var(--line);background:#fff;text-align:left;cursor:pointer;color:var(--ink);font:inherit}.phone-suggestion:last-child{border-bottom:0}.phone-suggestion:hover,.phone-suggestion:focus{background:#fff9eb;outline:none}.phone-suggestion strong{font-size:14px}.phone-suggestion small{font-size:12px;color:var(--muted)}.phone-suggestions .suggestion-empty{padding:12px;color:var(--muted);font-size:12px}.optional{font-weight:400;color:var(--muted)}.types{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .type{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 12px;text-align:left;cursor:pointer;color:var(--ink)}.type strong{display:block;font-size:16px;margin-bottom:4px}.type span{color:var(--muted);font-size:12px}.type.active{border:2px solid var(--gold);padding:13px 11px;background:#fff9eb}
     .providers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
     .provider{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px 10px;text-align:center;color:var(--ink);font:inherit;font-size:13px;font-weight:750;cursor:pointer;min-height:124px;transition:border-color .15s,background .15s}
@@ -79,7 +79,9 @@
     </div>
     <div class="field">
       <label for="phone">Customer phone number <span class="optional">(optional)</span></label>
-      <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Enter phone number">
+      <input id="phone" type="tel" inputmode="tel" autocomplete="off" placeholder="(+959) 000-000-000" value="(+959) " aria-label="Customer phone number, Myanmar country code plus 959" aria-controls="phoneSuggestions" aria-autocomplete="list">
+      <div id="phoneSuggestions" class="phone-suggestions" role="listbox" aria-label="Previously used customer phone numbers"></div>
+      <div class="muted" style="font-size:11px;margin-top:6px">Select a previously used number, or type a new one.</div>
     </div>
     <div class="field">
       <label for="amount">Transfer amount</label>
@@ -161,6 +163,7 @@
   let cashBalanceLoading = true;
   let pendingRequestId = '';
   let pendingRequestSignature = '';
+  let savedPhoneSuggestions = [];
   const $ = id => document.getElementById(id);
   const money = n => Number(n).toLocaleString('en-US', {maximumFractionDigits: 2});
   const moneyMMK = n => money(n) + ' MMK';
@@ -450,6 +453,145 @@
     setMessage(topUpActive ? 'Top Up activated. Only AYA, Truemoney, and MTB are available because their fee rates are known.' : 'Top Up service deactivated.', 'info');
   });
 
+
+  // Myanmar phone format. Supports 9–11 digits after the fixed (+959) prefix.
+  // Example: 09261427783 -> (+959) 261-427-783; longer numbers are preserved.
+  function formatMyanmarPhone(value) {
+    const raw = String(value || '').trim();
+    let digits = raw.replace(/\D/g, '');
+    if (!digits || raw.replace(/\s/g, '') === '(+959)' || raw.replace(/\s/g, '') === '+959') return '(+959) ';
+
+    // Strip a country code only when it was actually entered as part of the number.
+    if (digits.startsWith('00959')) digits = digits.slice(5);
+    else if (digits.startsWith('959') && (raw.startsWith('+') || raw.startsWith('(') || digits.length >= 12)) digits = digits.slice(3);
+    else if (digits.startsWith('95') && (raw.startsWith('+') || digits.length >= 12)) digits = digits.slice(2);
+    if (digits.startsWith('09')) digits = digits.slice(2);
+    digits = digits.slice(0, 11);
+    if (!digits) return '(+959) ';
+
+    const parts = [];
+    for (let i = 0; i < digits.length; i += 3) parts.push(digits.slice(i, Math.min(i + 3, digits.length)));
+    return '(+959) ' + parts.join('-');
+  }
+
+  $('phone').addEventListener('input', function() {
+    const before = this.value;
+    const cursor = this.selectionStart == null ? before.length : this.selectionStart;
+    // Count only number digits typed after the fixed (+959) prefix.
+    const beforeCursor = before.slice(0, cursor);
+    let digitsBefore = beforeCursor.replace(/\D/g, '').length;
+    if (/^\s*\(\+?959\)/.test(beforeCursor)) digitsBefore = Math.max(0, digitsBefore - 3);
+    const formatted = formatMyanmarPhone(before);
+    this.value = formatted;
+    let pos = 7, seen = 0; // index immediately after "(+959) "
+    while (pos < formatted.length && seen < digitsBefore) {
+      if (/\d/.test(formatted.charAt(pos))) seen++;
+      pos++;
+    }
+    try { this.setSelectionRange(Math.max(7, pos), Math.max(7, pos)); } catch (_) {}
+  });
+  $('phone').addEventListener('focus', function() {
+    if (!this.value.trim()) this.value = '(+959) ';
+    if (this.value.length <= 7) {
+      try { this.setSelectionRange(7, 7); } catch (_) {}
+    }
+  });
+  $('phone').addEventListener('blur', function() {
+    this.value = formatMyanmarPhone(this.value);
+  });
+  // Keep the country prefix visible even before the user starts typing.
+  if (!$('phone').value) $('phone').value = '(+959) ';
+
+  function phoneDigits(value) { return String(value || '').replace(/\D/g, '').replace(/^959/, '').replace(/^09/, ''); }
+
+  function renderPhoneSuggestions() {
+    const panel = $('phoneSuggestions');
+    if (!panel) return;
+    const query = phoneDigits($('phone').value);
+    const matches = savedPhoneSuggestions.filter(item => {
+      if (!query) return true;
+      const nameQuery = String($('customerName').value || '').trim().toLowerCase();
+      return phoneDigits(item.phone).startsWith(query) || (nameQuery && String(item.customerName || '').toLowerCase().includes(nameQuery));
+    }).slice(0, 12);
+    panel.replaceChildren();
+    if (!matches.length) {
+      if (savedPhoneSuggestions.length) {
+        const empty = document.createElement('div'); empty.className = 'suggestion-empty'; empty.textContent = 'No matching saved phone numbers.'; panel.appendChild(empty);
+      }
+      return;
+    }
+    matches.forEach(item => {
+      const button = document.createElement('button');
+      button.type = 'button'; button.className = 'phone-suggestion'; button.setAttribute('role', 'option');
+      const number = document.createElement('strong'); number.textContent = item.phone;
+      button.appendChild(number);
+      if (item.customerName) { const name = document.createElement('small'); name.textContent = item.customerName; button.appendChild(name); }
+      button.addEventListener('mousedown', event => event.preventDefault());
+      button.addEventListener('click', () => {
+        $('phone').value = item.phone;
+        if (item.customerName && !$('customerName').value.trim()) $('customerName').value = formatCustomerName(item.customerName);
+        panel.classList.remove('open');
+        $('phone').focus();
+        try { $('phone').setSelectionRange($('phone').value.length, $('phone').value.length); } catch (_) {}
+      });
+      panel.appendChild(button);
+    });
+  }
+
+  function loadSavedPhoneSuggestions() {
+    callServiceApi({action: 'phoneSuggestions'}, 20000).then(data => {
+      savedPhoneSuggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
+      renderPhoneSuggestions();
+    }).catch(() => { /* Suggestions are optional; manual entry still works. */ });
+  }
+
+  $('phone').addEventListener('focus', function() {
+    renderPhoneSuggestions();
+    if (savedPhoneSuggestions.length) $('phoneSuggestions').classList.add('open');
+  });
+  $('phone').addEventListener('input', function() {
+    renderPhoneSuggestions();
+    $('phoneSuggestions').classList.toggle('open', savedPhoneSuggestions.length > 0);
+  });
+  function formatCustomerName(value) {
+    // Normalize spacing and capitalize each whitespace-separated name part.
+    // This works for typed text, pasted text, saved suggestions, and submit.
+    return String(value == null ? '' : value)
+      .trim()
+      .replace(/\s+/g, ' ')
+      .split(' ')
+      .filter(Boolean)
+      .map(word => word.charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase())
+      .join(' ');
+  }
+  function formatCustomerNameWhileTyping(value) {
+    // Preserve spaces (including a trailing space) while the user is typing.
+    // Only change letter casing; final trimming/space normalization happens on submit/blur.
+    return String(value == null ? '' : value).replace(/\S+/g, word =>
+      word.charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase()
+    );
+  }
+  function applyCustomerNameFormat() {
+    const field = $('customerName');
+    const start = field.selectionStart;
+    const end = field.selectionEnd;
+    const oldValue = field.value;
+    const formatted = formatCustomerNameWhileTyping(oldValue);
+    if (oldValue !== formatted) {
+      field.value = formatted;
+      // Casing does not change character count, so preserve the exact caret/selection.
+      try { field.setSelectionRange(start, end); } catch (_) {}
+    }
+    if ($('phoneSuggestions').classList.contains('open')) renderPhoneSuggestions();
+  }
+  $('customerName').addEventListener('input', applyCustomerNameFormat);
+  $('customerName').addEventListener('change', applyCustomerNameFormat);
+  $('customerName').addEventListener('blur', applyCustomerNameFormat);
+  document.addEventListener('click', event => {
+    if (!event.target.closest('#phone') && !event.target.closest('#phoneSuggestions')) $('phoneSuggestions').classList.remove('open');
+  });
+  loadSavedPhoneSuggestions();
+
   $('amount').addEventListener('input', function() {
     const oldValue = this.value;
     const oldCursor = this.selectionStart == null ? oldValue.length : this.selectionStart;
@@ -497,8 +639,10 @@
 
   async function saveTransaction() {
     const amount = parseAmount($('amount').value);
-    const phone = $('phone').value.trim();
-    const customerName = $('customerName').value.trim();
+    const phone = formatMyanmarPhone($('phone').value.trim());
+    $('phone').value = phone;
+    const customerName = formatCustomerName($('customerName').value.trim());
+    $('customerName').value = customerName;
     const savedStatus = meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : transactionType);
     const savedProvider = selectedProvider;
     const cost = calculateFee(amount, topUpActive ? 'Top Up' : transactionType, meterBillActive, topUpActive, savedProvider);
@@ -558,8 +702,10 @@
       pendingRequestId = '';
       pendingRequestSignature = '';
       $('amount').value = '';
-      $('phone').value = '';
+      $('phone').value = '(+959) ';
       $('customerName').value = '';
+      $('phoneSuggestions').classList.remove('open');
+      loadSavedPhoneSuggestions();
       updatePreview();
       setMessage('Saved successfully. Fee: ' + money(savedCost) + '.', 'ok');
     } catch (err) {
