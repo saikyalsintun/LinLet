@@ -84,6 +84,7 @@
   .wrap > section.card:first-of-type > .field:nth-of-type(1){grid-column:1}
   .wrap > section.card:first-of-type > .field:nth-of-type(2){grid-column:2}
   .wrap > section.card:first-of-type > .field:nth-of-type(3){grid-column:1}
+  .wrap > section.card:first-of-type > #changeServiceFeeField{grid-column:1/-1}
   .wrap > section.card:first-of-type > .switch-field{margin-bottom:0;min-height:58px;padding:10px 12px}
   .wrap > section.card:first-of-type > .switch-field:nth-of-type(4){grid-column:2}
   .wrap > section.card:first-of-type > .meter-note{grid-column:1/-1;margin:0 0 2px}
@@ -284,6 +285,11 @@ body[data-theme="dark"] #linlettLoadingOverlay .linlett-loading-text{color:#c8c8
       <label for="amount">Transfer amount</label>
       <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="Enter amount" aria-describedby="amountHint">
       <div id="amountHint" class="muted" style="font-size:11px">Commas are added automatically, e.g. 100,000.</div>
+    </div>
+    <div class="field" id="changeServiceFeeField">
+      <label for="changeServiceFee">Change service fee <span class="optional">(optional)</span></label>
+      <input id="changeServiceFee" type="text" inputmode="numeric" autocomplete="off" placeholder="Leave blank to use the calculated fee" aria-describedby="changeServiceFeeHint">
+      <div id="changeServiceFeeHint" class="muted" style="font-size:11px">Leave blank to keep the system fee. Enter a different amount only when you decide to charge a different fee.</div>
     </div>
     <div class="switch-field">
       <div class="switch-copy">
@@ -593,8 +599,16 @@ body[data-theme="dark"] #linlettLoadingOverlay .linlett-loading-text{color:#c8c8
 
   function updatePreview() {
     const amount = parseAmount($('amount').value);
-    const fee = calculateFee(amount, topUpActive ? 'Top Up' : transactionType, meterBillActive, topUpActive, selectedProvider);
+    const calculatedFee = calculateFee(amount, topUpActive ? 'Top Up' : transactionType, meterBillActive, topUpActive, selectedProvider);
+    const overrideText = $('changeServiceFee').value.trim().replace(/,/g, '');
+    const overrideFee = overrideText === '' ? null : Number(overrideText);
+    const fee = overrideFee !== null && Number.isFinite(overrideFee) && overrideFee >= 0 ? overrideFee : calculatedFee;
     $('fee').textContent = fee === null ? '—' : money(fee);
+    $('changeServiceFeeHint').textContent = overrideText === ''
+      ? 'System fee: ' + (calculatedFee === null ? '—' : money(calculatedFee)) + '. Leave blank to use it.'
+      : (Number.isFinite(overrideFee) && overrideFee >= 0
+          ? 'Custom fee: ' + money(overrideFee) + ' (system calculation remains unchanged).'
+          : 'Enter a valid fee of 0 or more, or leave blank to use the system fee.');
     $('amountDisplay').textContent = Number.isFinite(amount) && amount > 0 ? money(amount) : '—';
     $('typeDisplay').textContent = meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : transactionType);
     $('providerDisplay').textContent = selectedProvider || 'Not selected';
@@ -804,6 +818,7 @@ body[data-theme="dark"] #linlettLoadingOverlay .linlett-loading-text{color:#c8c8
     updatePreview();
   });
 
+  $('changeServiceFee').addEventListener('input', updatePreview);
   $('saveBtn').addEventListener('click', saveTransaction);
   updatePreview();
   refreshCashBalance();
@@ -842,8 +857,15 @@ body[data-theme="dark"] #linlettLoadingOverlay .linlett-loading-text{color:#c8c8
     $('customerName').value = customerName;
     const savedStatus = meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : transactionType);
     const savedProvider = selectedProvider;
-    const cost = calculateFee(amount, topUpActive ? 'Top Up' : transactionType, meterBillActive, topUpActive, savedProvider);
-    const requestSignature = JSON.stringify([amount, phone, customerName, savedStatus, savedProvider, meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : 'Money Transfer')]);
+    const calculatedCost = calculateFee(amount, topUpActive ? 'Top Up' : transactionType, meterBillActive, topUpActive, savedProvider);
+    const overrideText = $('changeServiceFee').value.trim().replace(/,/g, '');
+    const overrideFee = overrideText === '' ? null : Number(overrideText);
+    if (overrideText !== '' && (!Number.isFinite(overrideFee) || overrideFee < 0)) {
+      setMessage('Change service fee must be a valid number of 0 or more, or leave it blank.', 'err');
+      return;
+    }
+    const cost = overrideFee === null ? calculatedCost : overrideFee;
+    const requestSignature = JSON.stringify([amount, phone, customerName, savedStatus, savedProvider, meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : 'Money Transfer'), overrideText]);
     if (!Number.isFinite(amount) || amount <= 0) {
       setMessage('Please enter an amount greater than zero.', 'err');
       return;
@@ -886,7 +908,8 @@ body[data-theme="dark"] #linlettLoadingOverlay .linlett-loading-text{color:#c8c8
         amount: String(amount),
         status: savedStatus,
         provider: savedProvider,
-        serviceType: meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : 'Money Transfer')
+        serviceType: meterBillActive ? 'Meter Bill' : (topUpActive ? 'Top Up' : 'Money Transfer'),
+        overrideFee: overrideText
       });
       const savedCost = Number(result.cost ?? cost);
       if (result.cashBalance !== null && result.cashBalance !== undefined && Number.isFinite(Number(result.cashBalance))) {
@@ -901,10 +924,11 @@ body[data-theme="dark"] #linlettLoadingOverlay .linlett-loading-text{color:#c8c8
       $('amount').value = '';
       $('phone').value = '(+959) ';
       $('customerName').value = '';
+      $('changeServiceFee').value = '';
       $('phoneSuggestions').classList.remove('open');
       loadSavedPhoneSuggestions();
       updatePreview();
-      setMessage('Saved successfully. Fee: ' + money(savedCost) + '.', 'ok');
+      setMessage('Saved successfully. Fee recorded: ' + money(savedCost) + (overrideFee === null ? ' (system fee).' : ' (custom fee; system calculation unchanged).'), 'ok');
     } catch (err) {
       setMessage('Could not confirm the save. ' + (err && err.message ? err.message : 'Check your Apps Script API deployment and CORS settings.') +
         ' If this is a browser CORS error, the Apps Script endpoint needs a compatible API setup. No success was reported.', 'err');
