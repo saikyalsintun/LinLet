@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#C99A35"><link rel="icon" type="image/png" href="../img/LinLett.png"><title>Service Desk</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#17241e;--muted:#718078;--line:#e0e8e2;--green:#087f62;--green2:#0da47c;--dark:#12251e;--gold:#d9b66e;--red:#c64d4d;--shadow:0 12px 34px #1834260b}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}.shell{max-width:1180px;margin:auto;padding:12px 16px 22px}.top{position:relative;display:flex;justify-content:center;align-items:center;gap:10px;background:var(--dark);color:white;border-radius:16px;padding:10px 16px;margin-bottom:10px;box-shadow:var(--shadow)}.brand{display:flex;align-items:center;gap:13px}.logo{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#f0d69b,#bd9146);color:#15241c;font-size:23px;font-weight:900}.top h1{font-size:17px;margin:0;letter-spacing:-.3px;text-align:center}.top p{display:none}.live{position:absolute;right:12px;font-size:9px;color:#d9e7de;white-space:nowrap}.live:before{content:"";display:inline-block;width:7px;height:7px;background:#43d7a5;border-radius:50%;margin-right:7px}.balance-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.metric{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 13px;min-width:0}.metric label{display:block;font-size:11px;color:var(--muted);font-weight:750}.metric strong{display:block;font-size:clamp(16px,2vw,22px);letter-spacing:-.5px;margin-top:4px;overflow-wrap:anywhere}.metric:first-child strong{color:var(--green)}.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.85fr);gap:12px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:15px;box-shadow:var(--shadow);min-width:0}.cardhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.eyebrow{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--green);font-weight:900}.card h2{font-size:18px;letter-spacing:-.35px;margin:3px 0 0}.sub{color:var(--muted);font-size:12px;margin:5px 0 0}.toggle{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:10px;background:#eef3ef;margin-bottom:12px}.toggle button{border:0;background:transparent;border-radius:9px;padding:11px 6px;color:#5d6c63;font-size:12px;font-weight:800}.toggle button.active{background:var(--dark);color:#fff;box-shadow:0 4px 12px #10231a1c}.direction{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}.direction button{border:1px solid var(--line);border-radius:12px;background:#fff;padding:13px 12px;text-align:left;font-weight:850;color:var(--muted)}.direction button.active{border-color:var(--green);background:#effaf5;color:var(--green)}.direction small{display:block;font-weight:500;font-size:11px;margin-top:3px;color:var(--muted)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field.full{grid-column:1/-1}.field label{font-size:10px;letter-spacing:.7px;font-weight:850;color:var(--muted)}.field input,.field select{width:100%;height:40px;border:1px solid #dbe4dd;background:#fbfcfb;border-radius:11px;padding:0 12px;outline:none;color:var(--ink);min-width:0}.field input:focus,.field select:focus{border-color:var(--green);box-shadow:0 0 0 3px #087f6216}.amountwrap{position:relative}.amountwrap input{font-size:16px;font-weight:400;padding-right:62px}.amountwrap span{position:absolute;right:13px;top:14px;color:var(--muted);font-size:11px;font-weight:800}.fee-box{margin-top:11px;padding:11px;border:1px solid #e7dcc1;background:#fffbf0;border-radius:14px}.fee-row{display:flex;justify-content:space-between;gap:12px;align-items:center}.fee-row span{font-size:12px;color:#766847}.fee-row strong{font-size:20px;color:#7b5c1c}.fee-total{border-top:1px solid #eee2c8;margin-top:10px;padding-top:10px}.fee-total span{font-weight:800;color:var(--ink)}.fee-total strong{font-size:14px;color:var(--ink)}.hint{font-size:11px;color:var(--muted);margin:10px 0 0}.primary{width:100%;border:0;border-radius:10px;background:var(--green);color:#fff;font-weight:850;padding:11px;margin-top:11px;box-shadow:0 7px 18px #087f6224}.primary:hover{background:#066d54}.message{display:none;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-size:12px}.message.show{display:block}.message.ok{background:#e9f8f0;color:#146b4c}.message.err{background:#fff0ef;color:#9e3430}.sidecol{display:grid;gap:10px}.bank-list{display:grid;gap:8px}.bank{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 13px}.bankname{font-size:12px;font-weight:800}.bankkey{font-size:10px;color:var(--muted);margin-top:2px}.bank strong{font-size:13px;font-variant-numeric:tabular-nums;text-align:right}.sectionline{border:0;border-top:1px solid var(--line);margin:18px 0}.loanlimit{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);margin:12px 0 7px}.progress{height:7px;background:#edf1ee;border-radius:99px;overflow:hidden}.progress span{display:block;height:100%;width:0;background:var(--gold);border-radius:99px}.mini{font-size:11px;color:var(--muted);margin-top:10px}.hidden{display:none!important}.foot{font-size:10px;color:#87948c;text-align:center;margin-top:18px}.pill{display:inline-flex;align-items:center;border-radius:99px;padding:5px 8px;background:#eaf7f1;color:var(--green);font-size:10px;font-weight:850;white-space:nowrap}
+.fold{padding:0;overflow:hidden}.foldsummary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;cursor:pointer;min-width:0}.foldsummary::-webkit-details-marker{display:none}.foldsummary h2{font-size:14px;margin:3px 0 0}.foldsummary .sub{margin-top:4px}.summaryright{display:flex;align-items:center;gap:10px;flex-shrink:0}.chevron{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#eff4f0;color:var(--green);font-size:19px;transition:transform .18s}.fold[open] .chevron{transform:rotate(180deg)}.foldbody{padding:0 14px 14px}.refreshbtn{border:1px solid var(--line);background:white;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:800;color:var(--ink)}.mutedlabel{color:var(--muted);font-size:12px}.loanfields{margin-top:14px}@media(max-width:560px){.foldsummary{padding:16px}.foldbody{padding:0 16px 16px}.summaryright{gap:6px}.refreshbtn{padding:7px;font-size:10px}.foldsummary h2{font-size:15px}}@media(max-width:850px){.layout{grid-template-columns:1fr}.sidecol{grid-template-columns:1fr 1fr}.balance-strip{gap:9px}.metric{padding:14px}}@media(max-width:560px){.shell{padding:11px 10px 26px}.top{padding:16px;border-radius:17px}.logo{width:39px;height:39px}.top h1{font-size:17px}.top p{font-size:10px}.live{font-size:9px}.balance-strip{grid-template-columns:1fr 1fr}.metric:last-child{grid-column:1/-1}.metric strong{font-size:20px}.layout{gap:12px}.card{padding:16px;border-radius:16px}.card h2{font-size:16px}.toggle button{font-size:11px;padding:10px 3px}.fields{grid-template-columns:1fr;gap:12px}.field.full{grid-column:auto}.sidecol{grid-template-columns:1fr}.direction button{padding:11px}.amountwrap input{font-size:19px}}
+
+.bank-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.bank-choice{border:1px solid transparent;border-radius:9px;min-height:34px;padding:7px 5px;font-size:11px;font-weight:900;line-height:1.1;box-shadow:0 1px 2px #10231a0d;transition:transform .12s,border-color .12s;white-space:nowrap}
+.bank-choice:active{transform:scale(.98)}
+.bank-choice:disabled{background:#e2e3e2!important;color:#858985!important;border-color:#d0d2d0!important;opacity:1!important;box-shadow:none!important;filter:none!important;cursor:not-allowed;transform:none;outline:none!important}
+body.dark .bank-choice:disabled{background:#303330!important;color:#777d78!important;border-color:#414641!important;opacity:1!important;filter:none!important}
+.bank-choice.selected{outline:2px solid var(--green);outline-offset:1px}
+.bank-choice[data-bank="KBZ"],.bank-choice[data-aux-bank="KBZ"],.bank-choice[data-self-bank="KBZ"],.bank-choice[data-transfer-bank="KBZ"]{background:#d9272e;color:#fff}
+.bank-choice[data-bank="Aya"],.bank-choice[data-aux-bank="Aya"],.bank-choice[data-self-bank="Aya"],.bank-choice[data-transfer-bank="Aya"]{background:#c9232c;color:#fff}
+.bank-choice[data-bank="Wave"],.bank-choice[data-aux-bank="Wave"],.bank-choice[data-self-bank="Wave"],.bank-choice[data-transfer-bank="Wave"]{background:#fff;color:#0877d1;border-color:#dce5ed}
+.bank-choice[data-bank="UAB"],.bank-choice[data-aux-bank="UAB"],.bank-choice[data-self-bank="UAB"],.bank-choice[data-transfer-bank="UAB"]{background:#111;color:#fff}
+.bank-choice[data-bank="Truemoney"],.bank-choice[data-aux-bank="Truemoney"],.bank-choice[data-self-bank="Truemoney"],.bank-choice[data-transfer-bank="Truemoney"]{background:#fff;color:#e2b800;border-color:#e8e0b7}
+.bank-choice[data-bank="MTB"],.bank-choice[data-aux-bank="MTB"],.bank-choice[data-self-bank="MTB"],.bank-choice[data-transfer-bank="MTB"]{background:#16864a;color:#fff}
+.bank-choice[data-bank="CB"],.bank-choice[data-aux-bank="CB"],.bank-choice[data-self-bank="CB"],.bank-choice[data-transfer-bank="CB"]{background:#416f9d;color:#fff;border-color:#416f9d}
+.cash-action-toggle{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;width:100%!important;min-width:0;margin:0;padding:4px;gap:4px}.cash-action-toggle button{display:block;width:100%;min-width:0;margin:0;padding:9px 8px;justify-self:stretch}.cash-action-toggle button.active{background:var(--gold);color:#fff;box-shadow:none}body.dark .cash-action-toggle button.active{background:#b99550;color:#171a16}
+/* Disabled Top Up banks must be fully gray; override bank-brand colors. */
+#bankButtons .bank-choice:disabled{background:#dedfdd!important;color:#858984!important;border:1px solid #c9ccc8!important;opacity:1!important;filter:none!important;box-shadow:none!important;outline:none!important;cursor:not-allowed}
+body.dark #bankButtons .bank-choice:disabled{background:#303431!important;color:#777e78!important;border-color:#444b45!important}
+.modal-bank-buttons{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.modal-bank-buttons .bank-choice{min-height:38px;font-size:12px}.bank-select-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(max-width:560px){.shell{padding:8px 8px 16px}.top{padding:9px 10px;border-radius:12px;margin-bottom:8px}.top h1{font-size:15px}.live{right:8px;font-size:8px}.balance-strip{gap:6px;margin-bottom:8px}.metric{padding:8px 9px;border-radius:10px}.metric label{font-size:9px}.metric strong{font-size:16px;margin-top:3px}.layout{gap:9px}.card{padding:12px;border-radius:13px}.toggle{margin-bottom:9px}.toggle button{padding:8px 2px;font-size:10px}.direction{margin-bottom:9px}.direction button{padding:9px}.fields{gap:9px}.field input,.field select{height:37px}.bank-buttons{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.bank-choice{min-height:31px;padding:6px 3px;font-size:10px}.fee-box{margin-top:9px;padding:9px}.primary{padding:10px;margin-top:9px}.sidecol{gap:8px}.foldsummary{padding:10px 12px}.foldbody{padding:0 12px 12px}.metric:last-child{grid-column:auto}}
+
+
+.top{min-height:48px}.top-controls{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px}.top-controls select{height:29px;min-width:83px;border:1px solid #ffffff35;border-radius:8px;padding:0 24px 0 8px;background-color:#20382e;color:#fff;font-size:11px;line-height:normal;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}.top-controls button{width:29px;height:29px;border:1px solid #ffffff35;border-radius:8px;background:#20382e;color:#fff;display:grid;place-items:center;font-size:16px;padding:0;line-height:1}
+select:not(.bank-select-hidden){color-scheme:light;appearance:none;-webkit-appearance:none;background-color:#fbfcfb!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23718078' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;line-height:normal;vertical-align:middle} .field select{display:block;align-self:stretch;background-color:#fbfcfb!important;color:#17241e!important}.field select option{background-color:#fbfcfb;color:#17241e}.top-controls select{background-color:#20382e!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;background-position:right 7px center!important;padding-right:24px!important;color:#fff!important}
+body.dark{--bg:#101714;--card:#19231e;--ink:#e8f0eb;--muted:#a0b0a6;--line:#2b3a31;--green:#27b58c;--green2:#35c79d;--dark:#0b100d;--shadow:0 12px 34px #00000025;--input-bg:#202c25;color:var(--ink)}body.dark .field input,body.dark .field select{color-scheme:dark;background-color:#202c25!important;border-color:#35463b;color:var(--ink)!important}body.dark .field select option{background-color:#202c25;color:#e8f0eb}body.dark .toggle{background:#222e27}body.dark .toggle button{color:#bac8bf}body.dark .toggle button.active{background:#0b100d;color:#fff}body.dark .direction button{background:#202c25;border-color:#35463b;color:#b4c1b8}body.dark .direction button.active{background:#18372b;color:#62ddb5;border-color:#27b58c}body.dark .fee-box{background:#29251a;border-color:#50452b}body.dark .fee-row span{color:#d1bd8b}body.dark .fee-total span,body.dark .fee-total strong{color:#e8f0eb}body.dark .refreshbtn{background:#202c25;color:var(--ink)}body.dark .chevron{background:#25362c;color:#58d6ad}body.dark .progress{background:#2c3931}body.dark .message.ok{background:#19372a;color:#a6f0ce}body.dark .message.err{background:#3a2220;color:#ffc0ba}body.dark .pill{background:#203b2e;color:#77e2bb}body.dark .bank-choice[data-bank="Wave"],.bank-choice[data-aux-bank="Wave"],.bank-choice[data-self-bank="Wave"],.bank-choice[data-transfer-bank="Wave"]{background:#fff;color:#0877d1}body.dark .bank-choice[data-bank="Truemoney"],.bank-choice[data-aux-bank="Truemoney"],.bank-choice[data-self-bank="Truemoney"],.bank-choice[data-transfer-bank="Truemoney"]{background:#fff;color:#b99300}body.dark .bank-choice[data-bank="CB"],body.dark .bank-choice[data-aux-bank="CB"],body.dark .bank-choice[data-self-bank="CB"],body.dark .bank-choice[data-transfer-bank="CB"]{background:#416f9d;color:#fff;border-color:#416f9d}
+@media(max-width:560px){.top{padding:9px 92px 9px 10px;min-height:43px}.top h1{font-size:14px}.top-controls{right:7px;gap:4px}.top-controls select{min-width:74px;width:74px;height:27px;font-size:10px;padding-left:5px;padding-right:20px;background-position:right 5px center}.top-controls button{width:27px;height:27px}.live{display:none}}
+
+
+/* Header layout fix: keep status, title, and controls in separate areas. */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;justify-content:stretch;gap:10px;min-height:48px;padding:9px 14px}
+.brand{grid-column:2;grid-row:1;justify-self:center;min-width:0}
+.top-controls{position:static;grid-column:3;grid-row:1;justify-self:end;transform:none;display:flex;align-items:center;gap:6px;min-width:0}
+.live{position:static;grid-column:1;grid-row:1;justify-self:start;min-width:0;font-size:10px}
+@media(max-width:560px){
+ .top{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;gap:6px 8px;padding:9px 10px;min-height:0;}
+ .brand{grid-column:1;grid-row:1;justify-self:start;}
+ .top-controls{grid-column:2;grid-row:1;justify-self:end;gap:5px;}
+ .top-controls select{width:78px;min-width:78px;height:28px;font-size:10px;padding-left:6px;padding-right:20px;}
+ .top-controls button{width:28px;height:28px;}
+ .live{display:block;grid-column:1/-1;grid-row:2;justify-self:center;font-size:9px;line-height:1.2;}
+}
+@media(max-width:350px){.top-controls select{width:70px;min-width:70px}.top h1{font-size:13px}}
+/* Fully opaque dropdowns in both themes; force solid native option surfaces. */
+.field select, select:not(.bank-select-hidden){color-scheme:light;background-color:#fbfcfb!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23718078' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 12px center!important;}
+body.dark .field select,body.dark select:not(.bank-select-hidden){color-scheme:dark;background-color:#202c25!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a0b0a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;color:var(--ink)!important;}
+.modal-backdrop{position:fixed;inset:0;z-index:1000;background:#08130dcc;display:flex;align-items:center;justify-content:center;padding:18px;}
+.modal-backdrop.hidden{display:none!important}.modal-card{width:min(100%,420px);background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 24px 70px #0004}.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.modal-head h2{font-size:18px;margin:3px 0 0}.modal-close{width:32px;height:32px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);font-size:22px;line-height:1}.modal-actions{display:flex;gap:8px;margin-top:12px}.modal-actions button{flex:1;margin-top:0}.secondary{border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-weight:800;padding:11px}
+
+.toggle{grid-template-columns:repeat(4,minmax(0,1fr))}
+.self-action-toggle{grid-template-columns:repeat(3,minmax(0,1fr));margin:0;padding:4px}.self-action-toggle button{min-width:0;line-height:1.25;padding:10px 6px}.self-panel{margin-top:0}
+.self-panel .field select{height:40px}.self-bank-buttons{margin-top:0}.self-bank-buttons .bank-choice{min-height:36px;font-size:11px}
+.self-panel .self-note{margin-top:10px}
+.transfer-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);margin-bottom:7px}
+.transfer-summary-row span{font-size:10px;letter-spacing:.6px;font-weight:850;color:var(--muted)}
+.transfer-summary-row strong{font-size:13px;text-align:right;color:var(--ink)}
+.change-banks{width:100%;margin-top:2px}
+@media(max-width:560px){.toggle{grid-template-columns:repeat(2,minmax(0,1fr))}.toggle button{min-height:34px}.self-action-toggle{grid-template-columns:1fr}.self-action-toggle button{text-align:left;padding:10px}.cash-action-toggle{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}.cash-action-toggle button{text-align:center;padding:9px 8px}.self-panel .fields{gap:9px}}
+
+/* Final readability overrides: amount inputs use regular text, never oversized bold numerals. */
+.amountwrap input{font-size:16px!important;font-weight:400!important;letter-spacing:0!important}
+.self-bank-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+@media(max-width:560px){.self-bank-buttons{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.self-bank-buttons .bank-choice{font-size:10px;min-height:31px;padding:6px 3px}}
+select:not(.bank-select-hidden),select:not(.bank-select-hidden) option{background-color:#fbfcfb!important;color:#17241e!important;opacity:1!important}body.dark select:not(.bank-select-hidden),body.dark select:not(.bank-select-hidden) option{background-color:#202c25!important;color:#e8f0eb!important;opacity:1!important}
+
+/* Consistent colored bank choices in Self Cash In/Out and transfer popup. */
+.bank-choice[data-self-bank="KBZ"],.bank-choice[data-transfer-bank="KBZ"]{background:#d9272e!important;color:#fff!important;border-color:#d9272e!important}
+.bank-choice[data-self-bank="Aya"],.bank-choice[data-transfer-bank="Aya"]{background:#c9232c!important;color:#fff!important;border-color:#c9232c!important}
+.bank-choice[data-self-bank="Wave"],.bank-choice[data-transfer-bank="Wave"]{background:#fff!important;color:#0877d1!important;border-color:#dce5ed!important}
+.bank-choice[data-self-bank="UAB"],.bank-choice[data-transfer-bank="UAB"]{background:#111!important;color:#fff!important;border-color:#111!important}
+.bank-choice[data-self-bank="Truemoney"],.bank-choice[data-transfer-bank="Truemoney"]{background:#fff!important;color:#c5a000!important;border-color:#e8e0b7!important}
+.bank-choice[data-self-bank="MTB"],.bank-choice[data-transfer-bank="MTB"]{background:#16864a!important;color:#fff!important;border-color:#16864a!important}
+.bank-choice[data-self-bank="CB"],.bank-choice[data-transfer-bank="CB"],.bank-choice[data-bank="CB"]{background:#0877d1!important;color:#fff!important;border-color:#0877d1!important}
+.aux-bank-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.aux-bank-buttons .bank-choice{min-width:0}
+@media(max-width:560px){.aux-bank-buttons{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}}
+/* Native dropdowns that remain (e.g. language/action) use an opaque surface. */
+select:not(.bank-select-hidden){background-color:#fbfcfb!important;color:#17241e!important;color-scheme:light;opacity:1!important}
+select:not(.bank-select-hidden) option{background:#fbfcfb!important;color:#17241e!important;opacity:1!important}
+body.dark select:not(.bank-select-hidden){background-color:#202c25!important;color:#e8f0eb!important;color-scheme:dark}
+body.dark select:not(.bank-select-hidden) option{background:#202c25!important;color:#e8f0eb!important;opacity:1!important}
+
+
+/* Cheerful but gentle palette: soft peach, sage, teal and warm honey. */
+:root{--bg:#f7f5ef;--card:#fffefa;--ink:#34352f;--muted:#77796f;--line:#e5e2d7;--green:#648a79;--green2:#7fa38f;--dark:#eaf1e9;--gold:#c5a15b;--shadow:0 7px 24px #4757470c}
+body{background:var(--bg);color:var(--ink)}
+.top{background:#edf3eb!important;color:#34352f!important;border:1px solid #dce7da!important;box-shadow:0 4px 14px #536a4a0b!important}
+.logo{background:#e4c98c!important;color:#493f2d!important}
+.live{color:#667d6b!important}.live:before{background:#78a58a!important}
+.metric:first-child strong,.eyebrow{color:#648a79!important}
+.toggle{background:#f1eee4!important;border-color:#e5e0d2!important}
+.toggle button{color:#777568!important}
+.toggle button.active,.primary{background:#648a79!important;color:#fff!important}
+.primary:hover{background:#527765!important}
+.direction button.active{background:#edf5ef!important;border-color:#86a995!important;color:#527765!important}
+.field input:focus,.field select:focus{border-color:#7fa38f!important;box-shadow:0 0 0 3px #7fa38f20!important}
+.chevron{background:#eaf2eb!important;color:#648a79!important}
+.progress span{background:#c5a15b!important}
+.fee-box{background:#fbf5e7!important;border-color:#eadbb8!important}
+.fee-row span{color:#81704c!important}.fee-row strong{color:#96752f!important}
+.message.ok{background:#e9f3e9!important;color:#416d54!important}
+.pill{background:#e7f1e8!important;color:#527765!important}
+.bank-choice.selected{outline:2px solid #c5a15b!important;outline-offset:2px}
+select:not(.bank-select-hidden){background-color:#fffefa!important;color:#34352f!important;border-color:#ddd9cc!important}
+select:not(.bank-select-hidden) option{background:#fffefa!important;color:#34352f!important}
+.top-controls select,.top-controls button{background-color:#f7f0df!important;color:#6b5b38!important;border-color:#e5d5ad!important}
+body.dark{--bg:#1c211d;--card:#252d27;--ink:#eef0e8;--muted:#b1b8aa;--line:#3b473d;--green:#91b7a0;--green2:#a4c7b1;--dark:#252d27;--gold:#d9bb76;--shadow:0 8px 24px #0002;background:var(--bg);color:var(--ink)}
+body.dark .top{background:#252f28!important;color:#eef0e8!important;border-color:#3b493e!important}
+body.dark .logo{background:#bda66f!important;color:#282b23!important}
+body.dark .live{color:#c1d1c0!important}body.dark .live:before{background:#91b7a0!important}
+body.dark .toggle{background:#2b342d!important;border-color:#3b473d!important}
+body.dark .toggle button{color:#c3c9bd!important}
+body.dark .toggle button.active,body.dark .primary{background:#648a79!important;color:#fff!important}
+body.dark .direction button{background:#252d27!important;border-color:#3b473d!important;color:#c3c9bd!important}
+body.dark .direction button.active{background:#2c4135!important;color:#b9dfc5!important;border-color:#719b81!important}
+body.dark .field input,body.dark .field select{background-color:#29342c!important;color:#eef0e8!important;border-color:#465649!important}
+body.dark select:not(.bank-select-hidden),body.dark select:not(.bank-select-hidden) option{background-color:#29342c!important;color:#eef0e8!important;color-scheme:dark!important}
+body.dark .top-controls select,body.dark .top-controls button{background-color:#303a30!important;color:#e2d1a5!important;border-color:#56634c!important}
+body.dark .chevron{background:#304137!important;color:#a6cfb2!important}
+body.dark .fee-box{background:#332e20!important;border-color:#5a4c2c!important}
+body.dark .fee-row span{color:#ddc98f!important}body.dark .fee-total span,body.dark .fee-total strong{color:#eef0e8!important}
+body.dark .refreshbtn{background:#29342c!important;color:#eef0e8!important}
+body.dark .message.ok{background:#263d2d!important;color:#bce0c5!important}
+body.dark .pill{background:#2d4032!important;color:#b8d9c0!important}
+@media(max-width:560px){.top{background:#edf3eb!important;color:#34352f!important}body.dark .top{background:#252f28!important;color:#eef0e8!important}}
+
+
+/* Initial data-loading screen */
+#appLoader{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#f8f7f2;color:#665536;transition:opacity .28s ease,visibility .28s ease}
+body.dark #appLoader{background:#171916;color:#e0c78d}
+#appLoader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#appLoader img{width:88px;height:88px;object-fit:contain;animation:logoBounce .85s ease-in-out infinite alternate}
+#appLoader .loaderText{font-size:14px;font-weight:500;letter-spacing:.03em}
+#appLoader .loaderDots:after{content:'…';display:inline-block;width:1.2em;overflow:hidden;vertical-align:bottom;animation:loadingDots 1.1s steps(4,end) infinite}
+@keyframes logoBounce{from{transform:translateY(0)}to{transform:translateY(-16px)}}
+@keyframes loadingDots{from{width:0}to{width:1.2em}}
+@media(prefers-reduced-motion:reduce){#appLoader img,#appLoader .loaderDots:after{animation:none}}
+</style>
+
+<style id="gold-white-palette-fix">
+:root{--bg:#fffdf8;--card:#ffffff;--ink:#302719;--muted:#81745f;--line:#e9dfc9;--green:#b88a2e;--green2:#d5ad55;--dark:#fffaf0;--gold:#c99a35;--shadow:0 8px 24px #8a68140d}
+body{background:var(--bg);color:var(--ink)}
+.top{background:#fff;color:#302719;border:1px solid #eadcb9}
+.logo{background:linear-gradient(145deg,#f5df9f,#c99a35);color:#302719}
+.live{color:#75613b}.live:before{background:#c99a35}
+.metric:first-child strong,.eyebrow{color:#a77b1e}
+.toggle{background:#f8f1df;border:1px solid #eee2c5}
+.toggle button{color:#77684b}
+.toggle button.active,.primary{background:#c99a35;color:#fff}
+.primary:hover{background:#ad7f22}
+.direction button.active{border-color:#c99a35;background:#fff8e7;color:#946b17}
+.field input:focus,.field select:focus{border-color:#c99a35;box-shadow:0 0 0 3px #c99a3518}
+.chevron{background:#f8f1df;color:#9b741f}
+.progress span{background:#c99a35}
+.bank-choice.selected{outline:2px solid #c99a35;outline-offset:2px}
+/* Bank-specific colors are consistent across main, self, transfer and external-money selections. */
+.bank-choice[data-aux-bank="KBZ"],.bank-choice[data-self-bank="KBZ"],.bank-choice[data-transfer-bank="KBZ"],.bank-choice[data-bank="KBZ"],.bank-choice[data-aux-bank="KBZ"],.bank-choice[data-self-bank="KBZ"],.bank-choice[data-transfer-bank="KBZ"]{background:#d9272e!important;color:#fff!important;border-color:#d9272e!important}
+.bank-choice[data-aux-bank="Aya"],.bank-choice[data-self-bank="Aya"],.bank-choice[data-transfer-bank="Aya"],.bank-choice[data-bank="Aya"],.bank-choice[data-aux-bank="Aya"],.bank-choice[data-self-bank="Aya"],.bank-choice[data-transfer-bank="Aya"]{background:#c9232c!important;color:#fff!important;border-color:#c9232c!important}
+.bank-choice[data-aux-bank="Wave"],.bank-choice[data-self-bank="Wave"],.bank-choice[data-transfer-bank="Wave"],.bank-choice[data-bank="Wave"],.bank-choice[data-aux-bank="Wave"],.bank-choice[data-self-bank="Wave"],.bank-choice[data-transfer-bank="Wave"]{background:#fff!important;color:#0877d1!important;border-color:#dce5ed!important}
+.bank-choice[data-aux-bank="UAB"],.bank-choice[data-self-bank="UAB"],.bank-choice[data-transfer-bank="UAB"],.bank-choice[data-bank="UAB"],.bank-choice[data-aux-bank="UAB"],.bank-choice[data-self-bank="UAB"],.bank-choice[data-transfer-bank="UAB"]{background:#111!important;color:#fff!important;border-color:#111!important}
+.bank-choice[data-aux-bank="Truemoney"],.bank-choice[data-self-bank="Truemoney"],.bank-choice[data-transfer-bank="Truemoney"],.bank-choice[data-bank="Truemoney"],.bank-choice[data-aux-bank="Truemoney"],.bank-choice[data-self-bank="Truemoney"],.bank-choice[data-transfer-bank="Truemoney"]{background:#fff!important;color:#b38b00!important;border-color:#e8e0b7!important}
+.bank-choice[data-aux-bank="MTB"],.bank-choice[data-self-bank="MTB"],.bank-choice[data-transfer-bank="MTB"],.bank-choice[data-bank="MTB"],.bank-choice[data-aux-bank="MTB"],.bank-choice[data-self-bank="MTB"],.bank-choice[data-transfer-bank="MTB"]{background:#16864a!important;color:#fff!important;border-color:#16864a!important}
+.bank-choice[data-aux-bank="CB"],.bank-choice[data-self-bank="CB"],.bank-choice[data-transfer-bank="CB"],.bank-choice[data-bank="CB"]{background:#0877d1!important;color:#fff!important;border-color:#0877d1!important}
+/* Force native select controls and their option menus to opaque colors. */
+select:not(.bank-select-hidden){background-color:#fffaf0!important;color:#302719!important;border-color:#e4d5b2!important;color-scheme:light!important}
+select:not(.bank-select-hidden) option{background:#fffaf0!important;color:#302719!important}
+.field select{background-color:#fffaf0!important;color:#302719!important}
+.top-controls select,.top-controls button{background-color:#fff5db!important;color:#725315!important;border-color:#e7d5a9!important}
+body.dark{--bg:#17140e;--card:#211c12;--ink:#f7f0df;--muted:#c2b59a;--line:#4a3c23;--green:#d5ad55;--green2:#e3c16e;--dark:#211c12;--gold:#d5ad55;background:var(--bg);color:var(--ink)}
+body.dark .top{background:#211c12;color:#f7f0df;border-color:#4a3c23}
+body.dark .toggle{background:#2b2416;border-color:#4a3c23}
+body.dark .toggle button{color:#d2c5a7}
+body.dark .toggle button.active,body.dark .primary{background:#c99a35;color:#fff}
+body.dark .direction button{background:#282115;border-color:#4a3c23;color:#d2c5a7}
+body.dark .direction button.active{background:#3b2e16;color:#f1d38b;border-color:#d5ad55}
+body.dark .field input,body.dark .field select{background-color:#292316!important;color:#f7f0df!important;border-color:#57472a!important}
+body.dark select:not(.bank-select-hidden),body.dark select:not(.bank-select-hidden) option{background-color:#292316!important;color:#f7f0df!important;color-scheme:dark!important}
+body.dark .top-controls select,body.dark .top-controls button{background-color:#2b2416!important;color:#f1d38b!important;border-color:#57472a!important}
+body.dark .chevron{background:#332917;color:#f1d38b}
+body.dark .fee-box{background:#2c2414;border-color:#57472a}
+body.dark .fee-row span{color:#d7c08b}
+body.dark .fee-total span,body.dark .fee-total strong{color:#f7f0df}
+body.dark .refreshbtn{background:#292316;color:#f7f0df}
+body.dark .bank-choice[data-aux-bank="Wave"],body.dark .bank-choice[data-aux-bank="Truemoney"]{background:#fff!important;color:#0877d1!important}
+@media(max-width:560px){.top{background:#fff;color:#302719}body.dark .top{background:#211c12;color:#f7f0df}}
+
+/* Calm champagne and ivory palette — deliberately low saturation */
+:root{--bg:#f6f4ef;--card:#fffefa;--ink:#34302a;--muted:#777166;--line:#e4dfd5;--green:#8b7958;--green2:#9b8866;--dark:#403b33;--gold:#a58b60;--shadow:0 6px 22px #3c33200a}
+body{background:var(--bg);color:var(--ink)}
+.top{background:#faf8f3;color:var(--ink);border-color:#e5dfd3;box-shadow:none}
+.logo{background:#d8c9aa;color:#3d372d}
+.live{color:#766f63}.live:before{background:#9b957f}
+.toggle{background:#eeebe4;border-color:#e5dfd3}
+.toggle button.active,.primary{background:#817158;color:#fff}
+.primary:hover{background:#6e5f4a}
+.direction button.active{background:#f3efe6;border-color:#b5a58a;color:#6d5b40}
+.fee-box{background:#f7f3eb;border-color:#e5dcca}.fee-row strong{color:#716044}
+.chevron{background:#eee9df;color:#77654a}.progress span{background:#a58b60}
+.field input,.field select{background-color:#fffefa!important;border-color:#ddd7cc}
+.top-controls select,.top-controls button{background-color:#eee9df;color:#4d4538;border-color:#d9cfbc}
+.bank-choice[data-aux-bank="KBZ"],.bank-choice[data-self-bank="KBZ"],.bank-choice[data-transfer-bank="KBZ"],.bank-choice[data-bank="KBZ"],.bank-choice[data-aux-bank="KBZ"],.bank-choice[data-self-bank="KBZ"],.bank-choice[data-transfer-bank="KBZ"]{background:#a94e52!important;border-color:#a94e52!important;color:#fff!important}
+.bank-choice[data-aux-bank="Aya"],.bank-choice[data-self-bank="Aya"],.bank-choice[data-transfer-bank="Aya"],.bank-choice[data-bank="Aya"],.bank-choice[data-aux-bank="Aya"],.bank-choice[data-self-bank="Aya"],.bank-choice[data-transfer-bank="Aya"]{background:#b05c60!important;border-color:#b05c60!important;color:#fff!important}
+.bank-choice[data-aux-bank="CB"],.bank-choice[data-self-bank="CB"],.bank-choice[data-transfer-bank="CB"],.bank-choice[data-bank="CB"]{background:#416e99!important;border-color:#416e99!important;color:#fff!important}
+.bank-choice[data-aux-bank="MTB"],.bank-choice[data-self-bank="MTB"],.bank-choice[data-transfer-bank="MTB"],.bank-choice[data-bank="MTB"],.bank-choice[data-aux-bank="MTB"],.bank-choice[data-self-bank="MTB"],.bank-choice[data-transfer-bank="MTB"]{background:#477b60!important;border-color:#477b60!important;color:#fff!important}
+.bank-choice[data-aux-bank="Wave"],.bank-choice[data-self-bank="Wave"],.bank-choice[data-transfer-bank="Wave"],.bank-choice[data-bank="Wave"],.bank-choice[data-aux-bank="Wave"],.bank-choice[data-self-bank="Wave"],.bank-choice[data-transfer-bank="Wave"]{background:#fffefa!important;border-color:#d5d9dd!important;color:#406e99!important}
+.bank-choice[data-aux-bank="Truemoney"],.bank-choice[data-self-bank="Truemoney"],.bank-choice[data-transfer-bank="Truemoney"],.bank-choice[data-bank="Truemoney"],.bank-choice[data-aux-bank="Truemoney"],.bank-choice[data-self-bank="Truemoney"],.bank-choice[data-transfer-bank="Truemoney"]{background:#fffefa!important;border-color:#e2d6b5!important;color:#9b7d31!important}
+body.dark{--bg:#1b1b19;--card:#252521;--ink:#e9e5dc;--muted:#aaa497;--line:#3d3b34;--green:#b3a080;--green2:#c0af91;--dark:#252521;--gold:#b3a080;--shadow:0 6px 22px #0002;background:var(--bg)}
+body.dark .top{background:#292822;color:var(--ink);border-color:#403d34}
+body.dark .toggle{background:#33312b;border-color:#484338}
+body.dark .toggle button.active,body.dark .primary{background:#8e7c5f;color:#fff}
+body.dark .direction button{background:#2d2c27;border-color:#49463c;color:#c7c0b2}
+body.dark .direction button.active{background:#3a352c;border-color:#9c8a6e;color:#e1d3b9}
+body.dark .fee-box{background:#302d26;border-color:#51483a}
+body.dark .field input,body.dark .field select{background-color:#2d2c27!important;border-color:#4b473e;color:#e9e5dc!important}
+body.dark .chevron{background:#39352d;color:#d1bfa0}
+body.dark .top-controls select,body.dark .top-controls button{background-color:#353128;color:#f1e9d8;border-color:#575043}
+
+
+/* Refined warm gold-and-white palette */
+:root{--bg:#f7f8fa;--card:#ffffff;--ink:#292929;--muted:#737373;--line:#e8e5de;--green:#a97619;--green2:#c99a35;--dark:#c99a35;--gold:#c99a35;--shadow:0 8px 24px #8c6a1a12}
+body{background:var(--bg);color:var(--ink)}
+.top{background:#fff!important;color:#292929!important;border:1px solid #eee5d2!important;box-shadow:0 4px 14px #6e53120c!important}
+.logo{background:#c99a35!important;color:#fff!important}
+.live{color:#76603a!important}.live:before{background:#c99a35!important}
+.metric:first-child strong,.eyebrow{color:#a97619!important}
+.toggle{background:#f5eddd!important;border:1px solid #ead9b7!important}
+.toggle button{color:#75613e!important}
+.toggle button.active,.primary{background:#c99a35!important;color:#fff!important;border-color:#b78a2c!important}
+.direction button.active{background:#f1e2c1!important;color:#63460f!important;border-color:#c99a35!important}
+.foldsummary{background:#fff!important}
+.field input,.field select{background-color:#fff!important;color:#292929!important;border-color:#ded8cc!important}
+.field select option{background-color:#fff!important;color:#292929!important}
+.top-controls select{background-color:#8f6823!important;color:#fff!important}
+body.dark{--bg:#24231f;--card:#302e28;--ink:#f4f0e7;--muted:#bcb5a7;--line:#49453a;--green:#d5ad55;--green2:#e0bd6e;--dark:#302e28;--gold:#d5ad55;--shadow:0 8px 24px #0003;background:var(--bg);color:var(--ink)}
+body.dark .top{background:#302e28!important;color:#f4f0e7!important;border-color:#49453a!important}
+body.dark .logo{background:#c99a35!important;color:#fff!important}
+body.dark .toggle{background:#39352b!important;border-color:#514633!important}
+body.dark .toggle button{color:#d7c8a5!important}
+body.dark .toggle button.active,body.dark .primary{background:#a77c2d!important;color:#fff!important}
+body.dark .field input,body.dark .field select{background-color:#302e28!important;color:#f4f0e7!important;border-color:#514b3e!important}
+body.dark .field select option{background-color:#302e28!important;color:#f4f0e7!important}
+</style>
+
+
+<style id="dark-mode-completeness-fix">
+/* Ensure every panel and nested control follows the active dark theme. */
+body.dark .metric, body.dark .service-card, body.dark .panel, body.dark .fold, body.dark details.fold, body.dark .foldbody, body.dark .foldsummary, body.dark .card, body.dark .side-card, body.dark .form-card, body.dark .summary-card { background-color:var(--card)!important; color:var(--ink)!important; border-color:var(--line)!important; }
+body.dark .foldsummary, body.dark details.fold > summary { background-color:var(--card)!important; color:var(--ink)!important; }
+body.dark .foldsummary *, body.dark details.fold > summary * { color:inherit; }
+body.dark .foldbody, body.dark .foldbody p, body.dark .foldbody label, body.dark .hint, body.dark .section-subtitle { color:var(--muted); }
+body.dark input:not([type="checkbox"]):not([type="radio"]), body.dark select, body.dark textarea { background-color:#302e28!important; color:var(--ink)!important; border-color:var(--line)!important; color-scheme:dark; }
+body.dark select option { background:#302e28!important; color:#f4f0e7!important; }
+body.dark .toggle, body.dark .direction, body.dark .tabs, body.dark .service-tabs { background:#292720!important; border-color:var(--line)!important; }
+body.dark .toggle button, body.dark .direction button, body.dark .tabs button, body.dark .service-tabs button { color:var(--ink)!important; }
+body.dark .toggle button.active, body.dark .direction button.active, body.dark .tabs button.active, body.dark .service-tabs button.active { background:#8f6823!important; color:#fff!important; border-color:#b88a2e!important; }
+body.dark .fee-box, body.dark .fee-row, body.dark .fee-total, body.dark .progress-wrap { background:#292720!important; color:var(--ink)!important; border-color:var(--line)!important; }
+body.dark .primary, body.dark button.primary, body.dark .submit-btn, body.dark .action-button { background:#8f6823!important; color:#fff!important; border-color:#a97619!important; }
+body.dark .foldbody .btn, body.dark .refreshbtn { background:#302e28!important; color:var(--ink)!important; border-color:var(--line)!important; }
+body.dark .top-controls select, body.dark .top-controls button { background-color:#302e28!important; color:#f4f0e7!important; border-color:#49453a!important; }
+body.dark .bank-choice { border-color:#49453a; }
+body.dark .message, body.dark .result, body.dark .notice { background:#302e28!important; color:var(--ink)!important; border-color:var(--line)!important; }
+body.dark .metric label, body.dark .field label, body.dark .foldbody label { color:var(--muted)!important; }
+</style>
+</head>
+<body>
+<div id="appLoader" role="status" aria-live="polite"><img src="../img/LinLett.png" alt="LinLett logo"><div class="loaderText">Loading Service Desk<span class="loaderDots"></span></div></div>
+<div class="shell">
+  <header class="top"><div class="brand"><div><h1>Service Desk</h1></div></div><div class="top-controls"><select id="languageSelect" aria-label="Language"><option value="en">English</option><option value="my">မြန်မာ</option></select><button id="themeToggle" type="button" aria-label="Switch to dark theme" title="Switch theme">☾</button></div><div class="live" id="connection">Ready to connect</div></header>
+  <section class="balance-strip">
+    <div class="metric"><label>TOTAL AVAILABLE MONEY</label><strong id="totalMoney">— MMK</strong></div>
+    <div class="metric"><label>TOTAL CASH AVAILABLE</label><strong id="cashMoney">— MMK</strong></div>
+    <div class="metric"><label>CASH IN BANK</label><strong id="cashInBank">— MMK</strong></div>
+  </section>
+  <div id="message" class="message"></div>
+  <div class="layout">
+    <main class="card">
+      <div class="cardhead"><div><div class="eyebrow">New transaction</div><h2>Service counter</h2><p class="sub">Choose a service, enter the amount and confirm the fee.</p></div><span class="pill">MMK</span></div>
+      <div class="toggle" role="tablist" aria-label="Service type">
+        <button type="button" data-mode="transfer" class="active">Cash In / Out</button><button type="button" data-mode="topup">Top Up</button><button type="button" data-mode="meter">Meter Bill</button><button type="button" data-mode="self">Self Cash In / Out</button>
+      </div>
+      <div id="direction" class="direction"><button type="button" data-direction="Cash In" class="active">Cash In<small>Bank balance → physical cash</small></button><button type="button" data-direction="Cash Out">Cash Out<small>Physical cash → bank balance</small></button></div>
+      <section id="selfPanel" class="self-panel hidden" aria-label="Self cash and bank adjustments">
+        <div class="fields">
+          <div class="field full"><label for="selfAction">SELF TRANSACTION TYPE</label><div class="toggle self-action-toggle" role="group" aria-label="Self transaction type"><button type="button" data-self-action="cashin" class="active">Cash In · Bank Out</button><button type="button" data-self-action="cashout">Cash Out · Bank In</button><button type="button" data-self-action="banktransfer">Bank Out · Bank In</button></div><select id="selfAction" class="hidden" aria-hidden="true" tabindex="-1"><option value="cashin">Cash In · Bank Out</option><option value="cashout">Cash Out · Bank In</option><option value="banktransfer">Bank Out · Bank In</option></select></div>
+          <div class="field full" id="selfSingleBankWrap"><label for="selfBank">BANK ACCOUNT</label><div class="bank-buttons self-bank-buttons" id="selfBankButtons" role="group" aria-label="Choose self transaction bank"></div><select id="selfBank" class="bank-select-hidden" aria-hidden="true" tabindex="-1"></select></div>
+          <div class="field full hidden" id="selfTransferSummary" aria-live="polite">
+            <div class="transfer-summary-row"><span>FROM BANK</span><strong id="selfFromText">—</strong></div>
+            <div class="transfer-summary-row"><span>TO BANK</span><strong id="selfToText">—</strong></div>
+            <button type="button" id="changeTransferBanks" class="secondary change-banks">Change banks</button>
+          </div>
+          <div class="field full"><label for="selfAmount">AMOUNT</label><div class="amountwrap"><input id="selfAmount" inputmode="numeric" autocomplete="off" placeholder="Enter amount" required><span>MMK</span></div></div>
+          <div class="field full"><label for="selfNote">NOTE (OPTIONAL)</label><input id="selfNote" maxlength="180" placeholder="Personal cash/bank adjustment note"></div>
+        </div>
+        <button class="primary" id="submitSelf" type="button">Confirm Self Adjustment</button>
+        <p class="hint self-note" id="selfHint">Personal balance adjustment only. This does not create a customer transaction or service fee.</p>
+      </section>
+      <form id="transactionForm">
+        <div class="fields">
+          <div class="field full"><label>BANK / PAYMENT ACCOUNT</label><div class="bank-buttons" id="bankButtons" role="group" aria-label="Choose payment account"></div><select id="bank" class="bank-select-hidden" aria-label="Payment account" required><option value="KBZ">KBZ</option><option value="Wave">Wave</option><option value="Aya">AYA Pay</option><option value="CB">CB Pay</option><option value="UAB">UAB Pay</option><option value="MTB">MTB Pay</option><option value="Truemoney">Truemoney</option></select></div>
+          <div class="field full"><label for="amount">TRANSACTION AMOUNT</label><div class="amountwrap"><input id="amount" inputmode="numeric" autocomplete="off" placeholder="Enter amount" required><span>MMK</span></div></div>
+          <div class="field"><label for="phone">CUSTOMER PHONE (OPTIONAL)</label><input id="phone" inputmode="tel" autocomplete="tel" maxlength="24" placeholder="(+959) 261-427-783"></div>
+          <div class="field"><label for="customerName">CUSTOMER NAME (OPTIONAL)</label><input id="customerName" autocomplete="name" placeholder="Customer name"></div>
+          <div class="field full"><label for="note">NOTE (OPTIONAL)</label><input id="note" maxlength="180" placeholder="Reference or short note"></div>
+        </div>
+        <div class="fee-box"><div class="fee-row"><span>Service fee</span><strong id="fee">0 MMK</strong></div><div class="fee-row fee-total"><span id="totalLabel">Customer amount</span><strong id="displayTotal">0 MMK</strong></div><p class="hint" id="feeHint">Fee is estimated using the fee rules in the supplied Exchange and transfer.gs.</p></div>
+        <button class="primary" id="submitTransaction" type="submit">Confirm Cash In</button>
+      </form>
+    </main>
+    <aside class="sidecol">
+      <details class="card fold">
+        <summary class="foldsummary"><div><div class="eyebrow">Cash control</div><h2>Add Money to Bank</h2><p class="sub">Add outside funds to a selected bank account.</p></div><div class="summaryright"><span class="chevron">⌄</span></div></summary>
+        <div class="foldbody"><form id="balanceForm"><div class="fields"><div class="field full"><label for="balanceBank">DESTINATION ACCOUNT</label><div class="bank-buttons aux-bank-buttons" id="balanceBankButtons" role="group" aria-label="Choose destination bank"></div><select id="balanceBank" class="bank-select-hidden" aria-hidden="true" tabindex="-1" required><option value="KBZ">KBZ — KBZPay Agent</option><option value="Wave">Wave</option><option value="Aya">AYA Pay</option><option value="CB">CB Pay</option><option value="UAB">UAB Pay</option><option value="MTB">MTB Pay</option><option value="Truemoney">Truemoney</option></select></div><div class="field full"><label for="balanceAmount">AMOUNT TO ADD</label><div class="amountwrap"><input id="balanceAmount" inputmode="numeric" placeholder="Enter amount" required><span>MMK</span></div></div></div><button class="primary" type="submit">Add to Bank Balance</button></form><p class="hint">For new money from outside your tracked cash and bank balances.</p></div>
+      </details>
+      <details class="card fold">
+        <summary class="foldsummary"><div><div class="eyebrow">Physical cash</div><h2>Add/Give Cash</h2><p class="sub">Update physical cash outside your tracked balance.</p></div><div class="summaryright"><span class="pill">CASH</span><span class="chevron">⌄</span></div></summary>
+        <div class="foldbody"><form id="cashForm"><div class="fields"><div class="field full"><label for="cashAction">ACTION</label><div class="toggle cash-action-toggle" id="cashActionButtons" role="group" aria-label="Cash in or out"><button type="button" data-cash-action="add" class="active" aria-pressed="true">In</button><button type="button" data-cash-action="remove" aria-pressed="false">Out</button></div><select id="cashAction" class="bank-select-hidden" aria-hidden="true" tabindex="-1"><option value="add">Add outside cash</option><option value="remove">Remove outside cash</option></select></div><div class="field full"><label for="cashAmount">AMOUNT</label><div class="amountwrap"><input id="cashAmount" inputmode="numeric" placeholder="Enter amount" required><span>MMK</span></div></div></div><button class="primary" type="submit">Update Physical Cash</button></form><p class="hint">Cash-only adjustment needs a dedicated backend operation.</p></div>
+      </details>
+      <details class="card fold">
+        <summary class="foldsummary"><div><div class="eyebrow">Quick Loan</div><h2>Loan</h2><p class="sub">Maximum loan limit: 4,000,000 MMK</p></div><div class="summaryright"><span class="pill">LOAN</span><span class="chevron">⌄</span></div></summary>
+        <div class="foldbody"><div class="fee-row"><span class="mutedlabel">Current loan</span><strong id="currentLoan">— MMK</strong></div><div class="loanlimit"><span>Loan used</span><span id="loanPercent">0%</span></div><div class="progress"><span id="loanProgress"></span></div><form id="loanForm"><div class="fields loanfields"><div class="field full"><label for="loanAmount">BORROW AMOUNT</label><div class="amountwrap"><input id="loanAmount" inputmode="numeric" placeholder="Enter amount" required><span>MMK</span></div></div><div class="field full"><label for="loanBank">CREDIT TO ACCOUNT</label><select id="loanBank"><option value="KBZ">KBZ — KBZPay Agent</option></select></div></div><button class="primary" type="submit">Borrow Loan</button></form><p class="hint">The supplied Loan.gs currently credits KBZ only. Other destination accounts need a backend update.</p></div>
+      </details>
+    </aside>
+  </div>
+  <p class="foot">Private finance workspace · Always verify the account and amount before confirming a transaction.</p>
+</div>
+<div id="bankTransferModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="bankTransferTitle">
+  <div class="modal-card">
+    <div class="modal-head"><div><div class="eyebrow">Self transaction</div><h2 id="bankTransferTitle">Bank Transfer</h2><p class="sub">Choose the source and destination accounts.</p></div><button type="button" id="cancelBankTransfer" class="modal-close" aria-label="Close">×</button></div>
+    <div class="fields">
+      <div class="field full" id="selfSourceWrap"><label>FROM BANK</label><div class="bank-buttons modal-bank-buttons" id="selfSourceButtons" role="group" aria-label="Choose source bank"></div><select id="selfSource" class="bank-select-hidden" aria-hidden="true" tabindex="-1"></select></div>
+      <div class="field full" id="selfDestinationWrap"><label>TO BANK</label><div class="bank-buttons modal-bank-buttons" id="selfDestinationButtons" role="group" aria-label="Choose destination bank"></div><select id="selfDestination" class="bank-select-hidden" aria-hidden="true" tabindex="-1"></select></div>
+    </div>
+    <p class="hint" id="bankTransferError" role="status"></p>
+    <div class="modal-actions"><button type="button" id="cancelBankTransfer2" class="secondary">Cancel</button><button type="button" id="confirmBankTransfer" class="primary">Use These Banks</button></div>
+  </div>
+</div>
+<script>
+/*
+  SET THESE AFTER DEPLOYING YOUR APPS SCRIPT FILES AS WEB APPS.
+  Each backend is a separate Apps Script project in the supplied files.
+*/
+const API = {
+  transaction: 'https://script.google.com/macros/s/AKfycbxGg6jvPbklCOXtVX2ZLj-Kp7UBvyROAZDjXBzL3tqParwgkIu_g5sFHFVtNJK7jbW-/exec',
+  cashBalance: 'https://script.google.com/macros/s/AKfycbwLBalu-wNWOnw9ktGmIfLvXiZgE01Tv6m7pf7qw5h2gBVH7VLYjkXmlVz66TB24OpK/exec',
+  balanceAdjust: 'https://script.google.com/macros/s/AKfycbzME_VqI34k9EkqofxBFyD9MxaEST8cOVaCsTb1xCNDzJ1Dpu2NzjeD1K2Uwt9P7eNkjg/exec',
+  balanceRead: 'https://script.google.com/macros/s/AKfycbzUvpo_FrhJgOXzuNeUCISbAaxFrxXhNNQnj_tibJVtkMK3Ny0rFb5w4Cv2dcfmVPAg/exec',
+  loan: 'https://script.google.com/macros/s/AKfycbwPNTZ7fv5bkv8vcSOdhZARB33C43AI-ezSgLpWEJLFtf2ewnMcKnMXuBGrecQWDD7I3Q/exec',
+  history: 'https://script.google.com/macros/s/AKfycbzMqNdgEgGQhI3gIUxK5op5z3PMJw069pmiU_PzhOuhM834XNqIUQZMWiQbV08CuTqzYg/exec'
+};
+const BANKS=[['KBZ','KBZ — KBZPay Agent'],['Wave','Wave'],['Aya','AYA Pay'],['CB','CB Pay'],['UAB','UAB Pay'],['MTB','MTB Pay'],['Truemoney','Truemoney']];
+const $=id=>document.getElementById(id);
+let mode='transfer',direction='Cash In',banks=[],cashBalance=null,loanState={limit:4000000,currentLoan:0,available:4000000};
+const fmt=n=>Math.round(Number(n)||0).toLocaleString('en-US');
+const parsed=id=>Number(String($(id).value||'').replace(/,/g,'').trim());
+// Format all money inputs with comma separators while keeping values numeric for calculations and submissions.
+const amountInputIds=['amount','selfAmount','balanceAmount','cashAmount','loanAmount'];
+function formatAmountInput(el){const before=el.value, caret=el.selectionStart??before.length, digitsBefore=(before.slice(0,caret).match(/\d/g)||[]).length;const digits=before.replace(/\D/g,'');const formatted=digits?digits.replace(/\B(?=(\d{3})+(?!\d))/g,','):'';el.value=formatted;let pos=0,count=0;while(pos<formatted.length&&count<digitsBefore){if(/\d/.test(formatted[pos]))count++;pos++;}try{el.setSelectionRange(pos,pos)}catch(_){}}
+amountInputIds.forEach(id=>{const el=$(id);if(el){el.addEventListener('input',()=>formatAmountInput(el));if(el.value)formatAmountInput(el);}});
+const ready=url=>url&&!url.startsWith('PASTE_');
+function notify(text,ok=false){const m=$('message');m.textContent=text;m.className='message show '+(ok?'ok':'err');window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>m.classList.remove('show'),6500)}
+function jsonp(url,params={}){return new Promise((resolve,reject)=>{if(!ready(url))return reject(new Error('Configure the Apps Script web app URLs in the API section of this HTML file first.'));const cb='cb_'+Math.random().toString(36).slice(2);const s=document.createElement('script');const q=new URLSearchParams({...params,callback:cb});let done=false;const timer=setTimeout(()=>finish(new Error('Request timed out. Check the Apps Script deployment URL and access settings.')),18000);function finish(err,data){if(done)return;done=true;clearTimeout(timer);delete window[cb];s.remove();err?reject(err):resolve(data)}window[cb]=data=>finish(null,data);s.onerror=()=>finish(new Error('Could not connect to Apps Script.'));s.src=url+(url.includes('?')?'&':'?')+q.toString();document.body.appendChild(s)})}
+function moneyLabel(n){return fmt(n)+' MMK'}
+function calcFee(){const amount=parsed('amount'),bank=$('bank').value;let fee=0;if(amount>0){if(mode==='meter')fee=200;else if(mode==='topup'){const rate={Aya:.025,Truemoney:.03,MTB:.005}[bank];fee=rate===undefined?0:Math.round(amount*rate)}else if(amount<10000)fee=0;else if(direction==='Cash In')fee=Math.ceil(amount/100000)*100;else if(amount<=20000)fee=100;else if(amount<=30000)fee=200;else if(amount<=50000)fee=300;else if(amount<=100000)fee=500;else{const tiers=[[150000,800],[200000,1000],[250000,1300],[300000,1500],[350000,1800],[400000,2000],[450000,2300],[500000,2500],[550000,2800],[600000,3000],[650000,3300],[700000,3500],[750000,3800],[800000,4000],[850000,4300],[900000,4500],[950000,4800],[1000000,5000],[1050000,5300],[1100000,5500],[1150000,5800],[1200000,6000],[1250000,6300],[1300000,6500],[1350000,6800],[1400000,7000],[1450000,7300],[1500000,7500]];const tier=tiers.find(t=>amount<=t[0]);fee=tier?tier[1]:Math.ceil((amount/100000*(amount<3000000?500:amount<5000000?450:400))/100)*100}}
+$('fee').textContent=moneyLabel(fee);$('displayTotal').textContent=moneyLabel(amount+(mode==='transfer'&&direction==='Cash In'?0:fee));$('totalLabel').textContent=mode==='transfer'?(direction==='Cash In'?'Customer receives':'Total amount including fee'):'Amount including service fee';$('feeHint').textContent=mode==='topup'&&![ 'Aya','Truemoney','MTB'].includes(bank)?'Top Up is available only for AYA (2.5%), Truemoney (3%), and MTB (0.5%).':'Fee estimate from the supplied backend fee rules. Final saved fee is calculated by Apps Script.'}
+function setMode(next){mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));const isSelf=mode==='self';$('direction').classList.toggle('hidden',mode!=='transfer');$('transactionForm').classList.toggle('hidden',isSelf);$('selfPanel').classList.toggle('hidden',!isSelf);if(mode==='transfer')$('submitTransaction').textContent='Confirm '+direction;else if(mode==='topup')$('submitTransaction').textContent='Confirm Top Up';else if(mode==='meter')$('submitTransaction').textContent='Confirm Meter Bill';const bank=$('bank');Array.from(bank.options).forEach(o=>o.disabled=mode==='topup'&&!['Aya','Truemoney','MTB'].includes(o.value));if(bank.selectedOptions[0]?.disabled)bank.value='Aya';renderBankButtons();$('bankButtons').querySelectorAll('.bank-choice').forEach(b=>b.disabled=mode==='topup'&&!['Aya','Truemoney','MTB'].includes(b.dataset.bank));if(!isSelf)calcFee();updateSelfFields()}
+function fillSelfBankOptions(){const opts=BANKS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');['selfBank','selfSource','selfDestination'].forEach(id=>{const el=$(id),old=el.value;el.innerHTML=opts;if([...el.options].some(o=>o.value===old))el.value=old});if($('selfSource').value===$('selfDestination').value)$('selfDestination').selectedIndex=1;renderTransferBankButtons();}
+function renderTransferBankButtons(){[['selfSource','selfSourceButtons'],['selfDestination','selfDestinationButtons']].forEach(([selectId,boxId])=>{const box=$(boxId),selected=$(selectId).value;if(!box)return;box.innerHTML=BANKS.map(([v,l])=>`<button type="button" class="bank-choice${selected===v?' selected':''}" data-transfer-bank="${v}" data-select="${selectId}" aria-pressed="${selected===v}">${v==='Aya'?'AYA':v==='Truemoney'?'TrueMoney':v}</button>`).join('');box.querySelectorAll('[data-transfer-bank]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.select;$(id).value=btn.dataset.transferBank;if(id==='selfSource'&&$('selfSource').value===$('selfDestination').value){const alternative=BANKS.find(([v])=>v!==$('selfSource').value);if(alternative)$('selfDestination').value=alternative[0];}renderTransferBankButtons();$('bankTransferError').textContent='';}));});}
+function renderSelfBankButtons(){const box=$('selfBankButtons');if(!box)return;box.innerHTML=BANKS.map(([v,l])=>`<button type="button" class="bank-choice${$('selfBank').value===v?' selected':''}" data-self-bank="${v}" aria-pressed="${$('selfBank').value===v}">${v==='Aya'?'AYA':v==='Truemoney'?'TrueMoney':v}</button>`).join('');box.querySelectorAll('[data-self-bank]').forEach(btn=>btn.addEventListener('click',()=>{$('selfBank').value=btn.dataset.selfBank;renderSelfBankButtons()}));}
+function renderAuxBankButtons(){const box=$('balanceBankButtons');if(!box)return;box.innerHTML=BANKS.map(([v,l])=>`<button type="button" class="bank-choice${$('balanceBank').value===v?' selected':''}" data-aux-bank="${v}" aria-pressed="${$('balanceBank').value===v}">${v==='Aya'?'AYA':v==='Truemoney'?'TrueMoney':v}</button>`).join('');box.querySelectorAll('[data-aux-bank]').forEach(btn=>btn.addEventListener('click',()=>{$('balanceBank').value=btn.dataset.auxBank;renderAuxBankButtons()}));}
+let bankTransferConfirmed=false;
+function openBankTransferModal(){bankTransferConfirmed=false;$('bankTransferError').textContent='';$('bankTransferModal').classList.remove('hidden');if($('selfSource').value===$('selfDestination').value){const next=[...$('selfDestination').options].find(o=>o.value!==$('selfSource').value);if(next)$('selfDestination').value=next.value;} }
+function bankLabel(value){return BANKS.find(([v])=>v===value)?.[1]||value||'—';}
+function renderTransferSummary(){ $('selfFromText').textContent=bankLabel($('selfSource').value); $('selfToText').textContent=bankLabel($('selfDestination').value); }
+function closeBankTransferModal(cancelled=false){$('bankTransferModal').classList.add('hidden');if(cancelled){$('selfAction').value='cashin';bankTransferConfirmed=false;}updateSelfFields(false);}
+function updateSelfFields(shouldOpen=true){if(!$('selfAction'))return;const transfer=$('selfAction').value==='banktransfer';$('selfSingleBankWrap').hidden=transfer;$('selfSingleBankWrap').classList.toggle('hidden',transfer);$('selfTransferSummary').classList.toggle('hidden',!transfer||!bankTransferConfirmed);if(transfer&&bankTransferConfirmed)renderTransferSummary();if(transfer&&shouldOpen)openBankTransferModal();}
+fillSelfBankOptions();renderSelfBankButtons();renderAuxBankButtons();
+function syncSelfActionButtons(){document.querySelectorAll('[data-self-action]').forEach(b=>{const active=b.dataset.selfAction===$('selfAction').value;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});}
+document.querySelectorAll('[data-self-action]').forEach(b=>b.addEventListener('click',()=>{$('selfAction').value=b.dataset.selfAction;syncSelfActionButtons();$('selfAction').dispatchEvent(new Event('change',{bubbles:true}));}));
+$('selfAction').addEventListener('change',()=>{syncSelfActionButtons();bankTransferConfirmed=false;updateSelfFields(true);});syncSelfActionButtons();
+$('changeTransferBanks').addEventListener('click',()=>openBankTransferModal());
+$('selfSource').addEventListener('change',()=>{if($('selfSource').value===$('selfDestination').value){const next=[...$('selfDestination').options].find(o=>o.value!==$('selfSource').value);if(next)$('selfDestination').value=next.value;}renderTransferBankButtons();});$('selfDestination').addEventListener('change',renderTransferBankButtons);
+$('confirmBankTransfer').addEventListener('click',()=>{if($('selfSource').value===$('selfDestination').value){$('bankTransferError').textContent='Choose two different bank accounts.';return;}bankTransferConfirmed=true;renderTransferSummary();closeBankTransferModal(false);});
+$('cancelBankTransfer').addEventListener('click',()=>closeBankTransferModal(true));$('cancelBankTransfer2').addEventListener('click',()=>closeBankTransferModal(true));
+$('bankTransferModal').addEventListener('click',e=>{if(e.target===$('bankTransferModal'))closeBankTransferModal(true);});
+$('submitSelf').addEventListener('click',async()=>{const amount=parsed('selfAmount'),action=$('selfAction').value;if(!Number.isInteger(amount)||amount<=0)return notify('Enter a positive whole-number MMK amount.');if(action==='banktransfer'&&!bankTransferConfirmed)return openBankTransferModal();const params={action:'adjust',mode:action,amount:String(amount),note:$('selfNote').value.trim()||'Self cash/bank adjustment',requestId:crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random()};if(action==='banktransfer'){params.fromService=$('selfSource').value;params.toService=$('selfDestination').value;if(params.fromService===params.toService)return notify('Choose two different bank accounts for a transfer.');}else params.service=$('selfBank').value;const btn=$('submitSelf');btn.disabled=true;btn.textContent='Saving…';try{const d=await jsonp(API.balanceAdjust,params);if(!d.success)throw new Error(d.error||d.message||'Self adjustment failed.');if(Array.isArray(d.services))renderBanks(d.services);if(d.cashBalance!==undefined){cashBalance=Number(d.cashBalance)||0;$('cashMoney').textContent=moneyLabel(cashBalance);$('totalMoney').textContent=moneyLabel(banks.reduce((sum,b)=>sum+(Number(b.balance)||0),0)+cashBalance);}notify(d.message||'Self cash/bank adjustment saved. No customer transaction was created.',true);$('selfAmount').value='';$('selfNote').value='';bankTransferConfirmed=false;$('connection').textContent='Balances updated';}catch(err){notify('Self adjustment failed: '+err.message)}finally{btn.disabled=false;btn.textContent=$('languageSelect').value==='my'?'အတည်ပြုရန်':'Confirm Self Adjustment';}});
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+document.querySelectorAll('[data-direction]').forEach(b=>b.addEventListener('click',()=>{direction=b.dataset.direction;document.querySelectorAll('[data-direction]').forEach(x=>x.classList.toggle('active',x.dataset.direction===direction));$('submitTransaction').textContent='Confirm '+direction;calcFee()}));
+['amount','bank'].forEach(id=>$(id).addEventListener('input',()=>{calcFee();renderBankButtons()}));renderBankButtons();
+function renderBankButtons(){const box=$('bankButtons');if(!box)return;box.innerHTML=BANKS.map(([v,l])=>`<button type="button" class="bank-choice${$('bank').value===v?' selected':''}" data-bank="${v}" aria-pressed="${$('bank').value===v}" ${mode==='topup'&&! ['Aya','Truemoney','MTB'].includes(v)?'disabled':''}>${v==='Aya'?'AYA':v==='Truemoney'?'TrueMoney':v}</button>`).join('');box.querySelectorAll('.bank-choice').forEach(btn=>btn.addEventListener('click',()=>{if(btn.disabled)return;$('bank').value=btn.dataset.bank;renderBankButtons();calcFee()}));} 
+function renderBanks(list){banks=list||[];const total=banks.reduce((s,b)=>s+(Number(b.balance ?? b.total_amt_per_payment)||0),0);$('cashInBank').textContent=moneyLabel(total);$('totalMoney').textContent=moneyLabel(total+(Number(cashBalance)||0));const opts=BANKS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');['bank','balanceBank','loanBank'].forEach(id=>{const select=$(id),current=select.value;select.innerHTML=opts;if([...select.options].some(o=>o.value===current))select.value=current});renderBankButtons();renderAuxBankButtons();}
+async function refresh(){
+  $('connection').textContent='Updating…';
+  const tasks=[
+    jsonp(API.balanceRead,{action:'read'}).then(d=>{if(!d.success)throw new Error(d.error||d.message||'Could not read bank balances');renderBanks(d.services||d.banks||d.data||[]);}).catch(e=>{console.warn('Bank balance request failed:',e.message);$('connection').textContent='Bank balances unavailable';}),
+    jsonp(API.cashBalance,{action:'cashBalanceRead'}).then(c=>{if(c.success){cashBalance=Number(c.cashBalance ?? c.balance ?? c.total_cash)||0;$('cashMoney').textContent=moneyLabel(cashBalance);$('totalMoney').textContent=moneyLabel(banks.reduce((s,b)=>s+(Number(b.balance ?? b.total_amt_per_payment)||0),0)+cashBalance);}}).catch(e=>console.warn('Physical cash request failed:',e.message))
+  ];
+  await Promise.allSettled(tasks);
+  if($('connection').textContent==='Updating…')$('connection').textContent='Balances updated';
+  const loader=$('appLoader');if(loader){loader.classList.add('hidden');setTimeout(()=>loader.remove(),350);}
+}
+// Keep the three right-side control cards as a single-open accordion.
+// Opening one card automatically closes the other two to prevent page overflow.
+const controlCards=[...document.querySelectorAll('.sidecol details.fold')];
+controlCards.forEach(card=>card.addEventListener('toggle',()=>{
+  if(card.open) controlCards.forEach(other=>{if(other!==card)other.open=false;});
+}));
+const refreshButton=$('refresh');if(refreshButton)refreshButton.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();refresh()});
+// Phone mask: display Myanmar country prefix and group the subscriber digits in threes (final group may be 2 digits).
+function formatMyanmarPhone(raw){let digits=String(raw||'').replace(/\D/g,'');if(digits.startsWith('959'))digits=digits.slice(3);else if(digits.startsWith('09')&&digits.length>=10&&digits.length<=11)digits=digits.slice(2);digits=digits.slice(0,11);const groups=digits.match(/.{1,3}/g)||[];return digits?'(+959) '+groups.join('-'):'';}
+$('phone').addEventListener('input',()=>{const el=$('phone'),formatted=formatMyanmarPhone(el.value);el.value=formatted;try{el.setSelectionRange(el.value.length,el.value.length)}catch(_){}});
+// Title-case the first letter of each word as the customer types.
+$('customerName').addEventListener('input',()=>{const el=$('customerName'),start=el.selectionStart,end=el.selectionEnd;el.value=el.value.replace(/(^|\s)([a-z])/g,(_,space,letter)=>space+letter.toUpperCase());try{el.setSelectionRange(start,end)}catch(_){}});
+$('transactionForm').addEventListener('submit',async e=>{e.preventDefault();const amount=parsed('amount'),bank=$('bank').value;if(!Number.isFinite(amount)||amount<=0)return notify('Enter a valid amount greater than zero.');if(mode==='topup'&&!['Aya','Truemoney','MTB'].includes(bank))return notify('Top Up is only available for AYA, Truemoney and MTB.');const status=mode==='transfer'?direction:mode==='topup'?'Top Up':'Meter Bill';const serviceType=mode==='transfer'?'Money Transfer':mode==='topup'?'Top Up':'Meter Bill';const btn=$('submitTransaction');btn.disabled=true;btn.textContent='Saving…';try{const d=await jsonp(API.transaction,{action:'saveTransaction',requestId:crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random(),phone:$('phone').value,customerName:$('customerName').value,amount:String(amount),status,provider:bank,serviceType});if(!d.success)throw new Error(d.message||d.error||'Transaction was not saved.');notify(`${d.message||'Transaction saved.'} · Fee ${moneyLabel(d.cost)}.`,true);$('transactionForm').reset();$('bank').value=bank;calcFee();await refresh()}catch(err){notify(err.message)}finally{btn.disabled=false;setMode(mode)}});
+$('balanceForm').addEventListener('submit',async e=>{e.preventDefault();const amount=parsed('balanceAmount');if(!Number.isInteger(amount)||amount<=0)return notify('Enter a positive whole-number MMK amount.');const btn=e.submitter;btn.disabled=true;try{const d=await jsonp(API.balanceRead,{action:'add',service:$('balanceBank').value,amount:String(amount),note:'External money added to bank'});if(!d.success)throw new Error(d.error||d.message||'Balance update failed');notify('Bank balance updated.',true);$('balanceAmount').value='';await refresh()}catch(err){notify('Balance adjustment failed: '+err.message)}finally{btn.disabled=false}});
+document.querySelectorAll('[data-cash-action]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.cashAction;$('cashAction').value=v;document.querySelectorAll('[data-cash-action]').forEach(x=>{const active=x.dataset.cashAction===v;x.classList.toggle('active',active);x.setAttribute('aria-pressed',String(active));});}));
+$('cashForm').addEventListener('submit',async e=>{e.preventDefault();const amount=parsed('cashAmount');if(!Number.isInteger(amount)||amount<=0)return notify('Enter a positive whole-number MMK amount.');/* This action requires a dedicated backend mode; never emulate it with a customer transaction. */notify('Cash-only adjustment is not exposed by the supplied Self CashinOut API. Add a dedicated cash adjustment mode to that backend before using this control.')});
+$('loanForm').addEventListener('submit',async e=>{e.preventDefault();const amount=parsed('loanAmount');if(!Number.isInteger(amount)||amount<=0)return notify('Enter a positive whole-number loan amount.');if(amount>Number(loanState.available||0))return notify('Loan limit exceeded. Available: '+moneyLabel(loanState.available));if($('loanBank').value!=='KBZ')return notify('The supplied Loan.gs currently credits KBZ only.');notify('Loan.gs only supports POST JSON and does not expose a GET/JSONP borrowing action. Add a same-origin Apps Script handler or JSONP GET action before using this button.')});
+
+const translations={
+ en:{metrics:['TOTAL AVAILABLE MONEY','TOTAL CASH AVAILABLE','TODAY INCOME'],eyebrow:'New transaction',counter:'Service counter',sub:'Choose a service, enter the amount and confirm the fee.',modes:['Cash In / Out','Top Up','Meter Bill','Self Cash In / Out'],bank:'BANK / PAYMENT ACCOUNT',amount:'TRANSACTION AMOUNT',phone:'CUSTOMER PHONE (OPTIONAL)',name:'CUSTOMER NAME (OPTIONAL)',note:'NOTE (OPTIONAL)',amountPlaceholder:'Enter amount',phonePlaceholder:'09…',namePlaceholder:'Customer name',notePlaceholder:'Reference or short note',fee:'Service fee',cashIn:'Cash In',cashOut:'Cash Out',cashInSub:'Bank balance → physical cash',cashOutSub:'Physical cash → bank balance',addExternal:'Add Money to Bank',addExternalSub:'Add outside funds to a selected bank account.',destination:'DESTINATION ACCOUNT',addAmount:'AMOUNT TO ADD',addBank:'Add to Bank Balance',externalHint:'For new money from outside your tracked cash and bank balances.',cashOnHand:'Add/Give Cash',cashOnHandSub:'Update physical cash outside your tracked balance.',action:'ACTION',addCash:'Add outside cash',removeCash:'Remove outside cash',cashAmount:'AMOUNT',updateCash:'Update Physical Cash',cashHint:'Cash-only adjustment needs a dedicated backend operation.',borrow:'Loan',borrowSub:'Maximum loan limit: 4,000,000 MMK',currentLoan:'Current loan',loanUsed:'Loan used',borrowAmount:'BORROW AMOUNT',credit:'CREDIT TO ACCOUNT',borrowButton:'Borrow Loan',loanHint:'The supplied Loan.gs currently credits KBZ only. Other destination accounts need a backend update.',footer:'Private finance workspace · Always verify the account and amount before confirming a transaction.',ready:'Ready to connect',themeDark:'Switch to dark theme',themeLight:'Switch to light theme',selfAction:'SELF TRANSACTION TYPE',selfBank:'BANK ACCOUNT',selfSource:'FROM BANK',selfDestination:'TO BANK',selfAmount:'AMOUNT',selfNote:'NOTE (OPTIONAL)',selfHint:'Personal balance adjustment only. This does not create a customer transaction or service fee.',selfConfirm:'Confirm Self Adjustment'},
+ my:{metrics:['စုစုပေါင်း ရရှိနိုင်သောငွေ','လက်ရှိ ငွေသားစုစုပေါင်း','ယနေ့ ဝင်ငွေ'],eyebrow:'ငွေလွှဲအသစ်',counter:'ဝန်ဆောင်မှုကောင်တာ',sub:'ဝန်ဆောင်မှုရွေးပြီး ငွေပမာဏနှင့် ဝန်ဆောင်ခကို စစ်ဆေးပါ။',modes:['ငွေသွင်း / ငွေထုတ်','ဖုန်းငွေဖြည့်','မီတာဘေလ်','ကိုယ်ပိုင် ငွေသား / ဘဏ်'],bank:'ဘဏ် / ငွေပေးချေမှုအကောင့်',amount:'ငွေလွှဲပမာဏ',phone:'ဖောက်သည်ဖုန်း (မဖြစ်မနေမဟုတ်)',name:'ဖောက်သည်အမည် (မဖြစ်မနေမဟုတ်)',note:'မှတ်ချက် (မဖြစ်မနေမဟုတ်)',amountPlaceholder:'ငွေပမာဏထည့်ပါ',phonePlaceholder:'09…',namePlaceholder:'ဖောက်သည်အမည်',notePlaceholder:'ရည်ညွှန်းချက် သို့မဟုတ် မှတ်ချက်',fee:'ဝန်ဆောင်ခ',cashIn:'ငွေသွင်း',cashOut:'ငွေထုတ်',cashInSub:'ဘဏ်လက်ကျန် → လက်ငင်းငွေသား',cashOutSub:'လက်ငင်းငွေသား → ဘဏ်လက်ကျန်',addExternal:'ဘဏ်သို့ ငွေထည့်ရန်',addExternalSub:'ရွေးချယ်ထားသော ဘဏ်အကောင့်သို့ ပြင်ပငွေထည့်ပါ။',destination:'လက်ခံမည့်အကောင့်',addAmount:'ထည့်မည့်ပမာဏ',addBank:'ဘဏ်လက်ကျန်ထဲ ထည့်ရန်',externalHint:'မှတ်တမ်းတင်ထားသော ငွေသားနှင့် ဘဏ်လက်ကျန်ပြင်ပမှ ငွေအသစ်အတွက်။',cashOnHand:'ငွေသား ထည့်/ပေးရန်',cashOnHandSub:'စာရင်းပြင်ပရှိ လက်ငင်းငွေသားကို ပြင်ဆင်ပါ။',action:'လုပ်ဆောင်ချက်',addCash:'ပြင်ပငွေသား ထည့်ရန်',removeCash:'ငွေသား ဖယ်ရှားရန်',cashAmount:'ပမာဏ',updateCash:'ငွေသားလက်ကျန် ပြင်ဆင်ရန်',cashHint:'ငွေသားတစ်ခုတည်း ပြင်ဆင်ရန် backend လုပ်ဆောင်ချက် သီးသန့်လိုအပ်သည်။',borrow:'ချေးငွေ',borrowSub:'အများဆုံး ချေးငွေကန့်သတ်ချက်: 4,000,000 MMK',currentLoan:'လက်ရှိချေးငွေ',loanUsed:'အသုံးပြုထားသောချေးငွေ',borrowAmount:'ချေးယူမည့်ပမာဏ',credit:'ငွေဝင်မည့်အကောင့်',borrowButton:'ချေးငွေယူရန်',loanHint:'လက်ရှိ Loan.gs သည် KBZ သို့သာ ငွေထည့်ပေးသည်။ အခြားအကောင့်များအတွက် backend ပြင်ဆင်ရန်လိုသည်။',footer:'ကိုယ်ပိုင်ငွေကြေးလုပ်ငန်းခွင် · အတည်ပြုမီ အကောင့်နှင့် ပမာဏကို စစ်ဆေးပါ။',ready:'ချိတ်ဆက်ရန် အသင့်ဖြစ်ပါပြီ',themeDark:'အမှောင်ပုံစံသို့ ပြောင်းရန်',themeLight:'အလင်းပုံစံသို့ ပြောင်းရန်',selfAction:'ကိုယ်ပိုင် လုပ်ဆောင်ချက်',selfBank:'ဘဏ်အကောင့်',selfSource:'မူလဘဏ်',selfDestination:'လက်ခံမည့်ဘဏ်',selfAmount:'ပမာဏ',selfNote:'မှတ်ချက် (မဖြစ်မနေမဟုတ်)',selfHint:'ကိုယ်ပိုင်ငွေသား/ဘဏ်လက်ကျန်ကိုသာ ပြင်ဆင်သည်။ ဖောက်သည်ငွေလွှဲမှတ်တမ်း သို့မဟုတ် ဝန်ဆောင်ခ မဖန်တီးပါ။',selfConfirm:'ကိုယ်ပိုင်ပြင်ဆင်မှု အတည်ပြုရန်'}
+};
+function applyLanguage(lang){const t=translations[lang]||translations.en;document.documentElement.lang=lang==='my'?'my':'en';document.querySelectorAll('.metric label').forEach((e,i)=>e.textContent=t.metrics[i]);const set=(sel,val)=>{const e=document.querySelector(sel);if(e&&val!==undefined)e.textContent=val};set('.cardhead .eyebrow',t.eyebrow);set('.cardhead h2',t.counter);set('.cardhead .sub',t.sub);document.querySelectorAll('[data-mode]').forEach((e,i)=>e.textContent=t.modes[i]);set('.field label:not([for])',t.bank);const labels={'amount':t.amount,'phone':t.phone,'customerName':t.name,'note':t.note,'balanceBank':t.destination,'balanceAmount':t.addAmount,'cashAction':t.action,'cashAmount':t.cashAmount,'loanAmount':t.borrowAmount,'loanBank':t.credit};Object.entries(labels).forEach(([id,v])=>{const e=document.querySelector(`label[for="${id}"]`);if(e)e.textContent=v});const selfLabels={selfAction:t.selfAction,selfBank:t.selfBank,selfSource:t.selfSource,selfDestination:t.selfDestination,selfAmount:t.selfAmount,selfNote:t.selfNote};Object.entries(selfLabels).forEach(([id,v])=>{const e=document.querySelector(`label[for="${id}"]`);if(e)e.textContent=v});$('selfHint').textContent=t.selfHint;$('submitSelf').textContent=t.selfConfirm;Object.entries({amount:t.amountPlaceholder,phone:t.phonePlaceholder,customerName:t.namePlaceholder,note:t.notePlaceholder,balanceAmount:t.amountPlaceholder,cashAmount:t.amountPlaceholder,loanAmount:t.amountPlaceholder}).forEach(([id,v])=>{if($(id))$(id).placeholder=v});set('.fee-row span',t.fee);const selfOpts=$('selfAction').options;const selfActionLabels=lang==='my'?['ငွေသားဝင် · ဘဏ်ငွေထွက်','ငွေသားထွက် · ဘဏ်ငွေဝင်','ဘဏ်ငွေထွက် · ဘဏ်ငွေဝင်']:['Cash In · Bank Out','Cash Out · Bank In','Bank Out · Bank In'];selfActionLabels.forEach((label,i)=>{selfOpts[i].text=label;const b=document.querySelector(`[data-self-action="${selfOpts[i].value}"]`);if(b)b.textContent=label});syncSelfActionButtons();document.querySelectorAll('[data-direction]').forEach((e,i)=>{e.childNodes[0].textContent=(i===0?t.cashIn:t.cashOut)+' ';const sm=e.querySelector('small');if(sm)sm.textContent=i===0?t.cashInSub:t.cashOutSub});const details=[...document.querySelectorAll('.foldsummary')];const keys=[['addExternal','addExternalSub'],['cashOnHand','cashOnHandSub'],['borrow','borrowSub']];details.forEach((e,i)=>{const h=e.querySelector('h2'),sub=e.querySelector('.sub');if(h)h.textContent=t[keys[i][0]];if(sub)sub.textContent=t[keys[i][1]]});const buttons={'balanceForm':t.addBank,'cashForm':t.updateCash,'loanForm':t.borrowButton};Object.entries(buttons).forEach(([id,v])=>{const b=document.querySelector(`#${id} button[type="submit"]`);if(b)b.textContent=v});const hints=document.querySelectorAll('.foldbody .hint');[t.externalHint,t.cashHint,t.loanHint].forEach((v,i)=>{if(hints[i])hints[i].textContent=v});set('.foot',t.footer);$('themeToggle').title=document.body.classList.contains('dark')?t.themeLight:t.themeDark;$('themeToggle').setAttribute('aria-label',$('themeToggle').title);$('connection').textContent=lang==='my'?'ချိတ်ဆက်မှု မရှိသေးပါ':t.ready;}
+$('languageSelect').addEventListener('change',e=>applyLanguage(e.target.value));
+$('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('dark');const dark=document.body.classList.contains('dark');$('themeToggle').textContent=dark?'☀':'☾';document.querySelector('meta[name="theme-color"]').content=dark?'#101714':'#12251e';applyLanguage($('languageSelect').value)});
+
+calcFee();applyLanguage('en');refresh().catch(err=>{console.warn(err);const loader=$('appLoader');if(loader){loader.classList.add('hidden');setTimeout(()=>loader.remove(),350);}});
+
+// Fail-safe: always release the initial loader if an API stalls or a browser blocks a request.
+setTimeout(()=>{const loader=$('appLoader');if(loader){loader.classList.add('hidden');setTimeout(()=>loader.remove(),350);}},8000);
+</script>
+</body></html>
