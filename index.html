@@ -1,33 +1,459 @@
-<!DOCTYPE html>
- <html lang="en"> <head> <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/> <meta content="#b58a3a" name="theme-color"/><title>LinLett — Money Transfer</title> <style> :root{--gold:#b58a3a;--gold2:#d7bd7d;--ink:#28271f;--muted:#858174;--line:#eee9dd;--bg:#f8f7f3;--white:#fff;--green:#26835c;--red:#bd5148;--shadow:0 8px 28px #32270d0b} *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.shell{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:246px;background:#fff;border-right:1px solid var(--line);padding:25px 16px;display:flex;flex-direction:column;z-index:10}.brand{display:flex;align-items:center;gap:11px;padding:0 10px 28px}.mark{height:40px;width:40px;border-radius:12px;background:linear-gradient(145deg,#ddc47f,#a77a2a);display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px}.brand b{font-size:20px;letter-spacing:.2px}.brand small{display:block;color:#9b9587;font-size:9px;letter-spacing:1.8px;text-transform:uppercase}.nav-label{font-size:10px;color:#aaa394;letter-spacing:1.5px;font-weight:800;padding:13px 12px 8px}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:10px;color:#6f6a5e;font-weight:600;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#f7f0df;color:#8b641e}.nav .ico{width:20px;text-align:center;font-size:16px}.sidefoot{margin-top:auto;border-top:1px solid var(--line);padding:15px 10px 0;font-size:11px;color:var(--muted)}.main{margin-left:246px;min-height:100vh}.topbar{height:74px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;padding:0 32px;display:flex;align-items:center;justify-content:space-between}.title{font-size:18px;font-weight:800}.subtitle{font-size:11px;color:var(--muted)}.topright{display:flex;align-items:center;gap:12px}.date{border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:12px;color:#777164}.avatar{width:35px;height:35px;border-radius:50%;background:#f5ecd6;color:#8c6826;display:grid;place-items:center;font-weight:800}.menu{display:none;border:0;background:none;font-size:22px}.content{padding:27px 32px 50px;max-width:1500px;margin:auto}.page{display:none}.page.active{display:block}.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.head h2{font-size:16px;margin:0}.head p{font-size:12px;color:var(--muted);margin:3px 0 0}.btn{border:0;border-radius:9px;padding:10px 15px;font-weight:700}.primary{color:#fff;background:linear-gradient(135deg,#c7a65d,#a77927);box-shadow:0 4px 10px #b58a3a26}.light{color:#89651f;background:#f8f2e5;border:1px solid #eee4cf}.grid{display:grid;gap:15px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}.stat,.panel,.formcard{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.stat{padding:16px 16px;min-width:0;overflow:hidden}.statlabel{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px;min-width:0}.statlabel:first-child{min-width:0}.staticon{width:29px;height:29px;border-radius:9px;background:#f8f1e1;color:#9b7227;display:grid;place-items:center}.statvalue{font-size:clamp(15px,1.55vw,22px);line-height:1.25;font-weight:850;letter-spacing:-.55px;margin-top:11px;white-space:normal;overflow-wrap:anywhere;word-break:normal;min-width:0}.statnote{font-size:10px;line-height:1.35;color:#a39d90;overflow-wrap:anywhere}.cols{grid-template-columns:minmax(0,1.2fr) minmax(290px,.8fr)}.panel{padding:19px;margin-bottom:16px}.panelhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.panelhead h3{font-size:14px;margin:0}.muted{font-size:11px;color:var(--muted)}.actions{grid-template-columns:repeat(4,1fr)}.action{background:#fff;border:1px solid var(--line);border-radius:11px;padding:15px 8px;text-align:center;font-weight:700;color:var(--ink)}.action:hover{border-color:var(--gold2);background:#fdfaf3}.action span{display:block;color:var(--gold);font-size:20px;margin-bottom:5px}.banks{grid-template-columns:repeat(2,minmax(0,1fr))}.bank{display:flex;justify-content:space-between;align-items:center;padding:10px 9px;border:1px solid var(--line);border-radius:10px;gap:7px;min-width:0;overflow:hidden}.bankname{display:flex;align-items:center;gap:7px;font-weight:700;min-width:0;flex:1}.bankname>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bankmark{height:27px;width:27px;min-width:27px;border-radius:8px;background:#f6f0e3;color:#906a25;display:grid;place-items:center;font-size:10px}.bankamount{font-size:clamp(10px,.85vw,12px);font-weight:800;white-space:nowrap;flex:0 0 auto;text-align:right;font-variant-numeric:tabular-nums}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th{text-align:left;padding:10px;color:#999385;font-size:10px;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--line)}td{padding:12px 10px;border-bottom:1px solid #f2efe8;font-size:12px}tr:last-child td{border:0}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#f7f1e4;color:#8c681f;font-size:10px;font-weight:800}.empty{text-align:center;padding:25px;color:#aaa394}.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(270px,.85fr);gap:16px;align-items:start}.formcard{padding:22px}.formcard h2{font-size:17px;margin:0 0 4px}.intro{font-size:12px;color:var(--muted);margin:0 0 20px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:750;color:#706b60}.field input,.field select,.field textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid #e8e3d8;border-radius:9px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#c5a052;box-shadow:0 0 0 3px #c5a05220}.field textarea{min-height:75px;resize:vertical}.hint{font-size:10px;color:#a49e91}.formactions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.fee{background:#faf7ef;border:1px solid #eee4ce;border-radius:10px;padding:13px;margin-top:15px}.feerow{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:#777164}.feerow strong{color:#37342b}.feerow.total{border-top:1px solid #e9dfc9;margin-top:6px;padding-top:10px;font-size:14px}.darkcard{background:linear-gradient(145deg,#3c382e,#24231f);color:#fff;border-radius:13px;padding:19px;margin-bottom:13px}.darkcard small{color:#d4c8a8}.darkcard strong{display:block;font-size:24px;margin:5px 0}.info{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff;color:#777164;font-size:12px}.notice{display:none;padding:11px 13px;border-radius:9px;margin-bottom:13px;font-size:12px}.notice.show{display:block}.notice.ok{background:#edf7f1;color:#26734f}.notice.err{background:#fff0ee;color:#b34b43}.toolbar{display:flex;gap:8px}.toolbar input{border:1px solid var(--line);border-radius:8px;padding:9px}.footnote{font-size:10px;color:#a7a193;margin-top:12px} @media(max-width:1150px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.cols,.layout{grid-template-columns:1fr}}@media(min-width:1151px) and (max-width:1400px){.banks{grid-template-columns:1fr}} @media(max-width:740px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.statvalue{font-size:clamp(14px,4vw,18px)}.bankamount{font-size:11px}.sidebar{transform:translateX(-100%);transition:.2s;box-shadow:var(--shadow)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu{display:block}.topbar{height:64px;padding:0 15px}.content{padding:19px 14px 35px}.date{display:none}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.formcard,.panel{padding:15px}.banks{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}.stats{gap:9px}.stat{padding:13px}.statvalue{font-size:18px}.action{font-size:11px}.actions{gap:8px}} 
-/* Minimal banking-style interface */
-:root{--bg:#f7f7f5;--line:#e9e8e2;--gold:#b58a3a;--gold2:#d7bd7d;--ink:#24241f;--muted:#77776f}
-.sidebar{width:220px;padding:22px 14px}.main{margin-left:220px}.topbar{padding:0 30px}.content{max-width:1120px;padding:28px 30px 48px}.brand{padding-bottom:22px}.nav button{padding:12px;border-radius:10px}.nav button.active{background:#f5f0e4;color:#805e20}.topright{gap:10px}.dashboard-link{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border:1px solid #e7dfcc;border-radius:9px;color:#805e20;text-decoration:none;font-size:12px;font-weight:750;background:#fffdf8}.dashboard-link:hover{background:#f7f0df}.page-service .head{margin-bottom:14px}.layout{grid-template-columns:minmax(0,1fr) 260px;gap:16px}.formcard{padding:24px}.formcard h2{font-size:18px}.intro{margin-bottom:18px}.fields{gap:15px}.field label{font-size:12px}.field input,.field select,.field textarea{min-height:44px;border-color:#e4e3dd;border-radius:10px}.field textarea{min-height:80px}.service-mode{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 20px;padding:14px;background:#faf9f6;border:1px solid #eeece5;border-radius:13px}.cash-switch{display:inline-flex;gap:4px;padding:4px;border-radius:11px;background:#ecebe6}.mode-choice{border:0;background:transparent;color:#68685f;border-radius:8px;padding:10px 18px;font-weight:750;min-width:100px}.mode-choice[aria-pressed=true]{background:#fff;color:#7d5b1d;box-shadow:0 1px 5px #00000012}.toggle-option{display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:7px 5px;user-select:none}.toggle-option input{position:absolute;opacity:0;width:1px;height:1px}.switch-track{width:38px;height:22px;border-radius:20px;background:#d5d5cf;display:inline-flex;align-items:center;padding:3px;transition:background .18s}.switch-knob{height:16px;width:16px;border-radius:50%;background:white;box-shadow:0 1px 3px #0002;transition:transform .18s}.toggle-option input:checked+.switch-track{background:#b58a3a}.toggle-option input:checked+.switch-track .switch-knob{transform:translateX(16px)}.toggle-option input:focus-visible+.switch-track,.mode-choice:focus-visible{outline:3px solid #b58a3a55;outline-offset:3px}.toggle-label{font-size:12px;font-weight:750;color:#55554d}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}.service-aside{display:flex;align-items:flex-start}.compact-info{line-height:1.65}.compact-info p{margin:8px 0 0}.fee{background:#faf8f2;border-color:#eee7d8}.formactions .btn{min-height:43px;padding:11px 20px}.btn.primary{background:#b58a3a;box-shadow:none}.btn.primary:hover{background:#9f772f}.notice{line-height:1.5}.sidefoot{font-size:10px}.page:not(.active){display:none}
-@media(max-width:740px){.sidebar{width:270px}.main{margin-left:0}.topbar{padding:0 14px}.content{padding:18px 13px 30px}.layout{grid-template-columns:1fr}.service-aside{display:none}.formcard{padding:17px}.service-mode{gap:8px;padding:10px}.cash-switch{width:100%}.mode-choice{flex:1;min-width:0}.toggle-option{padding:8px 4px}.dashboard-link{padding:8px 10px;font-size:11px}.head{flex-direction:row;align-items:center}.formactions{position:sticky;bottom:0;background:#fff;padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:3}}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#252724">
+<title>LinLett | Service Desk</title>
+<style>
+:root{--bg:#f3f4f1;--card:#fff;--ink:#242722;--muted:#70756d;--gold:#d0a557;--line:#e3e6df;--green:#17784e;--red:#b42318;--dark:#252724;--shadow:0 8px 28px #1c211b0b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:1280px;margin:auto;padding:18px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:var(--dark);color:var(--gold);display:grid;place-items:center;font-weight:900;font-size:19px;letter-spacing:-1px}.brand h1{font-size:19px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn,.navbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:11px;padding:10px 13px;font-weight:700}.btn.gold{background:var(--gold);border-color:var(--gold);color:#252724}.btn.danger{color:var(--red)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px}.sidebar{background:var(--dark);color:#fff;border-radius:18px;padding:14px;height:max-content;position:sticky;top:14px}.side-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#aeb2a9;padding:8px 10px}.nav{display:grid;gap:5px}.navbtn{width:100%;text-align:left;background:transparent;border-color:transparent;color:#d9ddd5;padding:11px 12px}.navbtn.active,.navbtn:hover{background:#3a3d36;color:#f4d58f;border-color:#55594e}.side-foot{border-top:1px solid #454940;margin-top:14px;padding:12px 9px 2px;color:#b8bcb3;font-size:11px}
+main{min-width:0}.page{display:none}.page.active{display:block}.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:2px 0 14px}.pagehead h2{margin:0;font-size:21px}.pagehead p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:13px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);min-width:0}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-6{grid-column:span 6}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+.card h3{font-size:14px;margin:0 0 13px}.muted{color:var(--muted)}.field{margin-bottom:13px;min-width:0}.field:last-child{margin-bottom:0}label{display:block;font-size:12px;font-weight:750;margin-bottom:6px}input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d8dcd4;border-radius:10px;background:#fff;color:var(--ink);outline:none;min-width:0}input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d0a55724}textarea{resize:vertical;min-height:70px}.hint{font-size:11px;color:var(--muted);margin-top:5px}
+.choice-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.choice{border:1px solid var(--line);background:#fff;border-radius:11px;padding:11px 8px;text-align:center;font-weight:750;color:var(--ink)}.choice small{display:block;color:var(--muted);font-weight:500;font-size:10px;margin-top:3px}.choice.active{border:2px solid var(--gold);background:#fff9eb;padding:10px 7px}
+.pills{display:flex;gap:7px;flex-wrap:wrap}.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-weight:700;color:var(--ink)}.pill.active{background:#fff5dc;border-color:var(--gold)}
+.bank-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.bank{border:2px solid transparent;border-radius:11px;padding:11px 6px;text-align:center;font-weight:800;letter-spacing:.15px;cursor:pointer;transition:transform .12s,box-shadow .12s,outline-color .12s}
+.bank:hover{transform:translateY(-1px);box-shadow:0 3px 10px #0002}
+.bank.active{outline:3px solid var(--gold);outline-offset:2px;box-shadow:0 0 0 1px #0002}
+.bank:disabled{opacity:.28;filter:grayscale(1);cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.bank:disabled:hover{transform:none;box-shadow:none}
+/* Payment-channel brand colors stay consistent in both light and dark themes. */
+.bank-kbz,.bank-aya{background:#d92332;color:#fff;border-color:#d92332}
+.bank-wave{background:#fff;color:#0876d1;border-color:#d9e1eb}
+.bank-cb{background:#1264b5;color:#fff;border-color:#1264b5}
+.bank-uab{background:#171717;color:#fff;border-color:#171717}
+.bank-mtb{background:#168447;color:#fff;border-color:#168447}
+.bank-truemoney{background:#fff;color:#e32935;border-color:#e8d9a5}
+.bank-aplus{background:#7137a8;color:#fff;border-color:#7137a8}
 
-/* Service selector: five clear banking-style switch buttons */
-.service-switches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;width:100%}.service-switch{min-height:43px;padding:9px 8px;border:1px solid #e4e1d8;border-radius:10px;background:#fff;color:#55554d;font-weight:750;font-size:12px;transition:.15s}.service-switch:hover{border-color:#c7a65d;background:#fcfaf5}.service-switch.active{background:#b58a3a;border-color:#b58a3a;color:#fff;box-shadow:0 3px 9px #b58a3a30}.service-switch:focus-visible,.channel-button:focus-visible{outline:3px solid #b58a3a66;outline-offset:3px}.channel-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.channel-button{min-height:49px;border:2px solid transparent;border-radius:11px;padding:10px 8px;font-weight:850;font-size:12px;letter-spacing:.1px;transition:transform .12s,border-color .12s,box-shadow .12s}.channel-button:hover{transform:translateY(-1px)}.channel-button[aria-pressed=true]{border-color:#d0a557;box-shadow:0 0 0 3px #d0a55730,0 3px 10px #00000010}.channel-kbz{background:#d9272e;color:#fff}.channel-wave{background:#fff;color:#1676d2;border-color:#d9e4f0}.channel-aya{background:#d9272e;color:#fff}.channel-cb{background:#1765bd;color:#fff}.channel-uab{background:#16834b;color:#fff}.channel-mtb{background:#171717;color:#fff}.channel-truemoney{background:#fff;color:#e32626;border-color:#e7e1d5}.channel-truemoney .tm-accent{color:#f2c500}.channel-aplus{background:#7137a8;color:#fff}@media(max-width:740px){.service-switches{grid-template-columns:repeat(3,minmax(0,1fr))}.channel-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.service-switch{min-height:44px}}
-</style> </head> <body> <div class="shell"> <aside class="sidebar" id="sidebar"> <div class="brand"><div class="mark">L</div><div><b>LinLett</b><small>Money Transfer</small></div></div> <div class="nav-label">MAIN MENU</div><nav class="nav"><button data-page="service" type="button"><span class="ico">＋</span>New transaction</button><button data-page="internal" type="button"><span class="ico">↔</span>Internal transfer</button><button data-page="balances" type="button"><span class="ico">▤</span>Balances</button><button data-page="transactions" type="button"><span class="ico">▧</span>History</button><button data-page="loans" type="button"><span class="ico">◈</span>Quick Loan</button></nav> <div class="sidefoot"><span id="connection">Connecting to Google Sheets…</span><br/>LinLett workspace</div> </aside> <main class="main"> <header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="menu" id="menu">☰</button><div><div class="title" id="pageTitle">New transaction</div><div class="subtitle">Secure money services</div></div></div><div class="topright"><a class="dashboard-link" href="https://script.google.com/macros/s/AKfycbxgdC_BYGZi-M2tpFKh6F2SeKoHzKrZ4RQNWNqqFl1P14uBMacgmFIGQLo1p7cfP08C/exec" rel="noopener noreferrer" target="_blank">Open dashboard ↗</a></div></header> <div class="content">  <section class="page active" id="page-service"> <div class="head"><div><h2 id="serviceTitle">Cash In</h2><p>Enter customer details and transaction amount.</p></div></div><div class="notice" id="serviceNotice"></div> <div class="layout"><div class="formcard"><h2>Transaction details</h2><p class="intro">Fields map to your existing ServiceDetail columns.</p> <div class="fields"> <div aria-label="Choose transaction type" class="service-mode full"><div class="service-switches" id="serviceSwitches" role="group" aria-label="Service type"><button class="service-switch active" type="button" data-service-type="CashIn" aria-pressed="true">Cash In</button><button class="service-switch" type="button" data-service-type="CashOut" aria-pressed="false">Cash Out</button><button class="service-switch" type="button" data-service-type="TopUp" aria-pressed="false">Top Up</button><button class="service-switch" type="button" data-service-type="Meter" aria-pressed="false">Meter</button><button class="service-switch" type="button" data-service-type="Other" aria-pressed="false">Other</button></div></div><div aria-hidden="true" class="field sr-only"><label>Service type *</label><select id="serviceType"><option value="CashIn">Cash In</option><option value="CashOut">Cash Out</option><option value="TopUp">Top Up</option><option value="Meter">Meter</option><option value="Other">Other</option></select></div> <div class="field full"><label>Payment Channel *</label><div class="channel-buttons" id="serviceChannelButtons" role="group" aria-label="Payment channel"></div><select aria-hidden="true" class="sr-only" id="serviceChannel" tabindex="-1"></select></div> <div class="field"><label>Customer phone number</label><input autocomplete="off" id="phone" inputmode="tel" placeholder="(+959) 261-427-783" type="tel"/></div> <div class="field"><label>Customer name</label><input autocomplete="off" id="customerName" placeholder="Customer Name" type="text"/></div> <div class="field"><label>Amount (MMK) *</label><input autocomplete="off" id="amount" inputmode="numeric" placeholder="0"/></div> <div class="field"><label>Manual Service Fee (optional)</label><input id="manualFee" inputmode="numeric" placeholder="0"/></div> <div class="field full"><label>Note</label><textarea id="note" placeholder="Additional note…"></textarea></div> </div> <div class="fee"><div class="feerow"><span>Amount</span><strong id="previewAmount">0 MMK</strong></div><div class="feerow"><span>Service Fee</span><strong id="previewBackendFee">Enter amount to preview</strong></div><div class="feerow"><span>Manual service fee</span><strong id="previewFee">0 MMK</strong></div></div> <div class="formactions"><button class="btn light" onclick="clearService()">Clear</button><button class="btn primary" id="saveService" onclick="submitService()">Save transaction</button></div> <div class="footnote">The backend remains responsible for service fee calculations and balance updates.</div> </div><div class="service-aside"><div class="info compact-info"><b>Transaction summary</b><p>Choose a service, select the payment channel, and enter the amount. Fees and balance updates are calculated by the existing backend.</p></div></div></div> </section> <section class="page" id="page-internal"> <div class="head"><div><h2>Internal transfer</h2><p>Move funds between cash and bank accounts.</p></div></div><div class="notice" id="internalNotice"></div> <div class="layout"><div class="formcard"><h2>Transfer between accounts</h2><p class="intro">Uses SelfCashin/Cashout backend.</p><div class="fields"> <div class="field"><label>From account *</label><select id="fromAccount"></select></div><div class="field"><label>To account *</label><select id="toAccount"></select></div> <div class="field full"><label>Amount (MMK) *</label><input id="transferAmount" inputmode="numeric" placeholder="0"/></div> <div class="field full"><label>Note</label><textarea id="transferNote"></textarea></div> </div><div class="formactions"><button class="btn primary" onclick="submitInternal()">Confirm transfer</button></div></div> <div><div class="darkcard"><small>Total in bank</small><strong id="internalBank">—</strong></div><div class="darkcard"><small>Total in cash</small><strong id="internalCash">—</strong></div></div></div> </section> <section class="page" id="page-balances"> <div class="head"><div><h2>Bank &amp; cash balances</h2><p>Balances from channel and CashTotal sheets.</p></div><button class="btn light" onclick="refreshAll()">↻ Refresh</button></div> <div class="grid stats"><div class="stat"><div class="statlabel">In Bank</div><div class="statvalue" id="bBank">—</div></div><div class="stat"><div class="statlabel">In Cash</div><div class="statvalue" id="bCash">—</div></div><div class="stat"><div class="statlabel">Grand Total</div><div class="statvalue" id="bGrand">—</div></div><div class="stat"><div class="statlabel">Channels</div><div class="statvalue">8</div></div></div> <div class="panel"><div class="panelhead"><h3>Payment channel balances</h3><span class="muted">MMK</span></div><div class="grid banks" id="allBanks"></div></div> </section> <section class="page" id="page-transactions"> <div class="head"><div><h2>Transaction history</h2><p>ServiceDetail records.</p></div><div class="toolbar"><input id="search" oninput="renderTransactions()" placeholder="Search customer or phone…"/><button class="btn light" onclick="loadTransactions()">Refresh</button></div></div> <div class="panel"><div class="tablewrap"><table><thead><tr><th>Date</th><th>Phone</th><th>Customer</th><th>Service</th><th>Channel</th><th>Amount</th><th>Service Fee</th><th>Manual fee</th><th>Note</th></tr></thead><tbody id="transactions"><tr><td class="empty" colspan="9">Loading…</td></tr></tbody></table></div></div> </section> <section class="page" id="page-loans"> <div class="head"><div><h2>Quick Loan</h2><p>Existing QuickLoan sheet records.</p></div><button class="btn light" onclick="loadLoans()">Refresh</button></div> <div class="grid stats"><div class="stat"><div class="statlabel">Loan limit</div><div class="statvalue" id="loanLimit">4,000,000 MMK</div></div><div class="stat"><div class="statlabel">Current loan</div><div class="statvalue" id="currentLoan">—</div></div><div class="stat"><div class="statlabel">Available</div><div class="statvalue" id="loanAvailable">—</div></div><div class="stat"><div class="statlabel">Records</div><div class="statvalue" id="loanCount">—</div></div></div> <div class="layout"><div class="formcard"><h2>Create loan record</h2><p class="intro">Uses existing QuickLoan saveLoan action.</p><div class="fields"><div class="field"><label>Customer phone</label><input id="loanPhone" placeholder="(+959) 261-427-783"/></div><div class="field"><label>Customer name</label><input id="loanName" placeholder="Customer Name"/></div><div class="field"><label>Loan amount (MMK) *</label><input id="loanAmount" inputmode="numeric" placeholder="0"/></div><div class="field"><label>Credit to</label><select id="loanChannel"></select></div><div class="field full"><label>Note</label><textarea id="loanNote"></textarea></div></div><div class="formactions"><button class="btn primary" onclick="submitLoan()">Save loan</button></div></div><div class="panel"><div class="panelhead"><h3>Loan records</h3></div><div class="empty" id="loanRows">Loading…</div></div></div> </section> </div></main></div> <script> /* Original six Apps Script deployments supplied for LinLett. */ const API={  dashboard:'https://script.google.com/macros/s/AKfycbxgdC_BYGZi-M2tpFKh6F2SeKoHzKrZ4RQNWNqqFl1P14uBMacgmFIGQLo1p7cfP08C/exec',  service:'https://script.google.com/macros/s/AKfycbxGg6jvPbklCOXtVX2ZLj-Kp7UBvyROAZDjXBzL3tqParwgkIu_g5sFHFVtNJK7jbW-/exec',  internal:'https://script.google.com/macros/s/AKfycbzMqNdgEgGQhI3gIUxK5op5z3PMJw069pmiU_PzhOuhM834XNqIUQZMWiQbV08CuTqzYg/exec',  channel:'https://script.google.com/macros/s/AKfycbzME_VqI34k9EkqofxBFyD9MxaEST8cOVaCsTb1xCNDzJ1Dpu2NzjeD1K2Uwt9P7eNkjg/exec',  cash:'https://script.google.com/macros/s/AKfycbxwmYdfjO6Ue1lA1fJ1GfW9LdRVWStSHy-7ZHc0JKu7IhcsSuNZCUcHnSchW-HUIKBa/exec',  loan:'https://script.google.com/macros/s/AKfycbwPNTZ7fv5bkv8vcSOdhZARB33C43AI-ezSgLpWEJLFtf2ewnMcKnMXuBGrecQWDD7I3Q/exec' }; const CHANNELS=['KBZ','Wave','Aya','CB','UAB','MTB','Truemoney','Aplus']; const $=id=>document.getElementById(id),state={channels:[],cash:0,dashboard:{},transactions:[],loans:[]}; const num=v=>Number(String(v??'').replace(/,/g,'').trim())||0; const money=v=>(Number(v)||0).toLocaleString('en-US',{maximumFractionDigits:2})+' MMK'; const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); function jsonp(url,params={}){return new Promise((resolve,reject)=>{const cb='ll_'+Date.now()+'_'+Math.random().toString(36).slice(2),s=document.createElement('script'),q=new URLSearchParams({...params,callback:cb});let done=false;const timer=setTimeout(()=>finish(new Error('Timed out. Check Apps Script deployment and JSONP callback support.')),18000);function finish(e,d){if(done)return;done=true;clearTimeout(timer);delete window[cb];s.remove();e?reject(e):resolve(d)}window[cb]=d=>finish(null,d);s.onerror=()=>finish(new Error('Apps Script response blocked or unreachable. This endpoint must return JavaScript JSONP when callback is supplied.'));s.src=url+(url.includes('?')?'&':'?')+q.toString();document.head.appendChild(s)})} async function call(key,action,p={}){const r=await jsonp(API[key],{action,...p});if(!r||r.success===false)throw new Error(r?.message||r?.error||'Backend returned an unsuccessful response.');return r} function notice(id,msg,ok=false){const e=$(id);e.textContent=msg;e.className='notice show '+(ok?'ok':'err');setTimeout(()=>e.classList.remove('show'),7000)} function go(page){document.querySelectorAll('.page').forEach(e=>e.classList.toggle('active',e.id==='page-'+page));document.querySelectorAll('.nav button').forEach(e=>e.classList.toggle('active',e.dataset.page===page));$('pageTitle').textContent=({service:'New transaction',internal:'Internal transfer',balances:'Balances',transactions:'History',loans:'Quick Loan'})[page]||'LinLett';$('sidebar').classList.remove('open')} document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{if(b.dataset.type)openService(b.dataset.type);else go(b.dataset.page)}); $('menu').onclick=()=>$('sidebar').classList.toggle('open');  function syncServiceControls(type){$('serviceType').value=type;document.querySelectorAll('[data-service-type]').forEach(b=>{const active=b.dataset.serviceType===type;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});$('serviceTitle').textContent=$('serviceType').selectedOptions[0].text;} function openService(type){go('service');syncServiceControls(type);updatePreview()} document.querySelectorAll('[data-service-type]').forEach(b=>b.addEventListener('click',()=>{syncServiceControls(b.dataset.serviceType);updatePreview()})); $('serviceType').onchange=()=>{syncServiceControls($('serviceType').value);updatePreview()}; function phoneDigits(raw){let d=String(raw||'').replace(/\D/g,'');if(d.startsWith('00959'))d=d.slice(5);else if(d.startsWith('959'))d=d.slice(3);else if(d.startsWith('09'))d=d.slice(2);return d.slice(0,11)} function formatPhone(raw){const d=phoneDigits(raw);return d?'(+959) '+(d.match(/.{1,3}/g)||[]).join('-'):''} function attachPhone(id){$(id).addEventListener('input',e=>{const el=e.target,old=el.value,caret=el.selectionStart||old.length,n=phoneDigits(old.slice(0,caret)).length,formatted=formatPhone(old);el.value=formatted;let pos=7,k=0;while(pos<formatted.length&&k<n){if(/\d/.test(formatted[pos]))k++;pos++}try{el.setSelectionRange(pos,pos)}catch(_){}})} attachPhone('phone');attachPhone('loanPhone'); ['customerName','loanName'].forEach(id=>$(id).addEventListener('input',e=>{const el=e.target,a=el.selectionStart,b=el.selectionEnd,v=el.value.replace(/(^|\s+)([a-z])/g,(_,sp,ch)=>sp+ch.toUpperCase());if(v!==el.value){el.value=v;try{el.setSelectionRange(a,b)}catch(_){}}})); ['amount','manualFee','transferAmount','loanAmount'].forEach(id=>$(id).addEventListener('input',e=>{const el=e.target,old=el.value,caret=el.selectionStart||old.length,n=(old.slice(0,caret).match(/\d/g)||[]).length,d=old.replace(/\D/g,''),f=d?d.replace(/\B(?=(\d{3})+(?!\d))/g,','):'';el.value=f;let p=0,k=0;while(p<f.length&&k<n){if(/\d/.test(f[p]))k++;p++}try{el.setSelectionRange(p,p)}catch(_){}})); let feePreviewRequest=0;
-async function updatePreview(){
-  const amount=num($('amount').value),type=$('serviceType').value,channel=$('serviceChannel').value;
-  $('previewAmount').textContent=money(amount);
-  $('previewFee').textContent=money(num($('manualFee').value));
-  const c=state.channels.find(x=>x.name===channel);
-  const serviceBankEl=$('serviceBank');if(serviceBankEl)serviceBankEl.textContent=c?money(c.balance):'—';
-  const selectedBankEl=$('selectedBank');if(selectedBankEl)selectedBankEl.textContent=channel||'Payment channel';
-  const request=++feePreviewRequest;
-  const feeEl=$('previewBackendFee');
-  feeEl.textContent='Calculating…';feeEl.removeAttribute('title');
-  if(!(amount>0)){feeEl.textContent='Enter amount';return;}
-  if(!type||!channel){feeEl.textContent='Select service and channel';return;}
+.preview{background:#292b27;color:white;border-radius:14px;padding:15px}.preview .big{font-size:30px;color:var(--gold);font-weight:850;line-height:1.2;margin:5px 0 10px}.preview-row{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #ffffff20;padding-top:8px;margin-top:8px;font-size:12px}.preview-row span{color:#c7cbc2}
+.primary{width:100%;border:0;border-radius:11px;background:var(--gold);color:#252724;padding:13px;font-weight:850;font-size:14px;margin-top:12px}.notice{padding:10px 12px;border-radius:10px;font-size:12px;margin-top:10px;display:none}.notice.show{display:block}.notice.ok{background:#eaf6ef;color:#17613e}.notice.err{background:#fff0ef;color:#a11e17}.notice.info{background:#eef3f6;color:#36536a}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.kpi{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px}.kpi .klabel{font-size:11px;color:var(--muted)}.kpi .kvalue{font-size:19px;font-weight:850;margin-top:5px;overflow-wrap:anywhere}.kpi.gold{background:#292b27;color:#fff;border-color:#292b27}.kpi.gold .klabel{color:#c7cbc2}.kpi.gold .kvalue{color:var(--gold)}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:680px;background:#fff}th,td{text-align:left;padding:10px 11px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap}th{background:#f7f8f5;color:#62685e;font-size:10px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0}tr:last-child td{border-bottom:0}.empty{text-align:center;color:var(--muted);padding:25px}
+.balance-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.balance-item{padding:12px;border:1px solid var(--line);border-radius:12px}.balance-item b{display:block;font-size:11px;color:var(--muted)}.balance-item strong{display:block;font-size:17px;margin-top:5px;overflow-wrap:anywhere}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hidden{display:none!important}.right{text-align:right}.tag{display:inline-block;padding:4px 7px;border-radius:20px;background:#f1f2ee;color:#60665d;font-size:10px;font-weight:750}
+.theme-dark{--bg:#151714;--card:#22251f;--ink:#f0f1eb;--muted:#b3b8ad;--line:#3a3f36;--shadow:0 8px 28px #0003;color-scheme:dark}.theme-dark input,.theme-dark select,.theme-dark textarea,.theme-dark .choice,.theme-dark .bank,.theme-dark .pill,.theme-dark table{background:#292d26;color:var(--ink);border-color:var(--line)}.theme-dark th{background:#30352c;color:#c7cbbf}.theme-dark .kpi{background:#22251f}.theme-dark .choice.active,.theme-dark .bank.active,.theme-dark .pill.active{background:#403722;color:#ffe4a6}.theme-dark .notice.ok{background:#20372a;color:#b4e4c5}.theme-dark .notice.err{background:#3b2525;color:#ffb9b3}.theme-dark .notice.info{background:#29333b;color:#c7e3f8}
+
+/* Post-save balance confirmation modal */
+.save-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:16px;background:#10130fc9;backdrop-filter:blur(3px)}
+.save-modal.open{display:flex}
+.save-modal-card{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 24px 80px #0005}
+.save-modal-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:15px}
+.save-modal-check{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:grid;place-items:center;background:#e6f5ec;color:#167348;font-size:22px;font-weight:900}
+.save-modal-head h3{margin:1px 0 3px;font-size:17px}.save-modal-head p{margin:0;color:var(--muted);font-size:12px}
+.save-modal-section{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}
+.save-modal-section h4{margin:0 0 9px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.save-modal-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}
+.save-modal-row:last-child{border-bottom:0}.save-modal-row strong{text-align:right;font-size:13px;overflow-wrap:anywhere}
+.save-modal-row .after{color:var(--green)}.save-modal-row .fee{color:#b17b18}
+.save-modal-warning{background:#fff5df;color:#75500e;border-radius:10px;padding:10px;font-size:12px;margin-top:10px}
+.theme-dark .save-modal-warning{background:#44371e;color:#ffe2a1}
+.save-modal-actions{display:flex;justify-content:flex-end;margin-top:15px}.save-modal-actions button{min-width:110px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static;padding:9px}.side-label,.side-foot{display:none}.nav{grid-template-columns:repeat(3,minmax(0,1fr))}.navbtn{text-align:center;font-size:11px;padding:9px 5px}.span-8,.span-7,.span-5,.span-4,.span-3{grid-column:span 6}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.app{padding:10px}.topbar{align-items:flex-start}.brand h1{font-size:16px}.top-actions .btn{padding:8px;font-size:11px}.grid{gap:9px}.card{padding:12px}.span-8,.span-7,.span-6,.span-5,.span-4,.span-3{grid-column:span 12}.choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bank-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.balance-list{grid-template-columns:repeat(2,minmax(0,1fr))}.pagehead h2{font-size:18px}.kpi .kvalue{font-size:16px}}
+
+.field{position:relative}
+.suggestions{position:absolute;z-index:30;top:calc(100% - 2px);left:0;right:0;max-height:230px;overflow:auto;background:var(--card);border:1px solid var(--gold);border-radius:10px;box-shadow:0 12px 28px #0002;padding:5px}
+.suggestions.hidden{display:none}
+.suggestion-item{display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;text-align:left;border:0;background:transparent;color:var(--ink);padding:9px 10px;border-radius:7px}
+.suggestion-item:hover,.suggestion-item:focus{background:var(--bg);outline:none}
+.suggestion-item strong{font-weight:750}
+.suggestion-item small{color:var(--muted);white-space:nowrap}
+.suggestion-empty{padding:10px;color:var(--muted);font-size:12px}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+ <div class="brand"><div class="logo">LL</div><div><h1>LinLett Service Desk</h1><p>Money transfer · Payments · Internal balances</p></div></div>
+ <div class="top-actions"><a class="btn" href="https://script.google.com/macros/s/AKfycbxgdC_BYGZi-M2tpFKh6F2SeKoHzKrZ4RQNWNqqFl1P14uBMacgmFIGQLo1p7cfP08C/exec" target="_blank" rel="noopener">Dashboard ↗</a><button class="btn" id="themeBtn">☾ Theme</button><button class="btn" id="refreshBtn">↻ Refresh</button></div>
+</header>
+<div class="layout">
+<aside class="sidebar"><div class="side-label">Workspace</div><nav class="nav">
+<button class="navbtn active" data-page="service">＋ New Service</button>
+<button class="navbtn" data-page="internal">⇄ Internal Movement</button>
+<button class="navbtn" data-page="balances">▦ Balances</button>
+<button class="navbtn" data-page="loan">↗ Quick Loan</button>
+<button class="navbtn" data-page="history">◷ Customer History</button>
+</nav><div class="side-foot">LinLett · Operations workspace<br>Balances update through your Google Sheets APIs.</div></aside>
+<main>
+<section class="page active" id="page-service">
+ <div class="pagehead"><div><h2>New service transaction</h2><p>Record customer services and preview fees before saving.</p></div><span class="tag">CUSTOMER SERVICE</span></div>
+ <div class="grid">
+  <div class="card span-8">
+   <h3>1. Service details</h3>
+   <div class="field"><label>Service type</label><div class="choice-grid" id="serviceTypes">
+    <button class="choice active" data-service="Cash In">Cash In<small>Cash received</small></button><button class="choice" data-service="Cash Out">Cash Out<small>Cash paid</small></button><button class="choice" data-service="Top Up">Top Up<small>Mobile top-up</small></button><button class="choice" data-service="Meter Bill">Meter Bill<small>Bill payment</small></button><button class="choice" data-service="Other">Other<small>Manual fee</small></button>
+   </div></div>
+   <div class="split">
+    <div class="field"><label for="customerName">Customer name</label><input id="customerName" placeholder="Customer name" autocomplete="off"><div id="nameSuggestions" class="suggestions hidden" role="listbox" aria-label="Matching customer names"></div></div>
+    <div class="field"><label for="phone">Phone number</label><input id="phone" placeholder="(+959) 261-427-783" inputmode="tel" autocomplete="off"><div id="phoneSuggestions" class="suggestions hidden" role="listbox" aria-label="Matching phone numbers"></div><div class="hint">Required · Myanmar mobile number (9–11 digits after +959)</div></div>
+   </div>
+   <div class="field"><label for="amount">Amount (MMK)</label><input id="amount" inputmode="decimal" placeholder="0"><div class="hint">Commas are formatted automatically.</div></div>
+   <div class="field"><label>Payment channel</label><div class="bank-grid" id="banks"></div><div class="hint" id="bankHint">Choose the payment channel used for this transaction.</div></div>
+   <div class="field hidden" id="directionField"><label>Customer payment method</label><div class="pills"><button class="pill active" data-direction="Cash In">Cash In · Physical cash</button><button class="pill" data-direction="Cash Out">Cash Out · Bank transfer</button></div><div class="hint">For Top Up/Meter Bill, Cash Out assumes the same bank is used to receive and pay, so the net balance movement is zero. Other uses this choice to determine whether cash or bank balance changes.</div></div>
+   <div class="field"><label for="note">Note <span class="muted">(optional)</span></label><textarea id="note" placeholder="Reference or short note"></textarea></div>
+  </div>
+  <div class="card span-4">
+   <h3>2. Service fee</h3>
+   <div class="field"><label for="overrideFee">Manual service fee (MMK)</label><input id="overrideFee" inputmode="numeric" placeholder="Leave blank for automatic fee"><div class="hint">Enter 0 to waive the fee.</div></div>
+   <div class="preview"><div class="muted" style="color:#c7cbc2;font-size:11px">Service fee to collect</div><div class="big" id="feePreview">— MMK</div><div class="preview-row"><span>Service</span><b id="servicePreview">Cash In</b></div><div class="preview-row"><span>Amount</span><b id="amountPreview">—</b></div><div class="preview-row"><span>Channel</span><b id="channelPreview">KBZ</b></div><div class="preview-row"><span>Fee type</span><b id="feeTypePreview">Automatic</b></div></div>
+   <button class="primary" id="saveService">Save customer transaction</button><div class="notice" id="serviceNotice"></div>
+  </div>
+ </div>
+</section>
+
+<section class="page" id="page-internal">
+ <div class="pagehead"><div><h2>Internal movement</h2><p>Move funds between Cash and bank accounts, or record business expenses.</p></div><span class="tag">NOT A CUSTOMER TRANSACTION</span></div>
+ <div class="grid">
+  <div class="card span-7">
+   <h3>Movement details</h3>
+   <div class="field"><label for="moveAmount">Amount (MMK)</label><input id="moveAmount" inputmode="numeric" placeholder="0"></div>
+   <div class="split">
+    <div class="field"><label for="moveFrom">From account</label><select id="moveFrom"></select></div>
+    <div class="field"><label for="moveTo">To account</label><select id="moveTo"></select></div>
+   </div>
+   <div class="field"><label for="moveNote">Note</label><textarea id="moveNote" placeholder="e.g. Cash used for shop expenses"></textarea></div>
+   <button class="primary" id="saveMovement">Save internal movement</button><div class="notice" id="movementNotice"></div>
+  </div>
+  <div class="card span-5"><h3>How it changes balances</h3><div class="muted">The source account decreases. The destination account increases. Choose <b>External / Expense</b> as the destination to record spending from Cash or a bank without increasing another account.</div><div class="notice info show" style="margin-top:14px">Internal movements are excluded from customer transaction history and service transaction counts.</div></div>
+ </div>
+</section>
+
+<section class="page" id="page-balances">
+ <div class="pagehead"><div><h2>Balances</h2><p>Current cash and e-wallet / bank balances.</p></div><button class="btn" id="balanceRefresh">Refresh balances</button></div>
+ <div class="grid">
+  <div class="card span-12"><div class="kpis">
+   <div class="kpi"><div class="klabel">Cash on hand</div><div class="kvalue" id="cashBalance">—</div></div>
+   <div class="kpi gold"><div class="klabel">Total in bank</div><div class="kvalue" id="bankTotal">—</div></div>
+   <div class="kpi"><div class="klabel">Grand total</div><div class="kvalue" id="grandTotal">—</div></div>
+   <div class="kpi"><div class="klabel">QuickLoan available</div><div class="kvalue" id="loanAvailable">—</div></div>
+  </div></div>
+  <div class="card span-12"><h3>Account balances</h3><div class="balance-list" id="balanceList"></div><div class="notice" id="balanceNotice"></div></div>
+ </div>
+</section>
+
+<section class="page" id="page-loan">
+ <div class="pagehead"><div><h2>QuickLoan</h2><p>Borrowing increases KBZ balance; repayment decreases KBZ balance.</p></div><span class="tag">KBZ LINKED</span></div>
+ <div class="grid">
+  <div class="card span-5"><h3>Loan position</h3><div class="kpis" style="grid-template-columns:1fr 1fr"><div class="kpi"><div class="klabel">Loan limit</div><div class="kvalue" id="loanLimit">—</div></div><div class="kpi"><div class="klabel">Outstanding</div><div class="kvalue" id="loanCurrent">—</div></div></div><div class="kpi gold" style="margin-top:10px"><div class="klabel">Available to borrow</div><div class="kvalue" id="loanAvailableLarge">—</div></div></div>
+  <div class="card span-7"><h3>Borrow or repay</h3><div class="pills" style="margin-bottom:13px"><button class="pill active" data-loan="Borrow">Borrow</button><button class="pill" data-loan="Repay">Repay</button></div><div class="field"><label for="loanAmount">Amount (MMK)</label><input id="loanAmount" inputmode="numeric" placeholder="0"></div><button class="primary" id="saveLoan">Confirm borrowing</button><div class="notice" id="loanNotice"></div></div>
+ </div>
+</section>
+
+<section class="page" id="page-history">
+ <div class="pagehead"><div><h2>Customer history</h2><p>Customer transactions from ServiceDetail only. Internal movements are excluded.</p></div><button class="btn" id="historyRefresh">Refresh history</button></div>
+ <div class="card"><div class="split" style="margin-bottom:12px"><div class="field"><label for="historySearch">Search name or phone</label><input id="historySearch" placeholder="Search…"></div><div class="field"><label for="historyDate">Date filter</label><input id="historyDate" type="date"></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Customer</th><th>Phone</th><th>Service</th><th>Channel</th><th>Amount</th><th>Fee</th><th>Action</th></tr></thead><tbody id="historyRows"><tr><td colspan="8" class="empty">Load history to view transactions.</td></tr></tbody></table></div><div class="notice" id="historyNotice"></div></div>
+</section>
+</main>
+</div>
+</div>
+
+<div class="save-modal" id="saveSummaryModal" role="dialog" aria-modal="true" aria-labelledby="saveSummaryTitle">
+ <div class="save-modal-card">
+  <div class="save-modal-head"><div class="save-modal-check">✓</div><div><h3 id="saveSummaryTitle">Saved successfully</h3><p id="saveSummarySubtitle">The backend confirmed the update.</p></div></div>
+  <div class="save-modal-section"><h4>Balance changes</h4><div id="saveSummaryBalances"></div></div>
+  <div class="save-modal-section"><h4>Transaction details</h4><div id="saveSummaryDetails"></div></div>
+  <div id="saveSummaryWarning" class="save-modal-warning hidden"></div>
+  <div class="save-modal-actions"><button class="btn gold" id="closeSaveSummary">Done</button></div>
+ </div>
+</div>
+<script>
+/* LinLett single-page operations UI.
+   API endpoint URLs and action names are kept in one place for easy deployment updates. */
+const API={
+ service:'https://script.google.com/macros/s/AKfycbxGg6jvPbklCOXtVX2ZLj-Kp7UBvyROAZDjXBzL3tqParwgkIu_g5sFHFVtNJK7jbW-/exec',
+ channel:'https://script.google.com/macros/s/AKfycbzME_VqI34k9EkqofxBFyD9MxaEST8cOVaCsTb1xCNDzJ1Dpu2NzjeD1K2Uwt9P7eNkjg/exec',
+ cash:'https://script.google.com/macros/s/AKfycbxwmYdfjO6Ue1lA1fJ1GfW9LdRVWStSHy-7ZHc0JKu7IhcsSuNZCUcHnSchW-HUIKBa/exec',
+ movement:'https://script.google.com/macros/s/AKfycbzMqNdgEgGQhI3gIUxK5op5z3PMJw069pmiU_PzhOuhM834XNqIUQZMWiQbV08CuTqzYg/exec',
+ loan:'https://script.google.com/macros/s/AKfycbwPNTZ7fv5bkv8vcSOdhZARB33C43AI-ezSgLpWEJLFtf2ewnMcKnMXuBGrecQWDD7I3Q/exec'
+};
+const BANKS=['KBZ','Wave','Aya','CB','UAB','MTB','Truemoney','Aplus'];
+const $=id=>document.getElementById(id), money=n=>(Number(n)||0).toLocaleString('en-US',{maximumFractionDigits:2})+' MMK';
+let serviceType='Cash In',direction='Cash In',selectedBank='KBZ',loanMode='Borrow',balances={},historyData=[],feeRequestToken=0,automaticFeeValue=null,customerSuggestions=[],suggestionFocus=null;
+function num(v){const n=Number(String(v??'').replace(/,/g,'').trim());return Number.isFinite(n)?n:NaN}
+function fmtInput(v){let x=String(v||'').replace(/[^\d]/g,'');return x.replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function jsonp(url,params={},timeout=25000){return new Promise((resolve,reject)=>{const cb='llcb_'+Date.now()+'_'+Math.random().toString(36).slice(2);let done=false;const s=document.createElement('script');const timer=setTimeout(()=>finish(new Error('API timeout. Check deployment and retry only after checking balances.')),timeout);function finish(err,data){if(done)return;done=true;clearTimeout(timer);delete window[cb];s.remove();err?reject(err):resolve(data)}window[cb]=d=>{if(!d||d.success===false)finish(new Error(d?.message||'API request failed.'));else finish(null,d)};s.onerror=()=>finish(new Error('Could not reach Apps Script endpoint.'));s.src=url+'?'+new URLSearchParams({...params,callback:cb,_ts:Date.now()});document.head.appendChild(s)})}
+function notify(id,msg,type='info'){const e=$(id);e.textContent=msg;e.className='notice show '+type}
+function clearNotice(id){const e=$(id);e.textContent='';e.className='notice'}
+function closeSaveSummary(){$('saveSummaryModal').classList.remove('open')}
+$('closeSaveSummary').onclick=closeSaveSummary;
+$('saveSummaryModal').addEventListener('click',e=>{if(e.target===$('saveSummaryModal'))closeSaveSummary()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSaveSummary()});
+function summaryRow(label,value,extraClass=''){return `<div class="save-modal-row"><span>${esc(label)}</span><strong class="${extraClass}">${value}</strong></div>`}
+function showSaveSummary(kind,data,details={}){
+  const title=kind==='service'?'Customer transaction saved':'Internal movement saved';
+  $('saveSummaryTitle').textContent=title;
+  $('saveSummarySubtitle').textContent=data?.message||'The backend confirmed the update.';
+  const changes=data?.balanceChanges;
+  if(changes&&typeof changes==='object'){
+    const entries=Object.entries(changes).filter(([_,v])=>v&&Number.isFinite(Number(v.before))&&Number.isFinite(Number(v.after)));
+    $('saveSummaryBalances').innerHTML=entries.length?entries.map(([key,v])=>summaryRow(v.label||key,`${money(v.before)} <span class="muted">→</span> <span class="after">${money(v.after)}</span>`)).join(''):'<div class="muted">No balance changes were returned.</div>';
+    $('saveSummaryWarning').classList.add('hidden');$('saveSummaryWarning').textContent='';
+  }else{
+    $('saveSummaryBalances').innerHTML='<div class="muted">No before/after balance data was returned by the backend.</div>';
+    $('saveSummaryWarning').textContent='The save request was accepted, but this Apps Script deployment did not return a balance snapshot. Update the matching backend Code.gs file and redeploy it to enable verified before/after balances.';
+    $('saveSummaryWarning').classList.remove('hidden');
+  }
+  const rows=[];
+  if(kind==='service'){
+    rows.push(summaryRow('Customer',esc(details.customerName||'—')));
+    rows.push(summaryRow('Service',esc(details.service||'—')));
+    rows.push(summaryRow('Payment channel',esc(details.channel||'—')));
+    rows.push(summaryRow('Transaction amount',money(details.amount)));
+    const fee=data?.serviceFee??data?.calculatedFee;
+    rows.push(summaryRow('Service fee revenue',fee===undefined||fee===null?'Not returned by backend':money(fee),'fee'));
+    rows.push(summaryRow('Fee method',data?.feeMethod||(details.manualFee?'Manual':'Automatic')));
+    rows.push(summaryRow('Fee accounting','Recorded separately from cash/bank balances'));
+  }else{
+    rows.push(summaryRow('Movement',esc(`${details.from||'—'} → ${details.to||'—'}`)));
+    rows.push(summaryRow('Movement amount',money(details.amount)));
+    rows.push(summaryRow('Service fee','Not applicable (internal movement)'));
+  }
+  $('saveSummaryDetails').innerHTML=rows.join('');
+  $('saveSummaryModal').classList.add('open');
+  $('closeSaveSummary').focus();
+}
+
+function titleCase(v){
+  // Preserve spaces while typing; capitalize the first letter after each space.
+  // Do not trim or collapse whitespace here, otherwise users cannot type the next word.
+  return String(v ?? '').toLowerCase()
+    .replace(/(^| )(\S)/g,(match,space,letter)=>space+letter.toLocaleUpperCase());
+}
+function cleanCustomerName(v){
+  return titleCase(String(v ?? '').trim().replace(/\s+/g,' '));
+}
+function phoneDigits(v){
+  let d=String(v ?? '').replace(/\D/g,'');
+  // Accept local 09..., international 959..., 00959..., or digits entered without a prefix.
+  if(d.startsWith('00959')) d=d.slice(5);
+  else if(d.startsWith('959')) d=d.slice(3);
+  else if(d.startsWith('09')) d=d.slice(2);
+  return d.slice(0,11);
+}
+function phoneFormat(v){
+  const d=phoneDigits(v);
+  if(!d) return '';
+  // Keep the requested display prefix and separate the subscriber number into groups of 3.
+  const groups=d.match(/.{1,3}/g) || [];
+  return '(+959) '+groups.join('-');
+}
+function validPhone(v){
+  const raw=String(v ?? '').trim();
+  if(!raw) return false;
+  const d=phoneDigits(raw);
+  return d.length>=9 && d.length<=11;
+}
+
+function normalizedName(v){return String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase()}
+function closeSuggestions(which){
+  const box=$(which==='phone'?'phoneSuggestions':'nameSuggestions');
+  if(box)box.classList.add('hidden');
+  if(suggestionFocus===which)suggestionFocus=null;
+}
+function chooseCustomerSuggestion(item){
+  $('customerName').value=cleanCustomerName(item.customerName||'');
+  $('phone').value=phoneFormat(item.phone||'');
+  closeSuggestions('name');closeSuggestions('phone');
+  $('customerName').focus();
+}
+function renderSuggestions(which){
+  const isPhone=which==='phone',box=$(isPhone?'phoneSuggestions':'nameSuggestions');
+  const raw=isPhone?$('phone').value:$('customerName').value;
+  const q=isPhone?phoneDigits(raw):normalizedName(raw);
+  if(!q){closeSuggestions(which);return}
+  const matches=customerSuggestions.filter(item=>{
+    if(isPhone)return phoneDigits(item.phone||'').startsWith(q);
+    return normalizedName(item.customerName||'').startsWith(q);
+  }).slice(0,8);
+  if(!matches.length){closeSuggestions(which);return}
+  box.innerHTML=matches.map((item,i)=>`<button type="button" class="suggestion-item" data-suggestion="${i}"><strong>${esc(item.customerName||'Unknown name')}</strong><small>${esc(phoneFormat(item.phone||''))}</small></button>`).join('');
+  box.querySelectorAll('[data-suggestion]').forEach(btn=>btn.addEventListener('mousedown',e=>{e.preventDefault();chooseCustomerSuggestion(matches[Number(btn.dataset.suggestion)])}));
+  box.classList.remove('hidden');suggestionFocus=which;
+}
+async function loadCustomerSuggestions(){
   try{
-    const result=await call('service','calculateServiceFee',{serviceType:type,amount:String(amount),paymentChannel:channel});
-    if(request!==feePreviewRequest)return;
-    feeEl.textContent=money(result.calculatedFee);
+    const r=await jsonp(API.service,{action:'getPhoneSuggestions'},30000);
+    customerSuggestions=Array.isArray(r.suggestions)?r.suggestions:[];
+    renderSuggestions('phone');renderSuggestions('name');
   }catch(error){
-    if(request!==feePreviewRequest)return;
-    feeEl.textContent='Unavailable';feeEl.title=error.message||'Could not calculate Service Fee.';
-    console.error('Service Fee calculation failed:',error);
+    // The transaction form remains usable if suggestions cannot be loaded.
+    customerSuggestions=[];
   }
 }
- $('amount').addEventListener('input',updatePreview);$('manualFee').addEventListener('input',updatePreview);$('serviceChannel').addEventListener('change',updatePreview); function bankMarkup(){return state.channels.map(c=>`<div class="bank"><div class="bankname"><span class="bankmark">${esc(c.name.slice(0,2).toUpperCase())}</span>${esc(c.name)}</div><div class="bankamount">${money(c.balance)}</div></div>`).join('')||'<div class="empty">No bank balances returned.</div>'} function renderBanks(){const allBanks=$('allBanks');if(allBanks)allBanks.innerHTML=bankMarkup();const serviceCash=$('serviceCash');if(serviceCash)serviceCash.textContent=money(state.cash);const serviceBank=$('serviceBank');if(serviceBank)serviceBank.textContent=money(state.channels.find(c=>c.name===$('serviceChannel').value)?.balance||0)} function updateTotals(){const bank=state.channels.reduce((sum,ch)=>sum+num(ch.balance),0);const cash=num(state.cash);const grand=bank+cash;const set=(id,value)=>{const el=$(id);if(el)el.textContent=value};set('bBank',money(bank));set('bCash',money(cash));set('bGrand',money(grand));set('internalBank',money(bank));set('internalCash',money(cash))} function renderTransactions(){const q=(($('search')?.value)||'').toLowerCase(),rows=state.transactions.filter(t=>Object.values(t).join(' ').toLowerCase().includes(q));const html=rows.map(t=>`<tr><td>${esc(t.Date||t.date||t.created_at||'—')}</td><td>${esc(t.Phone_Number||'—')}</td><td>${esc(t.Customer_Name||'—')}</td><td><span class="pill">${esc(t['CashIn/CashOut/TopUp/Meter/Other']||t.Service||'—')}</span></td><td>${esc(t.Payment_Channel||'—')}</td><td>${money(t.Amount)}</td><td>${money(t.Service_Fee)}</td><td>${money(t.Manual_ServiceFee)}</td><td>${esc(t.Note||'')}</td></tr>`).join('')||'<tr><td colspan="9" class="empty">No transactions returned.</td></tr>';const tbody=$('transactions');if(tbody)tbody.innerHTML=html} async function loadDashboard(){updateTotals()} function channelClass(name){return ({KBZ:'channel-kbz',Wave:'channel-wave',Aya:'channel-aya',CB:'channel-cb',UAB:'channel-uab',MTB:'channel-mtb',Truemoney:'channel-truemoney',Aplus:'channel-aplus'})[name]||'channel-wave'} function renderChannelButtons(){const host=$('serviceChannelButtons');if(!host)return;host.innerHTML=CHANNELS.map(name=>`<button type="button" class="channel-button ${channelClass(name)}" data-channel="${esc(name)}" aria-pressed="${$('serviceChannel').value===name}">${name==='Truemoney'?'<span class="tm-accent">True</span>money':esc(name)}</button>`).join('');host.querySelectorAll('[data-channel]').forEach(b=>b.addEventListener('click',()=>{ $('serviceChannel').value=b.dataset.channel;host.querySelectorAll('[data-channel]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));updatePreview()}));} async function loadChannels(){const r=await call('channel','getChannels');state.channels=r.channels||[];const opts=CHANNELS.map(c=>`<option>${c}</option>`).join('');$('serviceChannel').innerHTML=opts; $('serviceChannel').value='KBZ';renderChannelButtons();$('loanChannel').innerHTML=opts;$('fromAccount').innerHTML='<option>Cash</option>'+opts;$('toAccount').innerHTML='<option>Cash</option>'+opts;$('toAccount').value='KBZ';renderBanks();updatePreview();updateTotals(state.dashboard||{})} async function loadCash(){const r=await call('cash','getCashBalance');state.cash=num(r.cashBalance);renderBanks();updateTotals(state.dashboard)} async function loadTransactions(){const r=await call('service','getTransactions',{limit:200});state.transactions=r.transactions||r.records||[];renderTransactions();updateTotals()} async function refreshAll(){ $('connection').textContent='Refreshing…';const jobs=await Promise.allSettled([loadChannels(),loadCash(),loadTransactions()]);const bad=jobs.filter(x=>x.status==='rejected');if(bad.length){$('connection').textContent=bad.length+' API connection issue(s)';console.error('LinLett Service API errors',bad.map(x=>x.reason));}else $('connection').textContent='Connected to Service APIs'} function clearService(){['phone','customerName','amount','manualFee','note'].forEach(id=>$(id).value='');updatePreview()} async function submitService(){  const amount=num($('amount').value);if(amount<=0)return notice('serviceNotice','Enter a valid amount.');  const rawType=$('serviceType').value;const type=({cashin:'CashIn',cashout:'CashOut',topup:'TopUp',meter:'Meter',meterbill:'Meter',other:'Other'})[String(rawType||'').replace(/[\s_-]/g,'').toLowerCase()]||'';const channel=$('serviceChannel').value;  const btn=$('saveService');btn.disabled=true;btn.textContent='Saving…';  try{   if(!type)return notice('serviceNotice','Choose CashIn, CashOut, TopUp, Meter or Other.');const payload={action:'saveServiceTransaction',serviceType:type,type:type,category:type,amount:String(amount),paymentChannel:channel,phone:formatPhone($('phone').value),customerName:$('customerName').value.trim(),manualServiceFee:$('manualFee').value?String(num($('manualFee').value)):'',note:$('note').value,requestId:'LL-'+Date.now()+'-'+Math.random().toString(36).slice(2,9)};   const r=await call('service','saveServiceTransaction',payload);   notice('serviceNotice',r.duplicate?'This transaction was already saved.':'Transaction saved. Service Fee: '+money(r.calculatedFee)+'. Manual Service Fee: '+money(r.manualFee||0)+'.',true);   clearService();await refreshAll();  }catch(e){notice('serviceNotice',e.message)}finally{btn.disabled=false;btn.textContent='Save transaction'} } async function submitInternal(){const a=num($('transferAmount').value),from=$('fromAccount').value,to=$('toAccount').value;if(a<=0)return notice('internalNotice','Enter a valid amount.');if(from===to)return notice('internalNotice','Source and destination must be different.');try{const r=await call('internal','saveInternalTransfer',{amount:String(a),channelFrom:from,channelTo:to,operation:'Internal Transfer',note:$('transferNote').value});notice('internalNotice',r.message||'Transfer completed.',true);$('transferAmount').value='';$('transferNote').value='';await refreshAll()}catch(e){notice('internalNotice',e.message)}} async function loadLoans(){try{const [s,l]=await Promise.all([call('loan','getLoanSummary'),call('loan','getLoans')]);state.loans=l.loans||[];$('loanLimit').textContent=money(s.limit);$('currentLoan').textContent=money(s.currentLoan);$('loanAvailable').textContent=money(s.available);$('loanCount').textContent=state.loans.length;$('loanRows').innerHTML=state.loans.slice(0,8).map(x=>`<div class="bank"><div><b>${esc(x.customer_name||x.customer_phone||'Loan')}</b><br><small>${esc(x.status||'')}</small></div><b>${money(x.Current_Loan)}</b></div>`).join('')||'<div class="empty">No loan records.</div>'}catch(e){$('loanRows').textContent='Could not load loans: '+e.message}} async function submitLoan(){const a=num($('loanAmount').value);if(a<=0)return alert('Enter a loan amount.');try{const r=await call('loan','saveLoan',{amount:String(a),phone:formatPhone($('loanPhone').value),customerName:$('loanName').value,creditTo:$('loanChannel').value,note:$('loanNote').value});alert(r.message||'Loan saved.');$('loanAmount').value='';await loadLoans();await refreshAll()}catch(e){alert(e.message)}} $('search').addEventListener('input',renderTransactions); openService('CashIn');(async()=>{await refreshAll();await loadLoans()})(); </script></body></html> 
+
+function normalizeBank(v){let x=String(v||'').toLowerCase().replace(/[^a-z]/g,'');if(x.includes('true'))return'Truemoney';if(x.startsWith('aya'))return'Aya';if(x.startsWith('kbz'))return'KBZ';if(x.startsWith('wave'))return'Wave';if(x.startsWith('cb'))return'CB';if(x.startsWith('uab'))return'UAB';if(x.startsWith('mtb'))return'MTB';if(x.startsWith('aplus'))return'Aplus';return BANKS.find(b=>b.toLowerCase()===x)||''}
+function fee(amount,type,bank){if(!Number.isFinite(amount)||amount<=0)return null;if(type==='Meter Bill')return 200;if(type==='Top Up'){const rates={Aya:2.5,Truemoney:3,MTB:.5};return rates[bank]==null?null:Math.round(amount*rates[bank]/100)}if(type==='Other')return null;if(amount<10000)return 0;if(type==='Cash In')return Math.ceil(amount/100000)*100;if(amount<=20000)return 100;if(amount<=30000)return 200;if(amount<=50000)return 300;if(amount<=100000)return 500;const tiers=[[150000,800],[200000,1000],[250000,1300],[300000,1500],[350000,1800],[400000,2000],[450000,2300],[500000,2500],[550000,2800],[600000,3000],[650000,3300],[700000,3500],[750000,3800],[800000,4000],[850000,4300],[900000,4500],[950000,4800],[1000000,5000],[1050000,5300],[1100000,5500],[1150000,5800],[1200000,6000],[1250000,6300],[1300000,6500],[1350000,6800],[1400000,7000],[1450000,7300],[1500000,7500]];if(amount<=1500000)return tiers.find(t=>amount<=t[0])[1];const rate=amount<3000000?500:amount<5000000?450:400;return Math.ceil((amount/100000*rate)/100)*100}
+function bankClass(bank){
+  return ({KBZ:'bank-kbz',Wave:'bank-wave',Aya:'bank-aya',CB:'bank-cb',UAB:'bank-uab',MTB:'bank-mtb',Truemoney:'bank-truemoney',Aplus:'bank-aplus'})[bank] || '';
+}
+function buildBanks(){
+  const topUpAllowed=['Aya','Truemoney','MTB'];
+  const isTopUp=serviceType==='Top Up';
+  if(isTopUp&&!topUpAllowed.includes(selectedBank)) selectedBank='Aya';
+  $('bankHint').textContent=isTopUp
+    ? 'Top Up is available only through AYA (2.5%), Truemoney (3%) and MTB (0.5%). Other channels are disabled.'
+    : 'Choose the payment channel used for this transaction.';
+  $('banks').innerHTML=BANKS.map(b=>{
+    const disabled=isTopUp&&!topUpAllowed.includes(b);
+    return `<button type="button" class="bank ${bankClass(b)} ${b===selectedBank?'active':''}" data-bank="${b}" aria-pressed="${b===selectedBank}" ${disabled?'disabled aria-disabled="true"':''}>${b}</button>`;
+  }).join('');
+  $('banks').querySelectorAll('button:not(:disabled)').forEach(b=>b.onclick=()=>{selectedBank=b.dataset.bank;buildBanks();updatePreview()});
+}
+function backendServiceType(){
+  return ({'Cash In':'CashIn','Cash Out':'CashOut','Top Up':'TopUp','Meter Bill':'Meter','Other':'Other'})[serviceType] || serviceType;
+}
+async function updatePreview(){
+  const amount=num($('amount').value);
+  const overrideText=$('overrideFee').value.trim();
+  const override=overrideText===''?null:num(overrideText);
+  const token=++feeRequestToken;
+  $('servicePreview').textContent=serviceType+(['Top Up','Meter Bill','Other'].includes(serviceType)?' · '+direction:'');
+  $('amountPreview').textContent=Number.isFinite(amount)&&amount>0?money(amount):'—';
+  $('channelPreview').textContent=selectedBank;
+  $('feeTypePreview').textContent=override===null?'Automatic':'Manual override';
+
+  if(override!==null){
+    $('feePreview').textContent=Number.isFinite(override)&&override>=0?money(override):'Invalid manual fee';
+    return;
+  }
+  if(serviceType==='Other'){
+    automaticFeeValue=null;
+    $('feePreview').textContent='Manual fee required';
+    return;
+  }
+  if(!Number.isFinite(amount)||amount<=0){
+    automaticFeeValue=null;
+    $('feePreview').textContent='— MMK';
+    return;
+  }
+  $('feePreview').textContent='Calculating from backend…';
+  try{
+    const result=await jsonp(API.service,{
+      action:'calculateServiceFee',
+      amount:String(amount),
+      serviceType:backendServiceType(),
+      paymentChannel:selectedBank
+    },20000);
+    if(token!==feeRequestToken)return;
+    automaticFeeValue=Number(result.calculatedFee);
+    if(!Number.isFinite(automaticFeeValue))throw new Error('Backend returned an invalid calculated fee.');
+    $('feePreview').textContent=money(automaticFeeValue);
+  }catch(error){
+    if(token!==feeRequestToken)return;
+    automaticFeeValue=null;
+    $('feePreview').textContent='Fee unavailable';
+    $('feeTypePreview').textContent='Backend error';
+  }
+}
+function setService(type){serviceType=type;document.querySelectorAll('[data-service]').forEach(b=>b.classList.toggle('active',b.dataset.service===type));$('directionField').classList.toggle('hidden',!['Top Up','Meter Bill','Other'].includes(type));buildBanks();updatePreview()}
+document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>setService(b.dataset.service));
+buildBanks();
+document.querySelectorAll('[data-direction]').forEach(b=>b.onclick=()=>{direction=b.dataset.direction;document.querySelectorAll('[data-direction]').forEach(x=>x.classList.toggle('active',x===b));updatePreview()});
+['amount','overrideFee'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='amount')$(id).value=fmtInput($(id).value);else $(id).value=fmtInput($(id).value);updatePreview()}));
+// Capitalize each word as the user types, and normalize once more on blur/save.
+$('customerName').addEventListener('input',()=>{
+  const el=$('customerName'), pos=el.selectionStart, before=el.value;
+  const after=titleCase(before);
+  if(after!==before){ el.value=after; try{el.setSelectionRange(pos,pos)}catch(_){} }
+});
+$('customerName').addEventListener('input',()=>{
+  const el=$('customerName'), pos=el.selectionStart, before=el.value;
+  const after=titleCase(before);
+  if(after!==before){ el.value=after; try{el.setSelectionRange(pos,pos)}catch(_){} }
+  renderSuggestions('name');
+});
+$('customerName').addEventListener('focus',()=>renderSuggestions('name'));
+$('customerName').addEventListener('blur',()=>{ setTimeout(()=>closeSuggestions('name'),160); $('customerName').value=cleanCustomerName($('customerName').value); });
+// Phone is normalized while typing so the visible value always follows (+959) 261-427-783.
+$('phone').addEventListener('input',()=>{
+  const el=$('phone'), before=el.value, after=phoneFormat(before);
+  if(after!==before){ el.value=after; try{el.setSelectionRange(el.value.length,el.value.length)}catch(_){} }
+  renderSuggestions('phone');
+});
+$('phone').addEventListener('focus',()=>renderSuggestions('phone'));
+$('phone').addEventListener('blur',()=>{ setTimeout(()=>closeSuggestions('phone'),160); $('phone').value=phoneFormat($('phone').value); });
+$('saveService').onclick=async()=>{
+  clearNotice('serviceNotice');
+  const amount=num($('amount').value),override=$('overrideFee').value.trim();
+  const manual=override===''?'':num(override);
+  const name=cleanCustomerName($('customerName').value);
+  const phone=phoneFormat($('phone').value);
+  $('customerName').value=name;$('phone').value=phone;
+  if(!validPhone(phone))return notify('serviceNotice','Enter a valid Myanmar mobile number (9–11 digits after +959).','err');
+  if(!name)return notify('serviceNotice','Enter the customer name.','err');
+  if(!Number.isFinite(amount)||amount<=0)return notify('serviceNotice','Enter a valid amount.','err');
+  if(override!==''&&(!Number.isFinite(manual)||manual<0))return notify('serviceNotice','Manual fee must be 0 or greater.','err');
+  if(serviceType==='Top Up'&&!['Aya','Truemoney','MTB'].includes(selectedBank))return notify('serviceNotice','Top Up is configured only for AYA, Truemoney and MTB.','err');
+  if(serviceType==='Other'&&override==='')return notify('serviceNotice','Other service requires a manual fee.','err');
+
+  const btn=$('saveService');
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const payload={
+      action:'saveTransaction',
+      requestId:'svc_'+Date.now()+'_'+Math.random().toString(36).slice(2),
+      phone,
+      customerName:name,
+      amount:String(amount),
+      serviceType:backendServiceType(),
+      paymentDirection:(serviceType==='Cash Out'||(['Top Up','Meter Bill','Other'].includes(serviceType)&&direction==='Cash Out'))?'CashOut':'CashIn',
+      paymentChannel:selectedBank,
+      manualServiceFee:override,
+      note:$('note').value
+    };
+    const result=await jsonp(API.service,payload,45000);
+    if(result.duplicate){notify('serviceNotice','This transaction was already saved. No new balance change was made.','info');return;}
+    notify('serviceNotice','Saved successfully. Review the before/after balances in the confirmation popup.','ok');
+    showSaveSummary('service',result,{customerName:name,service:serviceType,channel:selectedBank,amount,manualFee:override!==''});
+    $('amount').value='';$('overrideFee').value='';$('note').value='';
+    updatePreview();refreshAll();loadCustomerSuggestions();
+  }catch(error){
+    notify('serviceNotice',error.message,'err');
+  }finally{
+    btn.disabled=false;btn.textContent='Save customer transaction';
+  }
+}
+function accountOptions(){return ['Cash',...BANKS,'External / Expense']}
+function initMoveSelects(){const opts=accountOptions().map(x=>`<option>${x}</option>`).join('');$('moveFrom').innerHTML=opts;$('moveTo').innerHTML=opts;$('moveFrom').value='Cash';$('moveTo').value='KBZ'}
+$('saveMovement').onclick=async()=>{
+ const amount=num($('moveAmount').value),from=$('moveFrom').value,to=$('moveTo').value;
+ if(!Number.isFinite(amount)||amount<=0)return notify('movementNotice','Enter a valid amount.','err');
+ if(from===to)return notify('movementNotice','Choose different source and destination accounts.','err');
+ const operation=(from==='Cash'&&BANKS.includes(to))?'CashToBank':(BANKS.includes(from)&&to==='Cash'?'BankToCash':(from==='Cash'&&to==='External / Expense'?'CashExpense':(BANKS.includes(from)&&to==='External / Expense'?'BankExpense':'')));
+ if(!operation)return notify('movementNotice','Choose a valid cash/bank movement or expense.','err');
+ try{
+  $('saveMovement').disabled=true;$('saveMovement').textContent='Saving…';
+  const r=await jsonp(API.movement,{action:'saveInternalTransfer',amount:String(amount),operation,channelFrom:from,channelTo:to,note:$('moveNote').value});
+  notify('movementNotice','Saved successfully. Review the before/after balances in the confirmation popup.','ok');
+  showSaveSummary('movement',r,{amount,from,to});
+  $('moveAmount').value='';$('moveNote').value='';refreshAll();
+ }catch(e){notify('movementNotice',e.message,'err')}
+ finally{$('saveMovement').disabled=false;$('saveMovement').textContent='Save internal movement'}
+};
+async function loadBalances(){clearNotice('balanceNotice');try{const [c,b]=await Promise.all([jsonp(API.cash,{action:'getCashBalance'}),jsonp(API.channel,{action:'getChannels'})]);const cash=Number(c.balance??c.total??c.cashBalance??0);const raw=b.balances||b.channels||b.data||b;balances={};BANKS.forEach(k=>{balances[k]=Number(raw[k]??raw[k.toLowerCase()]??0)});const bankTotal=BANKS.reduce((s,k)=>s+balances[k],0);$('cashBalance').textContent=money(cash);$('bankTotal').textContent=money(bankTotal);$('grandTotal').textContent=money(cash+bankTotal);$('balanceList').innerHTML=[['Cash',cash],...BANKS.map(k=>[k,balances[k]])].map(([k,v])=>`<div class="balance-item"><b>${k}</b><strong>${money(v)}</strong></div>`).join('');return{cash,bankTotal}}catch(e){notify('balanceNotice',e.message,'err');throw e}}
+async function loadLoan(){try{const r=await jsonp(API.loan,{action:'getLoanSummary'});const limit=Number(r.L_Loan??r.limit??0),current=Number(r.Current_Loan??r.currentLoan??0),available=limit-current;$('loanLimit').textContent=money(limit);$('loanCurrent').textContent=money(current);$('loanAvailable').textContent=money(available);$('loanAvailableLarge').textContent=money(available)}catch(e){$('loanAvailable').textContent='Unavailable';$('loanAvailableLarge').textContent='Unavailable'}}
+document.querySelectorAll('[data-loan]').forEach(b=>b.onclick=()=>{loanMode=b.dataset.loan;document.querySelectorAll('[data-loan]').forEach(x=>x.classList.toggle('active',x===b));$('saveLoan').textContent=loanMode==='Borrow'?'Confirm borrowing':'Confirm repayment'});
+$('saveLoan').onclick=async()=>{const amount=num($('loanAmount').value);if(!Number.isFinite(amount)||amount<=0)return notify('loanNotice','Enter a valid amount.','err');try{$('saveLoan').disabled=true;const r=await jsonp(API.loan,{action:loanMode==='Borrow'?'borrow':'repay',type:loanMode,operation:loanMode,amount:String(amount)});notify('loanNotice',r.message||loanMode+' successful.','ok');$('loanAmount').value='';await loadLoan();await loadBalances()}catch(e){notify('loanNotice',e.message,'err')}finally{$('saveLoan').disabled=false}};
+async function loadHistory(){const body=$('historyRows');body.innerHTML='<tr><td colspan="8" class="empty">Loading…</td></tr>';try{const r=await jsonp(API.service,{action:'getTransactions'});historyData=r.transactions||r.data||[];renderHistory()}catch(e){body.innerHTML='<tr><td colspan="8" class="empty">Could not load history. '+e.message+'</td></tr>'}}
+function renderHistory(){const q=$('historySearch').value.toLowerCase(),date=$('historyDate').value;const rows=historyData.filter(x=>{const text=[x.customerName,x.Customer_Name,x.phone,x.Phone_Number].join(' ').toLowerCase();const d=String(x.created_at||x.date||'').slice(0,10);return(!q||text.includes(q))&&(!date||d===date)});$('historyRows').innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.created_at||x.date||'')}</td><td>${esc(x.customerName||x.Customer_Name||'')}</td><td>${esc(x.phone||x.Phone_Number||'')}</td><td>${esc(x.serviceType||x.service||x['CashIn/CashOut/TopUp/Meter/Other']||x.status||'')}</td><td>${esc(x.provider||x.Payment_Channel||'')}</td><td>${money(x.amount??x.Amount)}</td><td>${money(x.cost??x.Service_Fee)}</td><td><span class="tag">Saved</span></td></tr>`).join(''):'<tr><td colspan="8" class="empty">No matching customer transactions.</td></tr>'}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('historySearch').oninput=renderHistory;$('historyDate').onchange=renderHistory;
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='history')loadHistory();if(p==='balances'||p==='loan')refreshAll()}
+document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+async function refreshAll(){try{await loadBalances()}catch(_){}await loadLoan()}
+$('refreshBtn').onclick=refreshAll;$('balanceRefresh').onclick=refreshAll;$('historyRefresh').onclick=loadHistory;
+$('themeBtn').onclick=()=>{document.body.classList.toggle('theme-dark');localStorage.setItem('linlett-theme',document.body.classList.contains('theme-dark')?'dark':'light')};
+if(localStorage.getItem('linlett-theme')==='dark')document.body.classList.add('theme-dark');
+buildBanks();initMoveSelects();updatePreview();refreshAll();loadCustomerSuggestions();
+</script>
+</body>
+</html>
