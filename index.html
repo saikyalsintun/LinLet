@@ -37,7 +37,7 @@ main{min-width:0}.page{display:none}.page.active{display:block}.pagehead{display
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.kpi{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px}.kpi .klabel{font-size:11px;color:var(--muted)}.kpi .kvalue{font-size:19px;font-weight:850;margin-top:5px;overflow-wrap:anywhere}.kpi.gold{background:#292b27;color:#fff;border-color:#292b27}.kpi.gold .klabel{color:#c7cbc2}.kpi.gold .kvalue{color:var(--gold)}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:680px;background:#fff}th,td{text-align:left;padding:10px 11px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap}th{background:#f7f8f5;color:#62685e;font-size:10px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0}tr:last-child td{border-bottom:0}.empty{text-align:center;color:var(--muted);padding:25px}
 .balance-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.balance-item{padding:12px;border:1px solid var(--line);border-radius:12px}.balance-item b{display:block;font-size:11px;color:var(--muted)}.balance-item strong{display:block;font-size:17px;margin-top:5px;overflow-wrap:anywhere}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hidden{display:none!important}.right{text-align:right}.tag{display:inline-block;padding:4px 7px;border-radius:20px;background:#f1f2ee;color:#60665d;font-size:10px;font-weight:750}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.split.single{grid-template-columns:1fr}.hidden{display:none!important}.right{text-align:right}.tag{display:inline-block;padding:4px 7px;border-radius:20px;background:#f1f2ee;color:#60665d;font-size:10px;font-weight:750}
 .theme-dark{--bg:#151714;--card:#22251f;--ink:#f0f1eb;--muted:#b3b8ad;--line:#3a3f36;--shadow:0 8px 28px #0003;color-scheme:dark}.theme-dark input,.theme-dark select,.theme-dark textarea,.theme-dark .choice,.theme-dark .bank,.theme-dark .pill,.theme-dark table{background:#292d26;color:var(--ink);border-color:var(--line)}.theme-dark th{background:#30352c;color:#c7cbbf}.theme-dark .kpi{background:#22251f}.theme-dark .choice.active,.theme-dark .bank.active,.theme-dark .pill.active{background:#403722;color:#ffe4a6}.theme-dark .notice.ok{background:#20372a;color:#b4e4c5}.theme-dark .notice.err{background:#3b2525;color:#ffb9b3}.theme-dark .notice.info{background:#29333b;color:#c7e3f8}
 
 /* Post-save balance confirmation modal */
@@ -115,15 +115,16 @@ main{min-width:0}.page{display:none}.page.active{display:block}.pagehead{display
  <div class="grid">
   <div class="card span-7">
    <h3>Movement details</h3>
+   <div class="field"><label>Movement type</label><div class="pills"><button type="button" class="pill active" data-movement-mode="Transfer">Transfer</button><button type="button" class="pill" data-movement-mode="Spending">Spending</button></div><div class="hint" id="movementModeHint">Transfer moves money from Cash to a bank account, or from a bank account to Cash.</div></div>
    <div class="field"><label for="moveAmount">Amount (MMK)</label><input id="moveAmount" inputmode="numeric" placeholder="0"></div>
-   <div class="split">
-    <div class="field"><label for="moveFrom">From account</label><select id="moveFrom"></select></div>
-    <div class="field"><label for="moveTo">To account</label><select id="moveTo"></select></div>
+   <div class="split" id="moveAccountsGrid">
+    <div class="field"><label for="moveFrom" id="moveFromLabel">From account</label><select id="moveFrom"></select></div>
+    <div class="field" id="moveToField"><label for="moveTo">To account</label><select id="moveTo"></select></div>
    </div>
    <div class="field"><label for="moveNote">Note</label><textarea id="moveNote" placeholder="e.g. Cash used for shop expenses"></textarea></div>
-   <button class="primary" id="saveMovement">Save internal movement</button><div class="notice" id="movementNotice"></div>
+   <button class="primary" id="saveMovement">Save transfer</button><div class="notice" id="movementNotice"></div>
   </div>
-  <div class="card span-5"><h3>How it changes balances</h3><div class="muted">The source account decreases. The destination account increases. Choose <b>External / Expense</b> as the destination to record spending from Cash or a bank without increasing another account.</div><div class="notice info show" style="margin-top:14px">Internal movements are excluded from customer transaction history and service transaction counts.</div></div>
+  <div class="card span-5"><h3>How it changes balances</h3><div class="muted" id="movementExplanation">Transfer: the source account decreases and the destination account increases. Choose Cash and a bank account in either direction.</div><div class="notice info show" style="margin-top:14px">Spending: the selected Cash or bank balance decreases only. No other account is credited. Both types are excluded from customer transaction history and service transaction counts.</div></div>
  </div>
 </section>
 
@@ -177,7 +178,7 @@ const API={
 };
 const BANKS=['KBZ','Wave','Aya','CB','UAB','MTB','Truemoney','Aplus'];
 const $=id=>document.getElementById(id), money=n=>(Number(n)||0).toLocaleString('en-US',{maximumFractionDigits:2})+' MMK';
-let serviceType='Cash In',direction='Cash In',selectedBank='KBZ',loanMode='Borrow',balances={},historyData=[],feeRequestToken=0,automaticFeeValue=null,customerSuggestions=[],suggestionFocus=null;
+let serviceType='Cash In',direction='Cash In',selectedBank='KBZ',loanMode='Borrow',movementMode='Transfer',balances={},historyData=[],feeRequestToken=0,automaticFeeValue=null,customerSuggestions=[],suggestionFocus=null;
 function num(v){const n=Number(String(v??'').replace(/,/g,'').trim());return Number.isFinite(n)?n:NaN}
 function fmtInput(v){let x=String(v||'').replace(/[^\d]/g,'');return x.replace(/\B(?=(\d{3})+(?!\d))/g,',')}
 function jsonp(url,params={},timeout=25000){return new Promise((resolve,reject)=>{const cb='llcb_'+Date.now()+'_'+Math.random().toString(36).slice(2);let done=false;const s=document.createElement('script');const timer=setTimeout(()=>finish(new Error('API timeout. Check deployment and retry only after checking balances.')),timeout);function finish(err,data){if(done)return;done=true;clearTimeout(timer);delete window[cb];s.remove();err?reject(err):resolve(data)}window[cb]=d=>{if(!d||d.success===false)finish(new Error(d?.message||'API request failed.'));else finish(null,d)};s.onerror=()=>finish(new Error('Could not reach Apps Script endpoint.'));s.src=url+'?'+new URLSearchParams({...params,callback:cb,_ts:Date.now()});document.head.appendChild(s)})}
@@ -213,7 +214,8 @@ function showSaveSummary(kind,data,details={}){
     rows.push(summaryRow('Fee method',data?.feeMethod||(details.manualFee?'Manual':'Automatic')));
     rows.push(summaryRow('Fee accounting','Recorded separately from cash/bank balances'));
   }else{
-    rows.push(summaryRow('Movement',esc(`${details.from||'—'} → ${details.to||'—'}`)));
+    rows.push(summaryRow('Type',esc(details.mode||'Transfer')));
+    rows.push(summaryRow(details.mode==='Spending'?'Spend from':'Transfer',details.mode==='Spending'?esc(details.from||'—'):esc(`${details.from||'—'} → ${details.to||'—'}`)));
     rows.push(summaryRow('Movement amount',money(details.amount)));
     rows.push(summaryRow('Service fee','Not applicable (internal movement)'));
   }
@@ -422,22 +424,37 @@ $('saveService').onclick=async()=>{
     btn.disabled=false;btn.textContent='Save customer transaction';
   }
 }
-function accountOptions(){return ['Cash',...BANKS,'External / Expense']}
-function initMoveSelects(){const opts=accountOptions().map(x=>`<option>${x}</option>`).join('');$('moveFrom').innerHTML=opts;$('moveTo').innerHTML=opts;$('moveFrom').value='Cash';$('moveTo').value='KBZ'}
+function accountOptions(){return ['Cash',...BANKS]}
+function setMovementMode(mode){
+ movementMode=mode==='Spending'?'Spending':'Transfer';
+ document.querySelectorAll('[data-movement-mode]').forEach(b=>b.classList.toggle('active',b.dataset.movementMode===movementMode));
+ const accounts=accountOptions(),fromValue=$('moveFrom').value,toValue=$('moveTo').value;
+ $('moveFrom').innerHTML=accounts.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+ $('moveTo').innerHTML=accounts.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+ $('moveFrom').value=accounts.includes(fromValue)?fromValue:'Cash';
+ $('moveTo').value=accounts.includes(toValue)?toValue:'KBZ';
+ $('moveToField').classList.toggle('hidden',movementMode==='Spending');
+ $('moveAccountsGrid').classList.toggle('single',movementMode==='Spending');
+ $('moveFromLabel').textContent=movementMode==='Spending'?'Spend from account':'From account';
+ $('movementModeHint').textContent=movementMode==='Spending'?'Spending subtracts money from the selected Cash or bank account. It does not add money to another account.':'Transfer moves money from Cash to a bank account, or from a bank account to Cash.';
+ $('movementExplanation').textContent=movementMode==='Spending'?'Spending: only the selected source balance decreases. No other account is credited.':'Transfer: the source account decreases and the destination account increases. Choose Cash and a bank account in either direction.';
+ $('saveMovement').textContent=movementMode==='Spending'?'Save spending':'Save transfer';
+}
+function initMoveSelects(){const opts=accountOptions().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');$('moveFrom').innerHTML=opts;$('moveTo').innerHTML=opts;$('moveFrom').value='Cash';$('moveTo').value='KBZ';setMovementMode('Transfer')}
+document.querySelectorAll('[data-movement-mode]').forEach(b=>b.onclick=()=>setMovementMode(b.dataset.movementMode));
 $('saveMovement').onclick=async()=>{
- const amount=num($('moveAmount').value),from=$('moveFrom').value,to=$('moveTo').value;
+ const amount=num($('moveAmount').value),from=$('moveFrom').value,to=movementMode==='Transfer'?$('moveTo').value:'';
  if(!Number.isFinite(amount)||amount<=0)return notify('movementNotice','Enter a valid amount.','err');
- if(from===to)return notify('movementNotice','Choose different source and destination accounts.','err');
- const operation=(from==='Cash'&&BANKS.includes(to))?'CashToBank':(BANKS.includes(from)&&to==='Cash'?'BankToCash':(from==='Cash'&&to==='External / Expense'?'CashExpense':(BANKS.includes(from)&&to==='External / Expense'?'BankExpense':'')));
- if(!operation)return notify('movementNotice','Choose a valid cash/bank movement or expense.','err');
+ if(movementMode==='Transfer'&&from===to)return notify('movementNotice','Choose different source and destination accounts.','err');
+ const operation=movementMode==='Spending'?(from==='Cash'?'CashExpense':'BankExpense'):(from==='Cash'?'CashToBank':'BankToCash');
  try{
   $('saveMovement').disabled=true;$('saveMovement').textContent='Saving…';
-  const r=await jsonp(API.movement,{action:'saveInternalTransfer',amount:String(amount),operation,channelFrom:from,channelTo:to,note:$('moveNote').value});
+  const r=await jsonp(API.movement,{action:'saveInternalTransfer',movementMode,amount:String(amount),operation,channelFrom:from,channelTo:movementMode==='Spending'?'Spending':to,note:$('moveNote').value});
   notify('movementNotice','Saved successfully. Review the before/after balances in the confirmation popup.','ok');
-  showSaveSummary('movement',r,{amount,from,to});
+  showSaveSummary('movement',r,{amount,from,to,mode:movementMode});
   $('moveAmount').value='';$('moveNote').value='';refreshAll();
  }catch(e){notify('movementNotice',e.message,'err')}
- finally{$('saveMovement').disabled=false;$('saveMovement').textContent='Save internal movement'}
+ finally{$('saveMovement').disabled=false;$('saveMovement').textContent=movementMode==='Spending'?'Save spending':'Save transfer'}
 };
 async function loadBalances(){clearNotice('balanceNotice');try{const [c,b]=await Promise.all([jsonp(API.cash,{action:'getCashBalance'}),jsonp(API.channel,{action:'getChannels'})]);const cash=Number(c.balance??c.total??c.cashBalance??0);const raw=b.balances||b.channels||b.data||b;balances={};BANKS.forEach(k=>{balances[k]=Number(raw[k]??raw[k.toLowerCase()]??0)});const bankTotal=BANKS.reduce((s,k)=>s+balances[k],0);$('cashBalance').textContent=money(cash);$('bankTotal').textContent=money(bankTotal);$('grandTotal').textContent=money(cash+bankTotal);$('balanceList').innerHTML=[['Cash',cash],...BANKS.map(k=>[k,balances[k]])].map(([k,v])=>`<div class="balance-item"><b>${k}</b><strong>${money(v)}</strong></div>`).join('');return{cash,bankTotal}}catch(e){notify('balanceNotice',e.message,'err');throw e}}
 async function loadLoan(){try{const r=await jsonp(API.loan,{action:'getLoanSummary'});const limit=Number(r.L_Loan??r.limit??0),current=Number(r.Current_Loan??r.currentLoan??0),available=limit-current;$('loanLimit').textContent=money(limit);$('loanCurrent').textContent=money(current);$('loanAvailable').textContent=money(available);$('loanAvailableLarge').textContent=money(available)}catch(e){$('loanAvailable').textContent='Unavailable';$('loanAvailableLarge').textContent='Unavailable'}}
