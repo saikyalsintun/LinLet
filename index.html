@@ -125,6 +125,7 @@ main{min-width:0}.page{display:none}.page.active{display:block}.pagehead{display
    <button class="primary" id="saveMovement">Save transfer</button><div class="notice" id="movementNotice"></div>
   </div>
   <div class="card span-5"><h3>How it changes balances</h3><div class="muted" id="movementExplanation">Transfer: the source account decreases and the destination account increases. Choose Cash and a bank account in either direction.</div><div class="notice info show" style="margin-top:14px">Spending: the selected Cash or bank balance decreases only. No other account is credited. Both types are excluded from customer transaction history and service transaction counts.</div></div>
+  <div class="card span-12"><div class="split" style="align-items:center;margin-bottom:12px"><div><h3 style="margin:0">Internal movement history</h3><div class="muted" style="font-size:12px">Separate record of every saved Transfer and Spending activity.</div></div><button class="btn" id="movementHistoryRefresh" type="button">Refresh history</button></div><div class="table-wrap"><table><thead><tr><th>Date / Time</th><th>Type</th><th>Amount</th><th>From</th><th>To</th><th>Cash Before → After</th><th>Bank</th><th>Bank Before → After</th><th>Note</th></tr></thead><tbody id="movementHistoryRows"><tr><td colspan="9" class="empty">Open Internal Movement or refresh to load history.</td></tr></tbody></table></div><div class="notice" id="movementHistoryNotice"></div></div>
  </div>
 </section>
 
@@ -452,10 +453,23 @@ $('saveMovement').onclick=async()=>{
   const r=await jsonp(API.movement,{action:'saveInternalTransfer',movementMode,amount:String(amount),operation,channelFrom:from,channelTo:movementMode==='Spending'?'Spending':to,note:$('moveNote').value});
   notify('movementNotice','Saved successfully. Review the before/after balances in the confirmation popup.','ok');
   showSaveSummary('movement',r,{amount,from,to,mode:movementMode});
-  $('moveAmount').value='';$('moveNote').value='';refreshAll();
+  $('moveAmount').value='';$('moveNote').value='';refreshAll();loadMovementHistory();
  }catch(e){notify('movementNotice',e.message,'err')}
  finally{$('saveMovement').disabled=false;$('saveMovement').textContent=movementMode==='Spending'?'Save spending':'Save transfer'}
 };
+async function loadMovementHistory(){
+ const body=$('movementHistoryRows');if(!body)return;body.innerHTML='<tr><td colspan="9" class="empty">Loading internal movement history…</td></tr>';
+ try{
+  const r=await jsonp(API.movement,{action:'getMovementHistory'},45000);const rows=r.history||[];
+  body.innerHTML=rows.length?rows.map(x=>{
+   const cashChange=x.cashBefore!==''&&x.cashAfter!==''?`${money(x.cashBefore)} → ${money(x.cashAfter)}`:'—';
+   const bankChange=x.bankBefore!==''&&x.bankAfter!==''?`${money(x.bankBefore)} → ${money(x.bankAfter)}`:'—';
+   return `<tr><td>${esc(x.dateTime||'Earlier record · date not stored')}</td><td><span class="tag">${esc(x.movementType||'')}</span></td><td><strong>${money(x.amount)}</strong></td><td>${esc(x.sourceAccount||'')}</td><td>${esc(x.destinationAccount||'')}</td><td>${cashChange}</td><td>${esc(x.bankChannel||'—')}</td><td>${bankChange}</td><td>${esc(x.note||'')}</td></tr>`;
+  }).join(''):'<tr><td colspan="9" class="empty">No internal movements have been recorded yet.</td></tr>';
+  clearNotice('movementHistoryNotice');
+ }catch(e){body.innerHTML=`<tr><td colspan="9" class="empty">Could not load internal movement history: ${esc(e.message)}</td></tr>`;notify('movementHistoryNotice',e.message,'err')}
+}
+$('movementHistoryRefresh').onclick=loadMovementHistory;
 async function loadBalances(){clearNotice('balanceNotice');try{const [c,b]=await Promise.all([jsonp(API.cash,{action:'getCashBalance'}),jsonp(API.channel,{action:'getChannels'})]);const cash=Number(c.balance??c.total??c.cashBalance??0);const raw=b.balances||b.channels||b.data||b;balances={};BANKS.forEach(k=>{balances[k]=Number(raw[k]??raw[k.toLowerCase()]??0)});const bankTotal=BANKS.reduce((s,k)=>s+balances[k],0);$('cashBalance').textContent=money(cash);$('bankTotal').textContent=money(bankTotal);$('grandTotal').textContent=money(cash+bankTotal);$('balanceList').innerHTML=[['Cash',cash],...BANKS.map(k=>[k,balances[k]])].map(([k,v])=>`<div class="balance-item"><b>${k}</b><strong>${money(v)}</strong></div>`).join('');return{cash,bankTotal}}catch(e){notify('balanceNotice',e.message,'err');throw e}}
 async function loadLoan(){try{const r=await jsonp(API.loan,{action:'getLoanSummary'});const limit=Number(r.L_Loan??r.limit??0),current=Number(r.Current_Loan??r.currentLoan??0),available=limit-current;$('loanLimit').textContent=money(limit);$('loanCurrent').textContent=money(current);$('loanAvailable').textContent=money(available);$('loanAvailableLarge').textContent=money(available)}catch(e){$('loanAvailable').textContent='Unavailable';$('loanAvailableLarge').textContent='Unavailable'}}
 document.querySelectorAll('[data-loan]').forEach(b=>b.onclick=()=>{loanMode=b.dataset.loan;document.querySelectorAll('[data-loan]').forEach(x=>x.classList.toggle('active',x===b));$('saveLoan').textContent=loanMode==='Borrow'?'Confirm borrowing':'Confirm repayment'});
@@ -464,7 +478,7 @@ async function loadHistory(){const body=$('historyRows');body.innerHTML='<tr><td
 function renderHistory(){const q=$('historySearch').value.toLowerCase(),date=$('historyDate').value;const rows=historyData.filter(x=>{const text=[x.customerName,x.Customer_Name,x.phone,x.Phone_Number].join(' ').toLowerCase();const d=String(x.created_at||x.date||'').slice(0,10);return(!q||text.includes(q))&&(!date||d===date)});$('historyRows').innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.created_at||x.date||'')}</td><td>${esc(x.customerName||x.Customer_Name||'')}</td><td>${esc(x.phone||x.Phone_Number||'')}</td><td>${esc(x.serviceType||x.service||x['CashIn/CashOut/TopUp/Meter/Other']||x.status||'')}</td><td>${esc(x.provider||x.Payment_Channel||'')}</td><td>${money(x.amount??x.Amount)}</td><td>${money(x.cost??x.Service_Fee)}</td><td><span class="tag">Saved</span></td></tr>`).join(''):'<tr><td colspan="8" class="empty">No matching customer transactions.</td></tr>'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 $('historySearch').oninput=renderHistory;$('historyDate').onchange=renderHistory;
-function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='history')loadHistory();if(p==='balances'||p==='loan')refreshAll()}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='history')loadHistory();if(p==='internal')loadMovementHistory();if(p==='balances'||p==='loan')refreshAll()}
 document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 async function refreshAll(){try{await loadBalances()}catch(_){}await loadLoan()}
 $('refreshBtn').onclick=refreshAll;$('balanceRefresh').onclick=refreshAll;$('historyRefresh').onclick=loadHistory;
