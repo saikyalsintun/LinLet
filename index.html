@@ -143,10 +143,10 @@ main{min-width:0}.page{display:none}.page.active{display:block}.pagehead{display
 </section>
 
 <section class="page" id="page-loan">
- <div class="pagehead"><div><h2>QuickLoan</h2><p>Borrowing increases KBZ balance; repayment decreases KBZ balance.</p></div><span class="tag">KBZ LINKED</span></div>
+ <div class="pagehead"><div><h2>QuickLoan</h2><p>Borrowing adds principal to KBZ; repayment deducts principal plus accrued interest.</p></div><span class="tag">KBZ LINKED</span></div>
  <div class="grid">
-  <div class="card span-5"><h3>Loan position</h3><div class="kpis" style="grid-template-columns:1fr 1fr"><div class="kpi"><div class="klabel">Loan limit</div><div class="kvalue" id="loanLimit">—</div></div><div class="kpi"><div class="klabel">Outstanding</div><div class="kvalue" id="loanCurrent">—</div></div></div><div class="kpi gold" style="margin-top:10px"><div class="klabel">Available to borrow</div><div class="kvalue" id="loanAvailableLarge">—</div></div></div>
-  <div class="card span-7"><h3>Borrow or repay</h3><div class="pills" style="margin-bottom:13px"><button class="pill active" data-loan="Borrow">Borrow</button><button class="pill" data-loan="Repay">Repay</button></div><div class="field"><label for="loanAmount">Amount (MMK)</label><input id="loanAmount" inputmode="numeric" placeholder="0"></div><button class="primary" id="saveLoan">Confirm borrowing</button><div class="notice" id="loanNotice"></div></div>
+  <div class="card span-5"><h3>Loan position</h3><div class="kpis" style="grid-template-columns:1fr 1fr"><div class="kpi"><div class="klabel">Loan limit</div><div class="kvalue" id="loanLimit">—</div></div><div class="kpi"><div class="klabel">Outstanding principal</div><div class="kvalue" id="loanCurrent">—</div></div><div class="kpi"><div class="klabel">Estimated accrued interest</div><div class="kvalue" id="loanInterestEstimate">—</div></div><div class="kpi"><div class="klabel">Annual interest rate</div><div class="kvalue">15%</div></div></div><div class="kpi gold" style="margin-top:10px"><div class="klabel">Available to borrow</div><div class="kvalue" id="loanAvailableLarge">—</div></div></div>
+  <div class="card span-7"><h3>Borrow or repay</h3><div class="pills" style="margin-bottom:13px"><button class="pill active" data-loan="Borrow">Borrow</button><button class="pill" data-loan="Repay">Repay</button></div><div class="field"><label for="loanAmount">Principal amount (MMK)</label><input id="loanAmount" inputmode="numeric" placeholder="0"></div><div class="muted" style="font-size:12px;line-height:1.55;margin:8px 0 12px">Interest: 15% per year, calculated daily (365-day basis). Minimum one day interest per borrowing. On repayment, enter the principal amount to reduce; accrued interest is added automatically to the KBZ deduction.</div><button class="primary" id="saveLoan">Confirm borrowing</button><div class="notice" id="loanNotice"></div></div>
  </div>
 </section>
 
@@ -191,7 +191,7 @@ $('saveSummaryModal').addEventListener('click',e=>{if(e.target===$('saveSummaryM
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSaveSummary()});
 function summaryRow(label,value,extraClass=''){return `<div class="save-modal-row"><span>${esc(label)}</span><strong class="${extraClass}">${value}</strong></div>`}
 function showSaveSummary(kind,data,details={}){
-  const title=kind==='service'?'Customer transaction saved':'Internal movement saved';
+  const title=kind==='service'?'Customer transaction saved':kind==='loan'?'QuickLoan transaction saved':'Internal movement saved';
   $('saveSummaryTitle').textContent=title;
   $('saveSummarySubtitle').textContent=data?.message||'The backend confirmed the update.';
   const changes=data?.balanceChanges;
@@ -214,6 +214,22 @@ function showSaveSummary(kind,data,details={}){
     rows.push(summaryRow('Service fee revenue',fee===undefined||fee===null?'Not returned by backend':money(fee),'fee'));
     rows.push(summaryRow('Fee method',data?.feeMethod||(details.manualFee?'Manual':'Automatic')));
     rows.push(summaryRow('Fee accounting','Recorded separately from cash/bank balances'));
+  }else if(kind==='loan'){
+    rows.push(summaryRow('Operation',esc(details.mode||data?.operation||data?.action||'—')));
+    rows.push(summaryRow(details.mode==='Repay'?'Principal repayment':'Principal borrowed',money(data?.principalAmount??details.amount??data?.amount)));
+    rows.push(summaryRow('Annual interest rate',`${Number(data?.interestRateAnnual??15)}%`));
+    if(details.mode==='Repay'){
+      rows.push(summaryRow('Longest accrued period',`${Number(data?.interestDays||0)} day(s)`));
+      rows.push(summaryRow('Interest charged',money(data?.interestAmount||0),'fee'));
+      rows.push(summaryRow('Total deducted from KBZ',money(data?.totalKbzDeduction??data?.totalRepayment),'fee'));
+    }else{
+      rows.push(summaryRow('Interest charged now',money(data?.interestAmount||0)));
+      rows.push(summaryRow('Amount added to KBZ',money(data?.totalKbzDeduction??details.amount)));
+    }
+    rows.push(summaryRow('Loan limit',money(data?.L_Loan)));
+    rows.push(summaryRow('Principal outstanding after',money(data?.Current_Loan)));
+
+    if(data?.loanId)rows.push(summaryRow('Reference ID',esc(data.loanId)));
   }else{
     rows.push(summaryRow('Type',esc(details.mode||'Transfer')));
     rows.push(summaryRow(details.mode==='Spending'?'Spend from':details.mode==='Add cash'?'Add to account':'Transfer',details.mode==='Spending'||details.mode==='Add cash'?esc(details.from||'—'):esc(`${details.from||'—'} → ${details.to||'—'}`)));
@@ -471,9 +487,9 @@ async function loadMovementHistory(){
 }
 $('movementHistoryRefresh').onclick=loadMovementHistory;
 async function loadBalances(){clearNotice('balanceNotice');try{const [c,b]=await Promise.all([jsonp(API.cash,{action:'getCashBalance'}),jsonp(API.channel,{action:'getChannels'})]);const cash=Number(c.balance??c.total??c.cashBalance??0);const raw=b.balances||b.channels||b.data||b;balances={};BANKS.forEach(k=>{balances[k]=Number(raw[k]??raw[k.toLowerCase()]??0)});const bankTotal=BANKS.reduce((s,k)=>s+balances[k],0);$('cashBalance').textContent=money(cash);$('bankTotal').textContent=money(bankTotal);$('grandTotal').textContent=money(cash+bankTotal);$('balanceList').innerHTML=[['Cash',cash],...BANKS.map(k=>[k,balances[k]])].map(([k,v])=>`<div class="balance-item"><b>${k}</b><strong>${money(v)}</strong></div>`).join('');return{cash,bankTotal}}catch(e){notify('balanceNotice',e.message,'err');throw e}}
-async function loadLoan(){try{const r=await jsonp(API.loan,{action:'getLoanSummary'});const limit=Number(r.L_Loan??r.limit??0),current=Number(r.Current_Loan??r.currentLoan??0),available=limit-current;$('loanLimit').textContent=money(limit);$('loanCurrent').textContent=money(current);$('loanAvailable').textContent=money(available);$('loanAvailableLarge').textContent=money(available)}catch(e){$('loanAvailable').textContent='Unavailable';$('loanAvailableLarge').textContent='Unavailable'}}
+async function loadLoan(){try{const r=await jsonp(API.loan,{action:'getLoanSummary'});const limit=Number(r.L_Loan??r.limit??0),current=Number(r.Current_Loan??r.currentLoan??0),available=limit-current;$('loanLimit').textContent=money(limit);$('loanCurrent').textContent=money(current);$('loanAvailable').textContent=money(available);$('loanAvailableLarge').textContent=money(available);if($('loanInterestEstimate'))$('loanInterestEstimate').textContent=money(r.Estimated_Accrued_Interest||0)}catch(e){$('loanAvailable').textContent='Unavailable';$('loanAvailableLarge').textContent='Unavailable';if($('loanInterestEstimate'))$('loanInterestEstimate').textContent='Unavailable'}}
 document.querySelectorAll('[data-loan]').forEach(b=>b.onclick=()=>{loanMode=b.dataset.loan;document.querySelectorAll('[data-loan]').forEach(x=>x.classList.toggle('active',x===b));$('saveLoan').textContent=loanMode==='Borrow'?'Confirm borrowing':'Confirm repayment'});
-$('saveLoan').onclick=async()=>{const amount=num($('loanAmount').value);if(!Number.isFinite(amount)||amount<=0)return notify('loanNotice','Enter a valid amount.','err');try{$('saveLoan').disabled=true;const r=await jsonp(API.loan,{action:loanMode==='Borrow'?'borrow':'repay',type:loanMode,operation:loanMode,amount:String(amount)});notify('loanNotice',r.message||loanMode+' successful.','ok');$('loanAmount').value='';await loadLoan();await loadBalances()}catch(e){notify('loanNotice',e.message,'err')}finally{$('saveLoan').disabled=false}};
+$('saveLoan').onclick=async()=>{const amount=num($('loanAmount').value);if(!Number.isFinite(amount)||amount<=0)return notify('loanNotice','Enter a valid amount.','err');try{$('saveLoan').disabled=true;const r=await jsonp(API.loan,{action:loanMode==='Borrow'?'borrow':'repay',type:loanMode,operation:loanMode,amount:String(amount)});notify('loanNotice',r.message||loanMode+' successful.','ok');showSaveSummary('loan',r,{mode:loanMode,amount});$('loanAmount').value='';await loadLoan();await loadBalances()}catch(e){notify('loanNotice',e.message,'err')}finally{$('saveLoan').disabled=false}};
 async function loadHistory(){const body=$('historyRows');body.innerHTML='<tr><td colspan="8" class="empty">Loading…</td></tr>';try{const r=await jsonp(API.service,{action:'getTransactions'});historyData=r.transactions||r.data||[];renderHistory()}catch(e){body.innerHTML='<tr><td colspan="8" class="empty">Could not load history. '+e.message+'</td></tr>'}}
 function renderHistory(){const q=$('historySearch').value.toLowerCase(),date=$('historyDate').value;const rows=historyData.filter(x=>{const text=[x.customerName,x.Customer_Name,x.phone,x.Phone_Number].join(' ').toLowerCase();const d=String(x.created_at||x.date||'').slice(0,10);return(!q||text.includes(q))&&(!date||d===date)});$('historyRows').innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.created_at||x.date||'')}</td><td>${esc(x.customerName||x.Customer_Name||'')}</td><td>${esc(x.phone||x.Phone_Number||'')}</td><td>${esc(x.serviceType||x.service||x['CashIn/CashOut/TopUp/Meter/Other']||x.status||'')}</td><td>${esc(x.provider||x.Payment_Channel||'')}</td><td>${money(x.amount??x.Amount)}</td><td>${money(x.cost??x.Service_Fee)}</td><td><span class="tag">Saved</span></td></tr>`).join(''):'<tr><td colspan="8" class="empty">No matching customer transactions.</td></tr>'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
