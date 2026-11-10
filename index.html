@@ -94,7 +94,7 @@ main{min-width:0}.page{display:none}.page.active{display:block}.pagehead{display
    </div></div>
    <div class="split">
     <div class="field"><label for="customerName">Customer name</label><input id="customerName" placeholder="Customer name" autocomplete="off"><div id="nameSuggestions" class="suggestions hidden" role="listbox" aria-label="Matching customer names"></div></div>
-    <div class="field"><label for="phone">Phone number</label><input id="phone" placeholder="(+959) 261-427-783" inputmode="tel" autocomplete="off"><div id="phoneSuggestions" class="suggestions hidden" role="listbox" aria-label="Matching phone numbers"></div><div class="hint">Required · Myanmar mobile number (9–11 digits after +959)</div></div>
+    <div class="field"><label for="phone">Phone number</label><input id="phone" placeholder="(+959) 261-427-783" inputmode="tel" autocomplete="off"><div id="phoneSuggestions" class="suggestions hidden" role="listbox" aria-label="Matching phone numbers"></div><div class="hint">Required · Enter 1–11 digits after +959</div></div>
    </div>
    <div class="field"><label for="amount">Amount (MMK)</label><input id="amount" inputmode="decimal" placeholder="0"><div class="hint">Commas are formatted automatically.</div></div>
    <div class="field"><label>Payment channel</label><div class="bank-grid" id="banks"></div><div class="hint" id="bankHint">Choose the payment channel used for this transaction.</div></div>
@@ -250,7 +250,7 @@ function validPhone(v){
   const raw=String(v ?? '').trim();
   if(!raw) return false;
   const d=phoneDigits(raw);
-  return d.length>=9 && d.length<=11;
+  return d.length>=1 && d.length<=11;
 }
 
 function normalizedName(v){return String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase()}
@@ -388,7 +388,7 @@ $('saveService').onclick=async()=>{
   const name=cleanCustomerName($('customerName').value);
   const phone=phoneFormat($('phone').value);
   $('customerName').value=name;$('phone').value=phone;
-  if(!validPhone(phone))return notify('serviceNotice','Enter a valid Myanmar mobile number (9–11 digits after +959).','err');
+  if(!validPhone(phone))return notify('serviceNotice','Enter 1–11 digits after +959.','err');
   if(!name)return notify('serviceNotice','Enter the customer name.','err');
   if(!Number.isFinite(amount)||amount<=0)return notify('serviceNotice','Enter a valid amount.','err');
   if(override!==''&&(!Number.isFinite(manual)||manual<0))return notify('serviceNotice','Manual fee must be 0 or greater.','err');
