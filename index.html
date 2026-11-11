@@ -115,7 +115,7 @@ main{min-width:0}.page{display:none}.page.active{display:block}.pagehead{display
  <div class="grid">
   <div class="card span-7">
    <h3>Movement details</h3>
-   <div class="field"><label>Movement type</label><div class="pills"><button type="button" class="pill active" data-movement-mode="Transfer">Transfer</button><button type="button" class="pill" data-movement-mode="Spending">Spending</button><button type="button" class="pill" data-movement-mode="Add cash">Add cash</button></div><div class="hint" id="movementModeHint">Transfer moves money between Cash and a bank account. Add cash increases one selected account.</div></div>
+   <div class="field"><label>Movement type</label><div class="pills"><button type="button" class="pill active" data-movement-mode="Transfer">Transfer</button><button type="button" class="pill" data-movement-mode="Spending">Spending</button><button type="button" class="pill" data-movement-mode="Add cash">Add cash</button></div><div class="hint" id="movementModeHint">Transfer moves money between Cash and a bank account, or between two different bank accounts. Add cash increases one selected account.</div></div>
    <div class="field"><label for="moveAmount">Amount (MMK)</label><input id="moveAmount" inputmode="numeric" placeholder="0"></div>
    <div class="split" id="moveAccountsGrid">
     <div class="field"><label for="moveFrom" id="moveFromLabel">From account</label><select id="moveFrom"></select></div>
@@ -453,8 +453,8 @@ function setMovementMode(mode){
  $('moveToField').classList.toggle('hidden',movementMode!=='Transfer');
  $('moveAccountsGrid').classList.toggle('single',movementMode!=='Transfer');
  $('moveFromLabel').textContent=movementMode==='Spending'?'Spend from account':movementMode==='Add cash'?'Add to account':'From account';
- $('movementModeHint').textContent=movementMode==='Spending'?'Spending subtracts money from the selected Cash or bank account. It does not add money to another account.':movementMode==='Add cash'?'Add cash increases the selected Cash or bank balance. No other account is reduced.':'Transfer moves money from Cash to a bank account, or from a bank account to Cash.';
- $('movementExplanation').textContent=movementMode==='Spending'?'Spending: only the selected source balance decreases. No other account is credited.':movementMode==='Add cash'?'Add cash: the selected Cash or bank balance increases. No other account is affected.':'Transfer: the source account decreases and the destination account increases. Choose Cash and a bank account in either direction.';
+ $('movementModeHint').textContent=movementMode==='Spending'?'Spending subtracts money from the selected Cash or bank account. It does not add money to another account.':movementMode==='Add cash'?'Add cash increases the selected Cash or bank balance. No other account is reduced.':'Transfer supports Cash to Bank, Bank to Cash, or Bank to a different Bank account.';
+ $('movementExplanation').textContent=movementMode==='Spending'?'Spending: only the selected source balance decreases. No other account is credited.':movementMode==='Add cash'?'Add cash: the selected Cash or bank balance increases. No other account is affected.':'Transfer: the source account decreases and the destination account increases. You can transfer Cash ↔ Bank or Bank → a different Bank account.';
  $('saveMovement').textContent=movementMode==='Spending'?'Save spending':movementMode==='Add cash'?'Add cash':'Save transfer';
 }
 function initMoveSelects(){const opts=accountOptions().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');$('moveFrom').innerHTML=opts;$('moveTo').innerHTML=opts;$('moveFrom').value='Cash';$('moveTo').value='KBZ';setMovementMode('Transfer')}
@@ -462,8 +462,8 @@ document.querySelectorAll('[data-movement-mode]').forEach(b=>b.onclick=()=>setMo
 $('saveMovement').onclick=async()=>{
  const amount=num($('moveAmount').value),from=$('moveFrom').value,to=movementMode==='Transfer'?$('moveTo').value:'';
  if(!Number.isFinite(amount)||amount<=0)return notify('movementNotice','Enter a valid amount.','err');
- if(movementMode==='Transfer'&&from===to)return notify('movementNotice','Choose different source and destination accounts.','err');
- const operation=movementMode==='Spending'?(from==='Cash'?'CashExpense':'BankExpense'):movementMode==='Add cash'?(from==='Cash'?'CashAdd':'BankAdd'):(from==='Cash'?'CashToBank':'BankToCash');
+ if(movementMode==='Transfer'&&from===to)return notify('movementNotice','Choose two different accounts. Transfers between the same account are not allowed.','err');
+ const operation=movementMode==='Spending'?(from==='Cash'?'CashExpense':'BankExpense'):movementMode==='Add cash'?(from==='Cash'?'CashAdd':'BankAdd'):(from==='Cash'?'CashToBank':to==='Cash'?'BankToCash':'BankToBank');
  try{
   $('saveMovement').disabled=true;$('saveMovement').textContent='Saving…';
   const r=await jsonp(API.movement,{action:'saveInternalTransfer',movementMode,amount:String(amount),operation,channelFrom:from,channelTo:movementMode==='Spending'?'Spending':movementMode==='Add cash'?'Added':to,note:$('moveNote').value});
@@ -476,11 +476,12 @@ $('saveMovement').onclick=async()=>{
 async function loadMovementHistory(){
  const body=$('movementHistoryRows');if(!body)return;body.innerHTML='<tr><td colspan="9" class="empty">Loading internal movement history…</td></tr>';
  try{
-  const r=await jsonp(API.movement,{action:'getMovementHistory'},45000);const rows=r.history||[];
+  const r=await jsonp(API.movement,{action:'getMovementHistory'},45000);const rows=(r.history||[]).filter(x=>String(x.status||'ACTIVE').trim().toUpperCase()!=='REVERSED');
   body.innerHTML=rows.length?rows.map(x=>{
    const cashChange=x.cashBefore!==''&&x.cashAfter!==''?`${money(x.cashBefore)} → ${money(x.cashAfter)}`:'—';
-   const bankChange=x.bankBefore!==''&&x.bankAfter!==''?`${money(x.bankBefore)} → ${money(x.bankAfter)}`:'—';
-   return `<tr><td>${esc(x.dateTime||'Earlier record · date not stored')}</td><td><span class="tag">${esc(x.movementType||'')}</span></td><td><strong>${money(x.amount)}</strong></td><td>${esc(x.sourceAccount||'')}</td><td>${esc(x.destinationAccount||'')}</td><td>${cashChange}</td><td>${esc(x.bankChannel||'—')}</td><td>${bankChange}</td><td>${esc(x.note||'')}</td></tr>`;
+   const bankEntries=[];if(x.bankChannel&&x.bankBefore!==''&&x.bankAfter!=='')bankEntries.push(`${esc(x.bankChannel)}: ${money(x.bankBefore)} → ${money(x.bankAfter)}`);if(x.destinationBank&&x.destinationBankBefore!==''&&x.destinationBankAfter!=='')bankEntries.push(`${esc(x.destinationBank)}: ${money(x.destinationBankBefore)} → ${money(x.destinationBankAfter)}`);const bankChange=bankEntries.length?bankEntries.join('<br>'):'—';
+   const bankNames=[x.bankChannel,x.destinationBank].filter(Boolean).join(' → ')||'—';
+   return `<tr><td>${esc(x.dateTime||'Earlier record · date not stored')}</td><td><span class="tag">${esc(x.movementType||'')}</span></td><td><strong>${money(x.amount)}</strong></td><td>${esc(x.sourceAccount||'')}</td><td>${esc(x.destinationAccount||'')}</td><td>${cashChange}</td><td>${bankNames}</td><td>${bankChange}</td><td>${esc(x.note||'')}</td></tr>`;
   }).join(''):'<tr><td colspan="9" class="empty">No internal movements have been recorded yet.</td></tr>';
   clearNotice('movementHistoryNotice');
  }catch(e){body.innerHTML=`<tr><td colspan="9" class="empty">Could not load internal movement history: ${esc(e.message)}</td></tr>`;notify('movementHistoryNotice',e.message,'err')}
@@ -503,4 +504,4 @@ if(localStorage.getItem('linlett-theme')==='dark')document.body.classList.add('t
 buildBanks();initMoveSelects();updatePreview();refreshAll();loadCustomerSuggestions();
 </script>
 </body>
-</html>
+</html>s
